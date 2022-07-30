@@ -1,0 +1,120 @@
+cs:
+ # UI
+  BootyPedia: "Kořisťopedie"
+  ITEMS: "PŘEDMĚTY"
+  CONDITIONS: "PODMÍNKY"
+  CATEGORIES: "KATEGORIE"
+  MANUFACTURE: "VYRÁBĚNÍ"
+  RESEARCH: "BÁDÁNÍ"
+  SERVICES: "SLUŽBY"
+
+ #Tables
+  Craft: "Plavidlo"
+  Weapon: "Zbraň"
+  Armor: "Zbroj"
+  see also: "viz také"
+  Show/Hide all variants: "Zobrazit/Skrýt všechny varianty"
+  Item: "Předmět"
+  mode: "Typ útoku"
+  Snap: "Od boku"
+  Aimed: "Mířeně"
+  Auto: "Dávka"
+  Melee: "Na blízko"
+  accuracy: "Přesnost"
+  cost: "Časová náročnost"
+  damage: "Účinek"
+  Launcher: "Odpalovač"
+  Clip: "Střelivo"
+  Facility: "Zařízení"
+  Expand: "Rozšířit"
+  Research: "Bádání"
+  Manufacture: "Vyrábění"
+  Unit: "Jednotka"
+  Allowed crafts: "Povolená plavidla"
+  Allowed item categories: "Povolené kategorie předmětů"
+  Allowed armors: "Povolené zbroje"
+  Allowed auxilia: "Povolené pomocné jednotky"
+  Deployments: "Mise"
+ #Subheaders
+  dependencies: "Závisí na:" #STR_DEPENDS_ON
+  seeAlso: "Potřebný předmět:" #STR_ITEM_REQUIRED
+  requiresBaseFunc: "Požadované služby" #STR_SERVICES_REQUIRED
+  freeFrom: "Obdrž zdarma za:" #STR_GET_FOR_FREE_FROM
+  leadsTo: "Vede k:" #STR_LEADS_TO
+  unlocks: "Odemyká:" #STR_UNLOCKS
+  disables: "Znepřístupňuje:" #STR_DISABLES
+  getOneFree: "Dává zdarma jeden z:" #STR_GIVES_ONE_FOR_FREE
+  manufacture: "Výrobní proces:" #STR_REQUIRED_BY(partly) - see STR_HEALING_GEL
+  randomProducedItems: "Náhodná produkce" #STR_RANDOM_PRODUCTION_DISCLAIMER
+
+  HOME: "JDI DOMŮ"
+  Search...: "Najít..."
+  Searching: "Hledání"
+  Query too short: "Příliš krátký dotaz"
+  Nothing found: "Nic nenalezeno"
+  Language: "Jazyk"
+  Lang: "Jazyk" #mobile, five letters max!
+  Download (forum link): "Stáhnout (odkaz na fóru)"
+  Download (from mod.io): "Stáhnout (mod.io)"
+ # intro
+  # Pt.1
+  Welcome onboard, seagal! Take your bunk at da orlop and have some X-Grog, yarrr!: "Vítej na palubě, plavčice! Vyber si kavalec někde na spodní palubě a dej si na uvítanou trochu X-Grogu!"
+  # Pt.2
+  Arrr, what da FLUFF is X-Piratez stuff?: "Co jsou X-Piratez zač?"
+  X-Piratez is a total conversion mod designed for OpenXcom, a free open-source reimplementation of UFO: "Jedná se o totální předělávku OpenXcomu, bezplatné open-sourcové reimplementace her UFO"
+  Enemy Unknown (1994) and X-Com: "Enemy Unknown (z roku 1994) a X-Com"
+  Terror From The Deep. There are major gameplay differences, as well as a complete overhaul of research, manufacture, base facilities, and so on. X-Piratez is designed for the veteran X-Com player seeking a much longer and complex campaign.: "Terror From The Deep. Oproti originálu se ale předělávka hraje v mnohých ohledech jinak a obsahuje, mimo jiné, také obsáhlejší výzkum, výrobu a množství zařízení základny. X-Piratez je určen především zkušeným hráčům X-Comu, kteří by rádi delší a náročnější kampaň."
+  The year is 2601. The Earth has been long conquered by aliens. You run a gang of mutant pirates. Rob aliens and their human proxies for fun, profit and power. X-Piratez is the biggest OpenXcom mod to date.: "Píše se rok 2601. Země si již před dlouhou násilím podmanili cizáci. Ty stojíš v čele bandy pirátek, které obírají cizáky a jejich přisluhovače nejen jen tak pro radost, ale také kvůli bohatství a slávě. X-Piratez je doposud nejrozsálejší modifikace OpenXcomu."
+  We appreciate Anna Zemlina for her fantastic artworks created especially for the mod.: "Děkujeme Anně Zemlině za její fantastická umělecká díla vytvořená speciálně pro X-Piratez."
+  # Pt.2,5
+  #Download mod: "Stáhni si mod"
+  #join our community with: "přidej se k naší komunitě na"
+  #Discord server: "Discordu"
+  #and: "a na"
+  #forum: "fóru"
+  # Pt.3
+  Current mod version is: "Aktuální verze modu je"
+  PC Installation & Update Guide: "Jak instalovat a upgradovat na PC"
+  Download the X-Piratez archive via the forum link (the main one) or from mod.io (alternatively.): "Stáhni zabalený mód z odkazu uveřejňovaném na fóru, nebo alternativně ze stránek mod.io."
+  Unzip the archive to a NEW folder. It strongly recommended not merging the contents with your existing Dioxine_XPiratez folder, as this can lead to various problems.: "Rozbal archiv do NOVÉ složky. Nemíchej dohromady obsah nového archivu s již existující složkou Dioxine_XPiratez, která obsahuje dřívější verzi. Takové počínání může vést k různým problémům."
+  You need your files of the original UFO: "Ke hraní potřebuješ soubory originální hry UFO"
+  Enemy Unknown or X-Com: "Enemy Unknown nebo X-Com"
+  UFO Defense game (either DOS or Steam version) to launch the mod. Copy them to the Dioxine_XPiratez\UFO folder.: "UFO Defense (ať už verze pro DOS, nebo Steam). S modem nejsou kompatibilní soubory počeštěné hry, která kdysi vyšla jako příloha jednoho z herních časopisů. Soubory originální hry nakopíruj do složky Dioxine_XPiratez\\UFO."
+  X-Piratez is distributed with the compatible OXCE engine version. There is no need to replace or upgrade OXCE, as other builds may not be compatible with your version of X-Piratez. Because of that, we recommend you turn off the 'Automatic update check' user option (options\advanced\general.) This option does not check for updates of the mod itself, in any case it has to be downloaded from the forum or mod.io: "Mód X-Piratez je distribuován s kompatibilní verzí enginu OXCE, takže ho není nutné nahrazovat nebo ugradovat. Navíc jiné verze s modem nemusí být nutně kompatibilní. I z tohoto důvodu je dobré vypnout volbu automatické kontroly aktualizací ve hře (možnosti\\další\\hlavní), která nekontroluje verzi módu, ale jen enginu. Mód je třeba stahovat z fóra, nebo stránek mod.io."
+  X-Piratez is distributed with the compatible OXCE engine version. There is no need to replace or upgrade OXCE, as other builds may not be compatible with your version of X-Piratez. Because of that, we recommend you turn off the 'Automatic update check' user option (options/advanced/general.) This option does not check for updates of the mod itself.: "Mód X-Piratez je distribuován s kompatibilní verzí enginu OXCE, takže ho není nutné nahrazovat nebo ugradovat. Navíc jiné verze s modem nemusí být nutně kompatibilní. I z tohoto důvodu je dobré vypnout volbu automatické kontroly aktualizací ve hře (možnosti\\další\\hlavní), která nekontroluje verzi módu, ale jen enginu."
+  If you already have X-Piratez saves, you can copy them from the old Dioxine_XPiratez\user\piratez folder to the new one.: "Pokud chceš zachovat již uložené pozice X-Piratez, nakopíruje je ze složky Dioxine_XPiratez\\user\\piratez dřívější verze do stejně pojmenované složky v adresáři s novou verzí."
+  Optionally, you can also copy user settings from the old Dioxine_XPiratez\user folder to the new one (options.cfg file.): "Obdobně můžeš zachovat i uživatelská nastavení ze složky Dioxine_XPiratez\\user, uložená v souboru options.cfg."
+  Optionally, don't delete your outdated version. Just in case.: "Pro jistotu je dobré okamžitě nemazat starší verzi, kdyby bylo něco špatného v nové."
+  # Pt.4
+  READ OR DIE. The Bootypedia is your friend. Trust me on that.: "ČTI NEBO ZEMŘEŠ. Kořisťopedie je tvou věrnou přítelkyní. Věř mi."
+  mod author, lead designer: "autor a hlavní designer modu"
+  # Pt.5
+  WARNINGS: "VAROVÁNÍ"
+  Contains some NUDITY of both sexes. You've been warned. Also take note this is not any porn-quality T&A since it's not a porn game.: "Obsahuje NAHOTU obou, všemi uznávaných, pohlaví. Rozlišení detailů není tak velké jako na pornostránkách, protože se nejedná o pornohru."
+  Do not install OpenXcom nightlies! They are not compatible with X-Piratez. (Requires OXCE version.): "Neinstaluj „nigtie“ verze OpenXcom! Ty nebývají s X-Piratez kompatibilní. (Vyžaduje verzi OXCE.)"
+  If you absolutely can't stand bikini babes fighting Nazis with chainsaws, you may suffer some trauma.: "Pokud ti jsou proti srsti holky v bikinách a s motorovými pilami, které bojují proti náckům, čeká na tebe nepříjemné překvapení."
+  If you're looking for a tactical game that doesn't require brains, try DOTA instead.: "Pokud toužíš po taktické hře, ve které nemusíš používat mozek, zkus DOTA."
+  Read or Die.: "Čti, nebo zemřeš."
+  Contains riddles. Not everything is what it seems.: "Ne vše ve hře je tím, čím se zprvu zdá."
+  A single campaign might take as much as 400 hours.: "Dohrání kampaně může zabrat i 400 hodin."
+ #External Links
+  #Block1
+  mod author, the Grand Master: "autor modu a Velmistr"
+  You can send your donations through PayPal to: "Můžete poslat své dary přes PayPal na"
+  #Block2
+  chief OXCE programmer, the Wise Alchemist: "hlavní programátor OXCE, Moudrý Alchymista"
+  You can send your donations on Patreon.: "Můžete poslat své dary na Patreon."
+  #Block3
+  Join the Transifex team!: "Připojte se k týmu Transifexu!"
+  All mods are translated by the players: "Všechny mody jsou přeloženy hráči"
+  OpenXcom needs your translation skills!: "OpenXcom potřebuje vaše překladatelské schopnosti!"
+  #Block4
+  Community & support: "Komunita a podpora"
+  Here you can ask any questions associated with this site.: "Zde si můžete položit jakékoli dotazy spojené s tímto webem."
+  Ping @Kato_guardian and we will hear you.: "Přidejte do své zprávy @Kato_guardian a my vás uslyšíme."
+ #Credits
+  Thanks to: "Děkujeme"
+  for translating the homepage and interfaces into non-English languages: "za překlad domovské stránky a rozhraní do neanglických jazyků"
+  Wiki is powered by: "Wiki využívá technologii"
+  Mobile version by: "Mobilní verze od"
+  Finnik, XCF junior developer: "Finnik, XCF mladší vývojář"

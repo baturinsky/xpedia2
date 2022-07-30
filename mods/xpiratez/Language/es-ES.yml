@@ -1,0 +1,120 @@
+es-ES:
+ # UI
+  BootyPedia: "BotínPedia"
+  ITEMS: "OBJETOS"
+  CONDITIONS: "CONDICIONES"
+  CATEGORIES: "CATEGORIAS"
+  MANUFACTURE: "FABRICAR"
+  RESEARCH: "INVESTIGAR"
+  SERVICES: "SERVICIOS"
+
+ #Tables
+  Craft: "Nave"
+  Weapon: "Arma"
+  Armor: "Armadura"
+  see also: "ver también"
+  Show/Hide all variants: "Mostrar/Ocultar todas las variantes"
+  Item: "Objeto"
+  mode: "Tipo de ataque"
+  Snap: "Francotirador"
+  Aimed: "Apuntando"
+  Auto: "Auto"
+  Melee: "Cuerpo a cuerpo"
+  accuracy: "Precisión"
+  cost: "Coste"
+  damage: "Daño"
+  Launcher: "Lanzador"
+  Clip: "Munición"
+  Facility: "Instalación"
+  Expand: "Expandir"
+  Research: "Investigar"
+  Manufacture: "Fabricar"
+  Unit: "Unidad"
+  Allowed crafts: "Naves permitidas"
+  Allowed item categories: "Categorías de objetos permitidos"
+  Allowed armors: "Armaduras permitidas"
+  Allowed auxilia: "Auxiliar permitidos"
+  Deployments: "Misiones"
+ #Subheaders
+  dependencies: "Depende de:" #STR_DEPENDS_ON
+  seeAlso: "Objeto requerido:" #STR_ITEM_REQUIRED
+  requiresBaseFunc: "Servicios requeridos" #STR_SERVICES_REQUIRED
+  freeFrom: "Se consigue gratis de:" #STR_GET_FOR_FREE_FROM
+  leadsTo: "Lleva a:" #STR_LEADS_TO
+  unlocks: "Desbloquea:" #STR_UNLOCKS
+  disables: "Deshabilita:" #STR_DISABLES
+  getOneFree: "Da uno gratis:" #STR_GIVES_ONE_FOR_FREE
+  manufacture: "Proceso de producción:" #STR_REQUIRED_BY(partly) - see STR_HEALING_GEL
+  randomProducedItems: "Producción al azar" #STR_RANDOM_PRODUCTION_DISCLAIMER
+
+  HOME: "PÁGINA DE INICIO"
+  Search...: "Buscar..."
+  Searching: "Buscando"
+  Query too short: "Consulta demasiado corta"
+  Nothing found: "¡Nada encontrado"
+  Language: "Idioma"
+  Lang: "Idioma" #mobile, five letters max!
+  Download (forum link): "Descargar (enlace del foro)"
+  Download (from mod.io): "Descargar (desde mod.io)"
+ # intro
+  # Pt.1
+  Welcome onboard, seagal! Take your bunk at da orlop and have some X-Grog, yarrr!: "¡Bienvenido a bordo marinero! ¡Toma tu litera en la cubierta inferior y agarra uno X-Grog, yarrr!"
+  # Pt.2
+  Arrr, what da FLUFF is X-Piratez stuff?: "¿Arr, qué diablos es X-Piratez?"
+  X-Piratez is a total conversion mod designed for OpenXcom, a free open-source reimplementation of UFO: "X-Piratez es un mod de conversión completa diseñado para OpenXcom, una redistribución gratuita de código abierto de UFO"
+  Enemy Unknown (1994) and X-Com: "Enemy Unknown (1994) y X-Com"
+  Terror From The Deep. There are major gameplay differences, as well as a complete overhaul of research, manufacture, base facilities, and so on. X-Piratez is designed for the veteran X-Com player seeking a much longer and complex campaign.: "Terror From The Deep. Existen importantes diferencias de juego, así como una nueva árbol tecnológica, la fabricación, las instalaciones de la base e mucho mais. X-Piratez es diseñado para jugadores veteranos de X-Com que buscan una campaña mucho más larga y compleja."
+  The year is 2601. The Earth has been long conquered by aliens. You run a gang of mutant pirates. Rob aliens and their human proxies for fun, profit and power. X-Piratez is the biggest OpenXcom mod to date.: "El año es 2601. La Tierra ha sido conquistada por extraterrestres. tu estás a cargo de una pandilla de piratas mutantes. Roba a los alienígenas y humanos que los representan por diversión, riqueza y poder. X-Piratez es el mod más grande de OpenXcom hasta la fecha."
+  We appreciate Anna Zemlina for her fantastic artworks created especially for the mod.: "Apreciamos a Anna Zemlina por sus fantásticas obras de arte creadas especialmente para el mod."
+  # Pt.2,5
+  #Download mod: "¡Descargue el mod"
+  #join our community with: "únase a nuestra comunidad con"
+  #Discord server: "el servidor Discord"
+  #and: "y"
+  #forum: "el foro"
+  # Pt.3
+  Current mod version is: "La versión actual del mod es"
+  PC Installation & Update Guide: "Guía de Instalación y Actualización en PC"
+  Download the X-Piratez archive via the forum link (the main one) or from mod.io (alternatively.): "Descarga el archivo X-Piratez mediante el enlace del foro (El principal) o de mod.io (alternativamente)."
+  Unzip the archive to a NEW folder. It strongly recommended not merging the contents with your existing Dioxine_XPiratez folder, as this can lead to various problems.: "Descomprime el archivo en una NUEVA carpeta. Se recomienda encarecidamente no mezclar los contenidos con tu carpeta Dioxine_XPiratez existente, ya que esto puede dar lugar a varios problemas."
+  You need your files of the original UFO: "Necesitas los archivos originales de UFO"
+  Enemy Unknown or X-Com: "Enemy Unknown o X-Com"
+  UFO Defense game (either DOS or Steam version) to launch the mod. Copy them to the Dioxine_XPiratez\UFO folder.: "UFO Defense (Versión de DOS o de Steam) para lanzar el mod. Cópialos a la carpeta Dioxine_XPiratez\\UFO."
+  X-Piratez is distributed with the compatible OXCE engine version. There is no need to replace or upgrade OXCE, as other builds may not be compatible with your version of X-Piratez. Because of that, we recommend you turn off the 'Automatic update check' user option (options\advanced\general.) This option does not check for updates of the mod itself, in any case it has to be downloaded from the forum or mod.io: "X-Piratez se distribuye con la versión compatible del motor OXCE. No hace falta reemplazar o actualizar OXCE, ya que otras versiones podrían no ser compatibles con tu versión de X-Piratez. Por ello, recomendamos que desactives la opción de usuario 'Comprobar actualizaciones automáticamente' (opciones\\avanzadas\\general). Esta opción no comprueba actualizaciones del mod en si, en todo caso tienen que ser descargadas del foro o de mod.io."
+  X-Piratez is distributed with the compatible OXCE engine version. There is no need to replace or upgrade OXCE, as other builds may not be compatible with your version of X-Piratez. Because of that, we recommend you turn off the 'Automatic update check' user option (options\advanced\general.) This option does not check for updates of the mod itself.: "X-Piratez se distribuye con la versión compatible del motor OXCE. No hace falta reemplazar o actualizar OXCE, ya que otras versiones podrían no ser compatibles con tu versión de X-Piratez. Por ello, recomendamos que desactives la opción de usuario 'Comprobar actualizaciones automáticamente' (opciones\\avanzadas\\general). Esta opción no comprueba actualizaciones del mod en si."
+  If you already have X-Piratez saves, you can copy them from the old Dioxine_XPiratez\user\piratez folder to the new one.: "Si ya tienes partidas guardadas de X-Piratez, puedes copiarlas de la antigua carpeta Dioxine_Xpiratez\\user\\piratez a una nueva."
+  Optionally, you can also copy user settings from the old Dioxine_XPiratez\user folder to the new one (options.cfg file.): "Opcionalmente, también puedes copiar tu configuración de usuario de la antigua carpeta Dioxine_XPiratez\\user\\piratez (fichero options.cfg)."
+  Optionally, don't delete your outdated version. Just in case.: "Opcionalmente, no borres tu versión antigua. Por si acaso."
+  # Pt.4
+  READ OR DIE. The Bootypedia is your friend. Trust me on that.: "LEER O MORIR. La Bootypedia es tu amiga. Confía en mí en eso."
+  mod author, lead designer: "autor del mod, diseñador principal"
+  # Pt.5
+  WARNINGS: "ADVERTENCIAS"
+  Contains some NUDITY of both sexes. You've been warned. Also take note this is not any porn-quality T&A since it's not a porn game.: "Contiene algo de DESNUDIDAD de ambos sexos. Tu has sido advertido. También tenga en cuenta que este no es un T&A de calidad porno ya que no es un juego porno."
+  Do not install OpenXcom nightlies! They are not compatible with X-Piratez. (Requires OXCE version.): "¡No instales OpenXcom nightlies! No lo son compatibles con Piratez. (Requiere la versión OXCE)."
+  If you absolutely can't stand bikini babes fighting Nazis with chainsaws, you may suffer some trauma.: "Si no puedes soportar a chicas en bikinis peleando contra los nazis con motosierras, puedes sufrir algún trauma."
+  If you're looking for a tactical game that doesn't require brains, try DOTA instead.: "Si estás buscando un juego táctico que no requiera cerebro, prueba DOTA."
+  Read or Die.: "Lee o muere."
+  Contains riddles. Not everything is what it seems.: "Contiene acertijos. No todo es lo que parece."
+  A single campaign might take as much as 400 hours.: "Una sola campaña puede tomar hasta 400 horas."
+ #External Links
+  #Block1
+  mod author, the Grand Master: "autor del mod, el Gran Maestro"
+  You can send your donations through PayPal to: "Puedes enviar tus donaciones a través de PayPal a"
+  #Block2
+  chief OXCE programmer, the Wise Alchemist: "programador jefe de OXCE, el Alquimista Sabio"
+  You can send your donations on Patreon.: "Puedes enviar tus donaciones en Patreon."
+  #Block3
+  Join the Transifex team!: "¡Únete al equipo de Transifex!"
+  All mods are translated by the players: "Todos los mods son traducidos por los jugadores"
+  OpenXcom needs your translation skills!: "¡OpenXcom necesita tus habilidades de traducción!"
+  #Block4
+  Community & support: "Comunidad y soporte"
+  Here you can ask any questions associated with this site.: "Aquí puede hacer cualquier pregunta relacionada con este sitio."
+  Ping @Kato_guardian and we will hear you.: "Ping @Kato_guardian y te escucharemos."
+ #Credits
+  Thanks to: "¡Gracias a"
+  for translating the homepage and interfaces into non-English languages: "por traducir la página de inicio y las interfaces a idiomas que no están en inglés"
+  Wiki is powered by: "Wiki es impulsado por"
+  Mobile version by: "Versión móvil por"
+  Finnik, XCF junior developer: "Finnik, desarrollador júnior de XCF"

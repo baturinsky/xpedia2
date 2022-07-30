@@ -1,0 +1,25 @@
+default:
+  tip_medikitType: 
+    <ul><li> 0 = All functions</li>
+    <li> 1 = Heal only</li>
+    <li> 2 = Stimulant only</li>
+    <li> 3 = Painkiller only</li></ul>
+  tip_attraction: Represents how likely an alien is to pick up this item. Values below 5 will be ignored (by design).
+  tip_escortsJoinFightAgainstHK: Should craft escorts join the fight against HK automatically (true)? Or is only fighting one-on-one allowed (false)?
+  tip_RandomType: |
+    <ul><li> 0 = default vanilla behavior dependent on damageType</li>
+    <li> 1 = 0-200% spread</li>
+    <li> 2 = 50-150% spread</li>
+    <li> 3 = flat damage equal to power</li>
+    <li> 4 = random damage in range defined by <b>fireDamageRange</b></li>
+    <li> 5 = no damage</li>
+    <li> 6 = 0-200% spread (2 dice roll), i.e. 0-100% + 0-100%</li>
+    <li> 7 = 50-200% spread</li></ul>
+  RandomType_0: (default vanilla behavior dependent on damageType)
+  RandomType_1: (0-200% spread)
+  RandomType_2: (50-150% spread)
+  RandomType_3: (flat damage equal to power)
+  RandomType_4: (random damage in range defined by <b>fireDamageRange</b>)
+  RandomType_5: (no damage)
+  RandomType_6: </br>(0-200% spread (2 dice roll), i.e. 0-100% + 0-100%)
+  RandomType_7: (50-200% spread)
