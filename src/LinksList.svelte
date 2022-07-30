@@ -1,5 +1,7 @@
 <script>
-  import { Link, divider } from "./Components";
+  import { filter } from "jszip";
+
+  import { Link, divider, LinksList, Value } from "./Components";
   import { rul } from "./Ruleset";
 
   export let items;
@@ -7,14 +9,16 @@
   export let vertical = false;
   export let numberTable = false;
 
-  $:{
-    if(items instanceof Set){
+  $: {
+    let a = (Object.values(items) || []).some((a) => typeof a == "object");
+    //debugger;
+    if (items instanceof Set) {
       items = [...items];
     }
   }
 </script>
 
-{#if items==null}
+{#if items == null}
   {rul.tl("NULL")}
 {:else if cols}
   <div class="cols" style={`columns:${cols};`}>
@@ -35,18 +39,31 @@
       </tr>
     {/each}
   </table>
+{:else if (Object.values(items) || []).some((a) => typeof a == "object")}
+  {#each Object.keys(items) as subfield, j}
+    <div class={j > 0 && "top-border"}>
+      {#if !Array.isArray(items)}
+        <Value val={subfield} /> :
+      {/if}
+      <Value val={items[subfield]} />
+    </div>
+  {/each}
 {:else if items.length == null}
   <span class="links-list">
     {#each rul.sortStrings(Object.keys(items)) as field, i}
       {@html divider(i, { vertical, cols })}‏‏‎‎<nobr
-        ><Link href={items[field]} /> <Link href={field} /></nobr
+        ><Value val={items[field]} /> <Link href={field} /></nobr
       >
     {/each}
   </span>
 {:else}
   <span class="links-list">
-    {#each rul.sortStrings(items.map(i=>i.type || i)) as item, i}
-      {@html divider(i, { vertical, cols })}<Link href={item} />
+    {#each rul.sortStrings(items.map((i) => i.type || i)) as item, i}
+      {#if Array.isArray(item)}
+        <LinksList items={item} />
+      {:else}
+        {@html divider(i, { vertical, cols })}<Link href={item} />
+      {/if}
     {/each}
   </span>
 {/if}

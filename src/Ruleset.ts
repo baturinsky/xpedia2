@@ -2,6 +2,7 @@ import Fuse from "fuse.js";
 import { emptyImg } from "./Components";
 
 export let rul!: Ruleset;
+export type SortFirsLastOptions = { first?: string[], last?: string[], exclude?: string[] }
 
 function timeout(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -18,10 +19,15 @@ function backLink(id: string, list: string[], to: any, field: string) {
 }
 
 function orderedFilteredEntries(item, fields) {
+  if(item==null)
+    return;
   return fields ? fields.map(key => item[key] != null ? [key, item[key]] : null).filter(v => v != null) : [];
 }
 
-export function sortFirstLast(item, options: { first?: string[], last?: string[], exclude?: string[] } = {}) {
+export function sortFirstLast(item, options: SortFirsLastOptions = {}) {
+  if(item==null)
+    return;
+
   let first = orderedFilteredEntries(item, options.first);
   let last = orderedFilteredEntries(item, options.last);
   let exclude = orderedFilteredEntries(item, options.exclude);
@@ -105,6 +111,28 @@ export class Manufacture {
       section: "MANUFACTURE",
       type_id: "MANUFACTURE",
     });
+  }
+}
+
+export class SoldierBonuses {
+  name: string;
+  constructor(raw: any) {
+    Object.assign(this, raw);
+    rul.soldierBonuses[this.name] = this;
+  }
+}
+
+export class Commendation {
+  type: string;
+  soldierBonusTypes: any[];
+  criteria;
+  killCriteria;
+
+  constructor(raw: any) {
+    Object.assign(this, raw);
+    rul.commendations[this.type] = this;
+    if(this.killCriteria)
+      this.killCriteria = this.killCriteria.flat(2);
   }
 }
 
@@ -258,6 +286,7 @@ export class Stats {
 export class Unit {
   type: string;
   stats: Stats;
+  armor: string;
   builtInWeaponSets: string[][];
 
   constructor(raw: any) {
@@ -681,6 +710,8 @@ export default class Ruleset {
   craftWeapons: { [key: string]: CraftWeapon } = {};
   alienDeployments: { [key: string]: AlienDeployment } = {};
   research: { [key: string]: Research } = {};
+  soldierBonuses: { [key: string]: SoldierBonuses } = {};
+  commendations: { [key: string]: Commendation } = {};  
   manufacture: { [key: string]: Manufacture } = {};
   startingConditions: { [key: string]: StartingConditions } = {};
   bigSprite: string[] = [];
@@ -919,6 +950,9 @@ export default class Ruleset {
     for (let data of this.raw.alienDeployments) new AlienDeployment(data);
 
     for (let data of this.raw.research) new Research(data);
+
+    for (let data of this.raw.soldierBonuses) new SoldierBonuses(data);
+    for (let data of this.raw.commendations) new Commendation(data);
 
     for (let data of this.raw.manufacture) new Manufacture(data);
 

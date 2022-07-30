@@ -1,5 +1,5 @@
 <script>
-  import { Value } from "./Components";
+  import { Value, rul } from "./Components";
   import { sortFirstLast } from "./Ruleset";
   export let unit;
   let sorted;
@@ -15,7 +15,7 @@
 </script>
 
 <table class="main-table">
-  <tr> <td colspan="2" class="table-header">Unit</td> </tr>
+  <tr> <td colspan="2" class="table-header">{rul.tl("Unit")}</td> </tr>
   {#each sorted.all as [key, prop]}
     <tr>
       <td><Value val={key} /></td><td>

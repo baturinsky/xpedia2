@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { rul } from "./Ruleset";
   import Illustration from "./Illustration.svelte";
   import Item from "./Item.svelte";
@@ -13,6 +13,8 @@
   import Facility from "./Facility.svelte";
   import BaseService from "./BaseService.svelte";
   import BaseServices from "./BaseServices.svelte";
+  import Commendation from "./Commendation.svelte";
+  import MainTable from "./MainTable.svelte";
   import CanvasImage from "./CanvasImage.svelte";
   import { Link, LinksPage, Value, LinksList } from "./Components";
 
@@ -125,6 +127,14 @@
 
     {#if article.id in rul.research}
       <Research research={rul.research[article.id]} />
+    {/if}
+
+    {#if article.id in rul.soldierBonuses}
+      <MainTable item={rul.soldierBonuses[article.id]} title="Bonuses" />
+    {/if}
+
+    {#if article.id in rul.commendations}
+      <Commendation com={rul.commendations[article.id]}/>
     {/if}
 
     {#if article.id in rul.armors}

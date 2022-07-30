@@ -1448,7 +1448,7 @@ en-US:
   recovery: Recovery
   energyCurrent: Energy current
   flatHundred: "*100"
-  flatOne: "*1"
+  flatOne: " "
   health: Health
   healthCurrent: Health current
   healthNormalized: Health normalized

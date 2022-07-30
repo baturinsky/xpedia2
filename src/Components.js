@@ -7,8 +7,9 @@ import LinksList from "./LinksList.svelte";
 import Value from "./Value.svelte";
 import BaseServiceList from "./BaseServiceList.svelte"
 import SpecialBonus from "./SpecialBonus.svelte";
+import MainTable from "./MainTable.svelte";
 
-export { Link, Intro, LinksPage, LinksList, Value, BaseServiceList, Tl, SpecialBonus, rul };
+export { Link, Intro, LinksPage, LinksList, Value, BaseServiceList, Tl, SpecialBonus, MainTable, rul };
 
 export const divider = (i, {vertical, cols} = {vertical:false, cols:0}) => i == 0 ? "" : vertical ? "</br>" : `<span class='list-divider'>&nbsp·${i%(cols||1)?"&nbsp":" "}</span>`;
 

@@ -21,13 +21,14 @@
     }
 
     :root {
+      --text: #ffffff;
       --border: #441c58;
       --lighter: #382c44;
       --scrollbar: #1e102c;
       --background: #180c24;
       --table-secondary: #1e102c;
       --table-main: #180c24;
-      --dead-link: #406040;
+      --dead-link: #ffffff;
       --link: #90ee90;
     }
 
@@ -40,7 +41,7 @@
         BlinkMacSystemFont, "Segoe UI", Oxygen-Sans, Cantarell, "Helvetica Neue",
         sans-serif;
       letter-spacing: 0.1pt;
-      color: white;
+      color: var(--text);
     }
 
     html,
@@ -93,6 +94,9 @@
       break-inside: avoid-column;
     }
 
+    .no-break-column{
+      break-inside: avoid-column;      
+    }
 
     .main-flex {
       columns: 2;
@@ -163,7 +167,7 @@
     }
 
     .table-subheader {
-      color: white;
+      color: var(--text);
       text-align: center;
       margin: 0.3rem 0rem;
       font-variant: small-caps;
@@ -200,18 +204,18 @@
       flex-direction: row;
       align-items: center;
       justify-content: flex-start;
-      color: white;
+      color: var(--text);
     }
 
     input::placeholder {
       font-style: italic;
-      color: white;
+      color: var(--text);
     }
 
     input {
       border: none;
       border-bottom: solid 1px #fff;
-      color: white;
+      color: var(--text);
       background: transparent;
       padding-right: 5px;
       font-size: inherit;
@@ -328,7 +332,7 @@
 
     .btn-hover-effect {
       display: flex;
-      color: #fff;
+      color: white;
       line-height: 1;
       background-color: black;
       font-family: inherit;
@@ -420,13 +424,13 @@
     button {
       cursor: pointer;
       background: black;
-      color: white;
+      color: var(--text);
       border: solid 1px gray;
       font-size: inherit;
     }
 
     :focus {
-      outline-color: white;
+      outline-color: var(--text);
     }
 
     .tight {
