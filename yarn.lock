@@ -203,6 +203,11 @@ esbuild@^0.14.49:
     esbuild-windows-64 "0.14.49"
     esbuild-windows-arm64 "0.14.49"
 
+flow-bin@^0.50.0:
+  version "0.50.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.50.0.tgz#d4cdb2430dee1a3599f0eb6fe551146e3027256a"
+  integrity sha512-sLnWAK7t0bMw0guZAr702p1cUkce8BwKO8o2PRy6ejE2+P2CCgzLH2zaibHcCKr4oPYjtCipwI6Q/zyYNLndIw==
+
 fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
@@ -264,6 +269,14 @@ isarray@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/isarray/-/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
   integrity sha512-VLghIWNM6ELQzo7zwmcg0NmTVyWKYjvIeM83yjp0wRDTmUnrM678fQbcKBo6n2CJEF0szoG//ytg+TKla89ALQ==
+
+js-worker-search@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/js-worker-search/-/js-worker-search-1.4.1.tgz#beb5ac0df3f37900ff2ad676951833d3913b3192"
+  integrity sha512-5KCio6angmP+AXX8X2pPtjw1h3BCrmEmwGv2MdkXhl3+7g/2NTHOMhUh8bZqacp8R9LjhTT2bGr+f7RdB8KFZw==
+  dependencies:
+    flow-bin "^0.50.0"
+    uuid "^2.0.1"
 
 js-yaml@^4.1.0:
   version "4.1.0"
@@ -458,6 +471,11 @@ util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
+
+uuid@^2.0.1:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-2.0.3.tgz#67e2e863797215530dff318e5bf9dcebfd47b21a"
+  integrity sha512-FULf7fayPdpASncVy4DLh3xydlXEJJpvIELjYjNeQWYUZ9pclcpvCZSr2gkmN2FrrGcI7G/cJsIEwk5/8vfXpg==
 
 wrappy@1:
   version "1.0.2"

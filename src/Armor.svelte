@@ -1,12 +1,23 @@
 <script>
   import { rul, sortFirstLast } from "./Ruleset";
-  import { Link, LinksPage, Value, LinksList, emptyImg, SpecialBonus } from "./Components";
+  import {
+    Link,
+    LinksPage,
+    Value,
+    LinksList,
+    emptyImg,
+    SpecialBonus,
+    Tr,
+  } from "./Components";
+  import Subheader from "./Subheader.svelte";
 
   export let armor;
+  export let text;
   let dollColumns = 6;
   let seeAllVariants = false;
   let zoom = 1;
   let seeAlso = [];
+
   const imageNotFound = () => {
     this.onerror = null;
     console.log(this.src + " not found");
@@ -41,7 +52,7 @@
 <table class="main-table">
   <tr class="table-header">
     <td colspan="2">
-      {rul.tl("Armor")}
+      <Tr s="Armor" />
       {#if seeAlso.length > 0}
         <span style="color:white">- see also</span>
         <LinksList items={seeAlso} />
@@ -86,123 +97,114 @@
             {/if}
           {/each}
           <div
-            style={"height:" +
+            style={`min-height:${
               (seeAllVariants
                 ? (Math.floor(
                     Object.keys(armor.dollSprites).length / dollColumns
                   ) +
                     1) *
                   120
-                : 120) +
-              "px"}
-          />
-        {/if}
+                : 120)
+              }px;margin-left:175px;`}
+          >
+          {#if !seeAllVariants}<p>{@html text}</p>{/if}</div>
+        {/if}        
       </div>
+
+
     </td>
   </tr>
   <tr>
     <td colspan="2">
       <div class="flex-horisontal" style="max-width: 95vw;">
-        {#each ["armor", "damageModifier", "stats", "recovery"] as prop}
+        {#each ["stats", "armor", "damageModifier" /*, "recovery"*/] as prop}
           {#if armor[prop]}
-            <table class="number-table armor-column">
-              <thead>
-                <tr>
-                  <td
-                    colspan="2"
-                    class="number-table-header"
-                    style="text-align:center;"
-                  >
-                    <Value val={prop} />
-                  </td>
-                </tr>
-              </thead>
+            <div class="armor-column {prop == "damageModifier" && "armor-column-resists"}">
+              <header><Tr s={prop}/></header>
               {#each sortFirstLast(armor[prop]).all as [key, val], i}
-                {#if !(prop == "damageModifier" && val == 1)}
-                  <tr>
-                    <td>
-                      {#if prop == "damageModifier"}
-                        <Link href={rul.damageTypes[key]} />
-                      {:else}
-                        <Value val={key} />
-                      {/if}
-                    </td>
-                    <td>
-                      {#if "recovery" == prop}
-                        {#each Object.keys(val) as subfield, j}
-                          {#if j != 0}
-                            <br />
-                          {/if}
-                          <Value val={subfield} />
-                          :
-                          <em>
-                            <Value val={val[subfield]} />
-                          </em>
-                        {/each}
-                      {:else}
+                <div>
+                    {#if prop == "damageModifier"}                    
+                      <Link href={rul.damageTypes[key]} />
+                    {:else}
+                      <Value val={key} />
+                    {/if}
+                </div>
+                  <div>
+                    {#if "recovery" == prop}
+                      {#each Object.keys(val) as subfield, j}
+                        {#if j != 0}
+                          <br />
+                        {/if}
+                        <Value val={subfield} />
+                        :
                         <em>
-                          <Value
-                            val={prop == "damageModifier"
-                              ? Math.floor(val * 100)
-                              : val}
-                          />
+                          <Value val={val[subfield]} />
                         </em>
-                      {/if}
-                    </td>
-                  </tr>
-                {/if}
+                      {/each}
+                    {:else}
+                      <em>
+                        {#if prop == "damageModifier"}
+                          <span
+                            style={`text-weight:bold; color:hsl(${~~(
+                              val * 70
+                            )}, 100%, 50%);`}>{~~(val * 100)}</span
+                          >
+                        {:else}
+                          <Value {val} />
+                        {/if}
+                      </em>
+                    {/if}
+                  </div>
               {/each}
-
-              <!-- <tr
-                ><td>
-                  <img
-                    src={Object.values(armor.dollSprites)[0][0]}
-                    alt="0"
-                    onerror={imageNotFound}
-                    class="armor-layer"
-                  /></td
-                ></tr
-              >-->
-            </table>
-          {/if}
+            </div>
+           {/if}
         {/each}
       </div>
     </td>
   </tr>
 
-  {#each Object.entries(armor).sort( (a, b) => (a[0] > b[0] ? 1 : -1) ) as [key, prop]}
-    {#if !["recovery", "type", "layersDefinition", "spriteFaceColor", "spriteHairColor", "spriteUtileColor", "spriteFaceGroup", "spriteHairGroup", "spriteUtileGroup", "customArmorPreviewIndex", "dollSprites", "layersDefaultPrefix", "frontArmor", "sideArmor", "rearArmor", "underArmor", "spriteInv", "scripts", "armor", "damageModifier", "stats"].includes(key)}
-      <tr>
-        <td>
-          <Value val={key} />
-        </td>
-        <td>
-          {#if key == "damageModifier"}
-            <table class="number-table">
-              {#each prop as res, i}
-                <tr>
-                  <td width="50%" class="number-table1">
-                    {rul.damageTypeName(i)}
-                  </td>
-                  <td width="50%" class="number-table2">
-                    {Math.round(res * 100)}%
-                  </td>
-                </tr>
-              {/each}
-            </table>
-          {:else if ["corpseBattle"].includes(key)}
-            <Value val={prop[0]} />
-          {:else if "spriteSheet" == key}
-            <a href={rul.sprite(prop)}>{prop}</a>
-          {:else if "psiDefence" == key}
-            <SpecialBonus bonus={prop} />            
-          {:else if ["builtInWeapons", "users", "units"].includes(key)}
-            <Value val={prop.filter((s) => s.substr(0, 8) != "INV_NULL")} />
-          {:else}
-            <Value val={prop} />
-          {/if}
-        </td>
-      </tr>
-    {/if}
+  {#each sortFirstLast( armor, { exclude: ["recovery", "type", "layersDefinition", "spriteFaceColor", "spriteHairColor", "spriteUtileColor", "spriteFaceGroup", "spriteHairGroup", "spriteUtileGroup", "customArmorPreviewIndex", "dollSprites", "layersDefaultPrefix", "frontArmor", "sideArmor", "rearArmor", "underArmor", "spriteInv", "scripts", "armor", "damageModifier", "stats"] } ).all as [key, prop]}
+    <tr>
+      <td>
+        <Value val={key} />
+      </td>
+      <td>
+        {#if key == "damageModifier"}
+          <table class="number-table">
+            {#each prop as res, i}
+              <tr>
+                <td width="50%" class="number-table1">
+                  {rul.damageTypeName(i)}
+                </td>
+                <td width="50%" class="number-table2">
+                  {Math.round(res * 100)}%
+                </td>
+              </tr>
+            {/each}
+          </table>
+        {:else if ["corpseBattle"].includes(key)}
+          <Value val={prop[0]} />
+        {:else if "spriteSheet" == key}
+          <a href={rul.sprite(prop)}>{prop}</a>
+        {:else if ["psiDefence", "meleeDodge"].includes(key)}
+          <SpecialBonus bonus={prop} />
+        {:else if ["builtInWeapons", "users", "units"].includes(key)}
+          <Value val={prop.filter((s) => s.substr(0, 8) != "INV_NULL")} />
+        {:else}
+          <Value val={prop} />
+        {/if}
+      </td>
+    </tr>
+  {/each}
+  <Subheader text="recovery" />
+  {#each sortFirstLast(armor.recovery).all as [key2, bonus], i}
+    <tr>
+      <td>
+        <Value val={key2} />
+      </td>
+      <td>
+        <SpecialBonus {bonus} />
+      </td>
+    </tr>
   {/each}
 </table>

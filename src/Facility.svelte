@@ -2,7 +2,7 @@
   import { rul, sortFirstLast } from "./Ruleset";
   
   import { Link, LinksPage, Value, LinksList } from "./Components";
-import FacilitySprite from "./FacilitySprite.svelte";
+  import FacilitySprite from "./FacilitySprite.svelte";
 
   export let facility;
   let seeStorageTiles = false;
@@ -17,7 +17,7 @@ import FacilitySprite from "./FacilitySprite.svelte";
 
 <table class="main-table">
   <tr class="table-header">
-    <td colspan="2">{rul.tl('Facility')}</td>
+    <td colspan="2">{rul.tr('Facility')}</td>
   </tr>
   {#each sortFirstLast(facility, {first:["spriteShape"], exclude:["spriteFacility"]}).all as [key, prop]}
     {#if !['type', 'battlescapeTerrainData', 'craftInventoryTile', 'deployment'].includes(key)}

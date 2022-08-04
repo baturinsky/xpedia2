@@ -4,11 +4,13 @@
 
   export let id;
   export let left = false;
-  export let maxWidth = window.innerWidth > 1400 ? 640 : 320;
-  export let maxZoom = 4;
+  //export let maxWidth = window.innerWidth > 1400 ? 640 : 320;
+  //export let maxZoom = 4;
   export let style = "";
 
-  function loaded(img) {
+  function loaded(img){}
+  
+  /*function loaded(img) {
     return;
     console.info(img);
     let zoom = Math.min(
@@ -17,7 +19,7 @@
     );
     img.width = img.naturalWidth * zoom;
     img.height = img.naturalHeight * zoom;
-  }
+  }*/
 
   function noimage(img) {
     img.onerror = null;

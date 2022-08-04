@@ -8,5 +8,5 @@
 </script>
 
 {#each sortFirstLast(conditions, {exclude:["type"]}).all as [key, prop]}
-  <LinksPage links={prop} title={rul.tl(key)}/>
+  <LinksPage links={prop} title={rul.tr(key)}/>
 {/each}

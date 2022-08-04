@@ -12,3 +12,5 @@ Unpack or clone it into a subdir of the Xpedia.
 Have https://nodejs.org installed.
 
 `npm install` and `npm start`
+
+It will read user settings to find out which mods and submods to use.

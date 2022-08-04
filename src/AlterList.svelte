@@ -1,6 +1,6 @@
 <script>
   import { rul } from "./Ruleset";
-  import {Value, divider} from "./Components";
+  import {Value, Tr, divider} from "./Components";
 
   export let items;
 
@@ -13,7 +13,7 @@
       {#each Object.keys(items).sort() as field, i}
         {@html divider(i)}&nbsp;<nobr>
           <span tooltip={"tip_" + field}>
-            {@html rul.tl(field)}
+            <Tr s={field}/>
             {#if "tip_" + field in rul.lang}
               <sup class="tipmark">?</sup>
             {/if}

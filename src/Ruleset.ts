@@ -1,4 +1,5 @@
 import Fuse from "fuse.js";
+import SearchApi from 'js-worker-search';
 import { emptyImg } from "./Components";
 
 export let rul!: Ruleset;
@@ -19,13 +20,13 @@ function backLink(id: string, list: string[], to: any, field: string) {
 }
 
 function orderedFilteredEntries(item, fields) {
-  if(item==null)
+  if (item == null)
     return;
   return fields ? fields.map(key => item[key] != null ? [key, item[key]] : null).filter(v => v != null) : [];
 }
 
 export function sortFirstLast(item, options: SortFirsLastOptions = {}) {
-  if(item==null)
+  if (item == null)
     return;
 
   let first = orderedFilteredEntries(item, options.first);
@@ -40,12 +41,12 @@ export function sortFirstLast(item, options: SortFirsLastOptions = {}) {
 
 //console.log("test", sortFirstLast({a:1,b:2,c:3,d:4,e:5}, {first:["a","c"], last:["d","b"]}));
 
-export class Search {
+export class SearchFuse {
   articles: Fuse<Article, { keys: ("id" | "type" | "title" | "text")[]; }>;
 
   constructor() {
     this.articles = new Fuse(rul.articlesOrder, {
-      keys: ["id", "type", "title", "text"],
+      keys: ["id", "type", "trTitle", "text"],
       tokenize: true,
       matchAllTokens: true,
 
@@ -55,6 +56,21 @@ export class Search {
   }
 
   findArticles(query: string) {
+    return this.articles.search(query);
+  }
+}
+
+export class Search {
+  articles = new SearchApi();
+
+  constructor() {    
+    for (let a of Object.values(rul.articles)) {
+      let texts = ["id", "type", "trTitle", "text"].map(key => (a[key] as string || "").toLowerCase()).join(" ");
+      this.articles.indexDocument(a.id, texts);
+    }
+  }
+
+  async findArticles(query: string) {
     return this.articles.search(query);
   }
 }
@@ -122,6 +138,40 @@ export class SoldierBonuses {
   }
 }
 
+export class SoldierTransformation {
+  name: string;
+  constructor(raw: any) {
+    Object.assign(this, raw);
+    rul.soldierTransformation[this.name] = this;
+
+    Article.create({
+      id: this.name,
+      section: "TRANSFORMATIONS",
+      type_id: "TRANSFORMATIONS",
+    });
+      
+  }
+}
+
+export class Soldiers {
+  type: string;
+  armors: string[];
+  constructor(raw: any) {
+    Object.assign(this, raw);
+    rul.soldiers[this.type] = this;
+
+    Article.create({
+      id: this.type,
+      section: "SOLDIERS",
+      type_id: "SOLDIERS",
+    });
+      
+  }
+
+}
+
+
+
 export class Commendation {
   type: string;
   soldierBonusTypes: any[];
@@ -131,7 +181,7 @@ export class Commendation {
   constructor(raw: any) {
     Object.assign(this, raw);
     rul.commendations[this.type] = this;
-    if(this.killCriteria)
+    if (this.killCriteria)
       this.killCriteria = this.killCriteria.flat(2);
   }
 }
@@ -162,6 +212,48 @@ export class Research {
     });
   }
 }
+
+export class Event {
+  name: string;
+  relatedScripts: string[] = [];
+
+  constructor(raw: any) {
+    Object.assign(this, raw);
+    Article.create({
+      id: this.name,
+      type_id: "EVENTS",
+      section: "EVENTS",
+    });
+    rul.events[this.name] = this;
+  }
+}
+
+export class EventScript {
+  type: string;
+  relatedEvents: string[];
+  eventWeights;
+  oneTimeRandomEvents;
+
+  constructor(raw: any) {
+    Object.assign(this, raw);
+    Article.create({
+      id: this.type,
+      type_id: "EVENTSCRIPTS",
+      section: "EVENTSCRIPTS",
+    });
+    rul.eventScripts[this.type] = this;
+    let relatedEvents = new Set<string>([
+      ...Object.values(this.eventWeights || []).map(w => Object.keys(w)).flat(),
+      ...Object.keys(this.oneTimeRandomEvents || {})
+    ]);
+    this.relatedEvents = [...relatedEvents];
+    for (let id of relatedEvents) {
+      if (rul.events[id])
+        rul.events[id].relatedScripts.push(this.type);
+    }
+  }
+}
+
 
 export class Service {
   constructor(public id: string) {
@@ -197,22 +289,33 @@ export class AlienDeployment {
 
 export class CraftWeapon {
   type: string;
+  weaponType: string;
   requiresBuyBaseFunc: string[];
 
   constructor(raw: any) {
     Object.assign(this, raw);
     rul.craftWeapons[this.type] = this;
     Service.add("canBuy", this.type, this.requiresBuyBaseFunc);
+    if (this.weaponType == null)
+      this.weaponType = '0';
+    this.weaponType = "weapon_type_" + this.weaponType;
+    rul.addCategory(this.weaponType, this.type)
+
   }
 }
 
 export class Craft {
   type: string;
   startingConditions: string[] = [];
+  weaponTypes: string[][];
 
   constructor(raw: any) {
     Object.assign(this, raw);
     rul.crafts[this.type] = this;
+    if (this.weaponTypes)
+      for (let t of this.weaponTypes.flat()) {
+        rul.addCategory("weapon_type_" + t, this.type)
+      }
   }
 }
 
@@ -258,7 +361,7 @@ export class StartingConditions {
   constructor(raw: any) {
     Object.assign(this, raw);
     rul.startingConditions[this.type] = this;
-    rul.lang[this.type] = rul.tl(this.type.substr(11));
+    rul.lang[this.type] = rul.tr(this.type.substr(11));
     for (let craft of this.allowedCraft)
       rul.crafts[craft].startingConditions.push(this.type);
     Article.create({
@@ -302,6 +405,7 @@ export class Unit {
       for (let w of weapons) {
         let item = rul.items[w];
         if (item) {
+          item.heldBy = item.heldBy || new Set<string>();
           item.heldBy.add(this.type)
         }
       }
@@ -434,6 +538,13 @@ export class Attack {
       (this.alter && this.alter.range) ||
       defaultRange[mode];
 
+    if (item.maxRange < this.range) {
+      this.range = item.maxRange;
+    }
+
+    if (this.alter && item.maxRange < +this.alter.range)
+      this.alter.range = `${item.maxRange}`;
+
     this.possible = true;
   }
 }
@@ -441,15 +552,17 @@ export class Attack {
 export class Article {
   id: string;
   title: string;
+  trTitle: string;
   text: string;
   image_id: string;
   type_id: string;
-  section: Section;
+  sections: Section[] = [];
 
   static create(raw: any) {
     if (raw.id in rul.articles) {
       let article = rul.articles[raw.id];
-      if (raw.section && article.section != raw.section) {
+      if (raw.section && !article.sections.includes(raw.section)) {
+        article.sections.push(rul.sections[raw.section])
         rul.sections[raw.section].add(article);
       }
       return article;
@@ -459,8 +572,10 @@ export class Article {
 
   constructor(raw: any) {
     this.id = raw.id;
-    this.title = raw.title || rul.tl(raw.id);
-    rul.lang[this.id] = this.title;
+    this.title = raw.title || raw.id;
+    if (!(this.id in rul.lang))
+      rul.lang[this.id] = this.title;
+    this.trTitle = rul.tr(this.title)
     this.text = rul.lang[raw.text] || rul.lang[raw.id + "_UFOPEDIA"];
     this.image_id = raw.image_id;
     this.type_id = raw.type_id || "-1";
@@ -504,7 +619,7 @@ export class Section {
 
   add(article: Article) {
     if (!this._articles.includes(article)) this._articles.push(article);
-    if (!article.section) article.section = this;
+    if (!article.sections.includes(this)) article.sections.push(this);
   }
 }
 
@@ -579,6 +694,14 @@ export class Armor {
       if (!item.armors) item.armors = [];
       item.armors.push(this.type);
     }
+
+    for(let unit of this.units || []){
+      let s = rul.soldiers[unit];
+      if(s){
+        s.armors = s.armors || [];
+        s.armors.push(this.type);
+      }
+    }
   }
 }
 
@@ -614,8 +737,9 @@ export class Item {
   liveAlien: boolean;
   recover: boolean;
   prisonType: number;
+  maxRange: number;
   categories: string[];
-  heldBy = new Set<string>();
+  heldBy: Set<string>;
 
   constructor(raw: any) {
     Object.assign(this, raw);
@@ -633,7 +757,7 @@ export class Item {
     Service.add("canBuyItem", this.type, this.requiresBuyBaseFunc);
 
     if (this.categories) {
-      for (let cat of this.categories) this.addCategory(cat);
+      for (let cat of this.categories) rul.addCategory(cat, this.type);
     }
 
     if (this.liveAlien && this.recover && !this.prisonType)
@@ -664,12 +788,12 @@ export class Item {
         let attack = new Attack(this, mode);
         if (attack.possible) {
           this._attacks.push(attack);
-          if (attack.damageType)
-            this.addCategory("dmg=" + rul.damageTypes[attack.damageType]);
-          if (attack.damageBonus) {
-            for (let k in attack.damageBonus) this.addCategory("dmg*" + k);
+          if (attack.damageType != null)
+            rul.addCategory("dmg=" + rul.damageTypes[attack.damageType], this.type);
+          if (attack.damageBonus != null) {
+            for (let k in attack.damageBonus) rul.addCategory("dmg*" + k, this.type);
             for (let k in attack.accuracyMultiplier)
-              this.addCategory("acc*" + k);
+              rul.addCategory("acc*" + k, this.type);
           }
         }
       }
@@ -683,11 +807,6 @@ export class Item {
     return this._attacks;
   }
 
-  addCategory(catName: string) {
-    let cat = rul.categories[catName] || [];
-    if (!cat.includes(this)) cat.push(this);
-    rul.categories[catName] = cat;
-  }
 }
 
 export default class Ruleset {
@@ -701,7 +820,7 @@ export default class Ruleset {
   search: Search;
   ourArmors: string[];
   items: { [key: string]: Item } = {};
-  categories: { [key: string]: Item[] } = {};
+  categories: { [key: string]: string[] } = {};
   armors: { [key: string]: Armor } = {};
   units: { [key: string]: Unit } = {};
   crafts: { [key: string]: Craft } = {};
@@ -711,16 +830,20 @@ export default class Ruleset {
   alienDeployments: { [key: string]: AlienDeployment } = {};
   research: { [key: string]: Research } = {};
   soldierBonuses: { [key: string]: SoldierBonuses } = {};
-  commendations: { [key: string]: Commendation } = {};  
+  commendations: { [key: string]: Commendation } = {};
+  soldierTransformation: { [key: string]: SoldierTransformation } = {};
+  soldiers: { [key: string]: Soldiers } = {};  
   manufacture: { [key: string]: Manufacture } = {};
   startingConditions: { [key: string]: StartingConditions } = {};
+  events: { [key: string]: Event } = {};
+  eventScripts: { [key: string]: EventScript } = {};
   bigSprite: string[] = [];
   floorSprite: string[] = [];
   handSprite: string[] = [];
   baseSprite: string[] = [];
   sounds: string[] = [];
   modName: string;
-  config: Object;
+  config: any;
   path: string;
   baseServices: { [key: string]: Service } = {};
   redirect: { [key: string]: string } = {};
@@ -754,20 +877,23 @@ export default class Ruleset {
     "STR_MANA",
   ];
 
-  battleTypes = [
-    "None (Geoscape-only item)",
-    "Firearm",
-    "Ammo",
-    "Melee",
-    "Grenade",
-    "Proximity Grenade",
-    "Medi-Kit",
-    "Motion Scanner",
-    "Mind Probe",
-    "Psi-Amp",
-    "Electro-flare",
-    "Corpse",
+  deprecated_categoriesNames: [
+    "crafts",
+    "items",
+    "armors",
+    "ufopaedia",
+    "manufacture",
+    "units",
+    "alienDeployments",
+    "research"
   ];
+
+
+  addCategory(catName: string, id: string) {
+    let cat = rul.categories[catName] || [];
+    if (!cat.includes(id)) cat.push(id);
+    rul.categories[catName] = cat;
+  }
 
   damageTypeName(type: number) {
     return this.lang[this.damageTypes[type]];
@@ -819,16 +945,6 @@ export default class Ruleset {
     }
   }
 
-  categoriesNames: [
-    "crafts",
-    "items",
-    "armors",
-    "ufopaedia",
-    "manufacture",
-    "units",
-    "alienDeployments",
-    "research"
-  ];
 
   mergeRuls(reversed = false) {
     for (let categoryName in this.raw) {
@@ -837,11 +953,8 @@ export default class Ruleset {
 
       let category = this.raw[categoryName];
       if (!Array.isArray(category)) {
-        //merged[categoryName] = category;
         continue;
       }
-
-      //if (categoryName == "extraSprites") debugger;
 
       for (let data of category) {
         let id =
@@ -893,6 +1006,10 @@ export default class Ruleset {
       "RESEARCH",
       "MANUFACTURE",
       "SERVICES",
+      "EVENTS",
+      "EVENTSCRIPTS",
+      "SOLDIERS",
+      "TRANSFORMATIONS"
     ];
 
     for (let type of specialSections) new Section(type, "TYPE");
@@ -932,16 +1049,23 @@ export default class Ruleset {
     if (this.sprites["BASEBITS.PCK"])
       this.baseSprite = this.sprites["BASEBITS.PCK"].extra;
 
-    if (this.raw.extraSounds && this.raw.extraSounds[0])
+    this.sounds = []
+    if (this.raw.extraSounds?.length)
       this.sounds = this.raw.extraSounds[0].files;
 
+    //if (this.raw.musics?.lengths) this.sounds = [...this.sounds, ...this.raw.musics.map(v=>`SOUND/${v.type}.ogg`)]
+
     for (let data of this.raw.items) new Item(data);
+    for (let data of this.raw.soldiers) new Soldiers(data);
     for (let data of this.raw.armors) new Armor(data);
     for (let data of this.raw.units) new Unit(data);
     for (let data of this.raw.crafts) new Craft(data);
     for (let data of this.raw.craftWeapons) new CraftWeapon(data);
     for (let data of this.raw.ufos) new Ufo(data);
     for (let data of this.raw.facilities) new Facility(data);
+    for (let data of this.raw.events) new Event(data);
+    for (let data of this.raw.eventScripts) new EventScript(data);
+    for (let data of this.raw.soldierTransformation) new SoldierTransformation(data);
 
     if (this.raw.startingConditions)
       for (let data of this.raw.startingConditions)
@@ -1026,11 +1150,12 @@ export default class Ruleset {
     });*/
 
     for (let cat of Object.keys(this.categories)) {
-      Article.create({
-        id: cat,
-        type_id: "CATEGORIES",
-        section: "CATEGORIES",
-      });
+      if (this.categories[cat].length)
+        Article.create({
+          id: cat,
+          type_id: "CATEGORIES",
+          section: "CATEGORIES",
+        });
     }
 
     console.log(this);
@@ -1061,10 +1186,11 @@ export default class Ruleset {
     }
   }
 
-  findNextArticle(current: Article, delta: number) {
+  findNextArticle(current: Article, delta: number, currentSection: Section) {
     if (!current) return null;
-    let section = current.section;
-    let list = section ? section.articles : this.articlesOrder;
+    if (!currentSection)
+      currentSection = current.sections[0];
+    let list = currentSection ? currentSection.articles : this.articlesOrder;
     let index = list.findIndex((a) => a.id == current.id);
     if (index != undefined) {
       let nextIndex = index + delta;
@@ -1073,13 +1199,17 @@ export default class Ruleset {
     }
   }
 
-  tl(str, separ = " ") {
-    if (typeof str === "string") {
-      if (rul.lang[str]) {
-        str = rul.lang[str]
-        if (str.substr(0, 4) != "STR_")
-          return str;
-      }
+  tr(str, separ = " ") {
+    //console.log("tr", str, rul.lang[str]);
+
+    if (str in rul.lang) {
+      str = rul.lang[str]
+      if (str.substr(0, 4) != "STR_")
+        return str;
+    }
+
+    if (typeof str == "string") {
+
       if (this.lang[fieldNames[str]]) return this.lang[fieldNames[str]];
 
       if (str.substr(0, 4) == "STR_")
@@ -1090,13 +1220,14 @@ export default class Ruleset {
       else str = str.replace(/([^A-Z0-9])([A-Z0-9])/g, "$1" + separ + "$2");
       str = str.substr(0, 1).toUpperCase() + str.substr(1).toLowerCase();
     }
+
     return str;
   }
 
-  sprite(id: string) {
+  sprite(id: string, onlyIfExists = false) {
     if (id in this.sprites) return this.path + this.sprites[id].path;
 
-    return this.path + id;
+    return onlyIfExists ? null : this.path + id;
   }
 
   constructor() {
@@ -1117,7 +1248,7 @@ export default class Ruleset {
 
     if (article.id != section.id) section.add(article);
 
-    article.section = section;
+    article.sections.push(section);
     return section;
   }
 
@@ -1146,7 +1277,7 @@ export default class Ruleset {
   }
 
   sortStrings(s: string[]) {
-    let tl: [string, string][] = s.map(s => [s, this.tl(s)])
+    let tl: [string, string][] = s.map(s => [s, this.tr(s)])
     tl = tl.sort((a, b) => a[1] > b[1] ? 1 : -1)
     return tl.map(a => a[0]);
   }

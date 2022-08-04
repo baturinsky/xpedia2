@@ -30,12 +30,12 @@
 {#if weapon.launcher}
   <Item
     item={rul.items[weapon.launcher]}
-    title={"Launcher: " + rul.tl(weapon.launcher)}
+    title={"Launcher: " + rul.tr(weapon.launcher)}
   />
 {/if}
 <!--{#if weapon.clip}
   <Item
     item={rul.items[weapon.clip]}
-    title={"Clip: " + rul.tl(weapon.clip)}
+    title={"Clip: " + rul.tr(weapon.clip)}
   />
 {/if}-->

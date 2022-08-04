@@ -86,21 +86,38 @@
   background: var(--table-main);
 }*/
 
+
     .main-table {
       border: solid 0.2px var(--border);
       border-collapse: collapse;
       width: 100%;
       max-width: 90vw;
       break-inside: avoid-column;
+      margin-bottom: 3px;
     }
 
-    .no-break-column{
-      break-inside: avoid-column;      
+    .main-text {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .main-text div {
+      padding: 5px;
+    }
+
+    .no-break-column {
+      break-inside: avoid-column;
     }
 
     .main-flex {
       columns: 2;
       column-gap: 1pt;
+    }
+
+    .columns2 {
+      columns: 2;
+      column-gap: 1pt;
+      break-inside: auto;
     }
 
     .section-width {
@@ -146,7 +163,7 @@
       text-align: center;
     }
 
-    .centeredText{
+    .centeredText {
       text-align: center;
     }
 
@@ -267,7 +284,7 @@
     }
 
     .armors {
-      min-width: 600px;
+      min-width: 400px;
     }
 
     .armor {
@@ -288,8 +305,28 @@
       font-size: small;
     }
 
+    .armor-column header {
+      grid-column: 1 / -1;
+      font-variant: small-caps;
+      text-align: center;
+    }
+
     .armor-column {
-      margin: 0px 5px;
+      display: grid;
+      margin-right: 10px;
+      grid-template-columns: auto auto;
+    }
+
+    .armor-column div:nth-child(odd) {
+      margin-right: 10px;
+    }
+
+    .armor-column div:nth-child(even) {
+      margin-right: 30px;
+    }
+
+    .armor-column-resists {
+      grid-template-columns: auto auto auto auto auto auto;
     }
 
     audio {
@@ -310,7 +347,7 @@
       margin: 0;
     }
 
-    .top-border{
+    .top-border {
       border-top: solid 1px var(--border);
     }
 
@@ -582,7 +619,7 @@
     .side-sort-button,
     .side-hide-button {
       position: fixed;
-      z-index: 5;
+      z-index: 10;
       height: 2rem;
       width: 3rem;
       background-color: rgba(0, 0, 0, 0.3);
@@ -857,7 +894,7 @@
     }
 
     .subtable {
-      background: rgba(0, 0, 0, 0);      
+      background: rgba(0, 0, 0, 0);
     }
 
     td.td-attacks-table {
@@ -926,11 +963,21 @@
       display: inline-block;
     }
 
-    a.dead{
-      color:var(--dead-link)
+    a.dead {
+      color: var(--dead-link)
     }
 
-    @media screen and (max-width: 1500px) {
+    .reveal-lock {
+      background: #000;
+    }
+
+    #reveal {
+      width: 20pt;
+      justify-content: center;
+      padding-right: 5pt;
+    }
+
+    @media screen and (max-width: 1300px) {
       .on-wide {
         display: none;
       }
@@ -946,6 +993,12 @@
 
       .main-flex {
         columns: 1;
+      }
+    }
+
+    @media screen and (max-width: 720px) {
+      .armor-column-resists {
+        grid-template-columns: auto auto;
       }
     }
   </style>

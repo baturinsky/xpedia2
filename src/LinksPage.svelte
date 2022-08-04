@@ -1,15 +1,18 @@
 <script>
-  import { rul } from "./Ruleset";
-  import { Value, LinksList } from "./Components";
+  import { Value, LinksList, tr } from "./Components";
 
   export let links;
   export let cols = false;
   export let title = null;
   let sorted = false;
+  let sortedList;
 
-  $: sortedList = sorted
-    ? links.slice().sort((a, b) => (rul.str(a) > rul.str(b) ? 1 : -1))
+  $: {
+    //console.log("linkslist", links);
+    sortedList = sorted
+    ? links.slice().sort((a, b) => (tr(a) > tr(b) ? 1 : -1))
     : links;
+  }
 </script>
 
 {#if links && links.length > 0}
@@ -39,6 +42,6 @@
       </div>
     </div>
   {:else}
-    <LinksList items={sortedList} />
+    <LinksList items={sortedList} sorted={false} />
   {/if}
 {/if}

@@ -5,10 +5,9 @@
   import CanvasImage from "./CanvasImage.svelte";
   import Value from "./Value.svelte";
   import AlterList from "./AlterList.svelte";
-  import LinksList from "./LinksList.svelte";
 
   export let item;
-  export let title = rul.str("Item");
+  let title;
   let attacks;
   let sorted;
   let anal = false;
@@ -21,6 +20,9 @@
 
   $: {
     attacks = item.attacks().slice();
+    title =
+      (item.battleType ? rul.tr("battleType" + item.battleType) + " " : "") +
+      rul.tr("Item");
 
     if (item.compatibleAmmo)
       for (let ammoId of item.compatibleAmmo) {
@@ -38,13 +40,20 @@
         "invWidth",
         "weight",
         "size",
+        "isConsumable",
+        "maxRange",
+        "medikitTargetSelf",
+        "medikitType",
+        "stimulant",
+        "stunRecovery",
         "dropoff",
         "costPrime",
         "costUnprime",
         "twoHanded",
         "blockBothHands",
-        "oneHandedPenalty",
+        "oneHandedPenalty",        
         "kneelBonus",
+        "blastRadius",
         "requires",
         "categories",
         "armors",
@@ -96,7 +105,7 @@
                 {:else}
                   <td>{rul.str("mode")}</td>
                   <td>{rul.str("accuracy")}</td>
-                  <td>{rul.str("cost")}</td>
+                  <td style="width:30%">{rul.str("cost")}</td>
                 {/if}
                 <td>{rul.str("damage")}</td>
               </thead>
@@ -127,24 +136,13 @@
                         : "×" + attack.shots}
                     </td>
                     <td>
-                      <nobr>
-                        <span>
-                          <em class="big-number">{attack.accuracy}</em>
-                          {"%"}
-                        </span>
-
-                        <span>
-                          {#if attack.range}
-                            {@html rul
-                              .str("at N m")
-                              .replace("N", `<em>${attack.range}</em>`)}
-                          {/if}
-                        </span>
-
-                        <div>
-                          <SpecialBonus bonus={attack.accuracyMultiplier} />
-                        </div>
-                      </nobr>
+                      <em class="big-number">{attack.accuracy}</em>{"%"}
+                      {#if attack.range}
+                        {@html rul
+                          .str("at !N! m")
+                          .replace("!N!", `<em>${attack.range}</em>`)}
+                      {/if}<br/>
+                      <SpecialBonus bonus={attack.accuracyMultiplier} />
                     </td>
                     <td>
                       <nobr>
@@ -165,7 +163,6 @@
                   {/if}
                   <td>
                     {#if "damage" in attack || "damageType" in attack}
-                      <nobr>
                         {attack.pellets > 1 && attack.damageBonus ? "(" : ""}
                         <em>{attack.damage || 0}</em>
                         <small>
@@ -176,7 +173,6 @@
                           {attack.pellets > 1 && attack.damageBonus ? ")" : ""}
                         </small>
                         {attack.pellets > 1 ? " ×" + attack.pellets : ""}
-                      </nobr>
                       <br />
                       {#if attack.damageType}
                         <Link href={rul.damageTypes[attack.damageType]} />
@@ -223,18 +219,18 @@
         <td class="item-right-column">
           {#if ["manufacture"].includes(key)}
             {#each Object.keys(prop) as man, i}
-            <div class={i>0 && "top-border"}>
-              <Value val={man} />: 
-              <Value val={rul.manufacture[man]?.requiredItems || ""}/> → 
-              <Value val={rul.manufacture[man]?.producedItems || ""} /> 
-            </div>
+              <div class={i > 0 && "top-border"}>
+                <Value val={man} />:
+                <Value val={rul.manufacture[man]?.requiredItems || ""} /> →
+                <Value val={rul.manufacture[man]?.producedItems || ""} />
+              </div>
             {/each}
           {:else if ["damageBonus", "meleeBonus", "accuracyMultiplier", "meleeMultiplier", "closeQuartersMultiplier"].includes(key)}
             <SpecialBonus bonus={prop} />
           {:else if ["damageType", "meleeType"].includes(key)}
             {rul.damageTypeName(prop)}
           {:else if key == "battleType"}
-            {prop}: {rul.str(rul.battleTypes[prop])}
+            {prop}: {rul.tr("battleType" + prop)}
           {:else if key.includes("Sound")}
             {#each soundsFrom(prop) as sound, i}
               {@html i > 0 ? "<br/>" : ""}

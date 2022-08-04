@@ -15,7 +15,7 @@
 </script>
 
 <table class="main-table">
-  <tr> <td colspan="2" class="table-header">{rul.tl("Unit")}</td> </tr>
+  <tr> <td colspan="2" class="table-header">{rul.tr("Unit")}</td> </tr>
   {#each sorted.all as [key, prop]}
     <tr>
       <td><Value val={key} /></td><td>

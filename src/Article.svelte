@@ -16,9 +16,10 @@
   import Commendation from "./Commendation.svelte";
   import MainTable from "./MainTable.svelte";
   import CanvasImage from "./CanvasImage.svelte";
-  import { Link, LinksPage, Value, LinksList } from "./Components";
+  import { Link, LinksPage, Value, LinksList, Tr } from "./Components";
 
   import { createEventDispatcher } from "svelte";
+import { identity } from "svelte/internal";
   const dispatch = createEventDispatcher();
 
   export let article;
@@ -27,6 +28,8 @@
   let other = false;
 
   $: {
+    if(article == null)
+      debugger;
     textwithHighlights = article.text || "";
 
     if (textwithHighlights == "") {
@@ -49,7 +52,7 @@
 </script>
 
 <svelte:head>
-  <title>{rul.tl(article.title || "XPedia")}</title>
+  <title>{rul.tr(article.title || "XPedia")}</title>
   {#if article.text}<meta
       property="og:description"
       content={article.text}
@@ -61,23 +64,11 @@
 </svelte:head>
 
 <h1>
-  <nobr>{article.title || article.id}</nobr>
+  <nobr><Tr s={article.title} /></nobr>
   <span style="flex:1" />
   <button class="page-turn" on:click={(e) => dispatch("prev")}>&lt;</button>
   <button class="page-turn" on:click={(e) => dispatch("next")}>&gt;</button>
 </h1>
-
-<div class="flex-horisontal">
-  {#if rul.items[article.id]}
-    <CanvasImage item={rul.items[article.id]} zoom="2" />
-  {/if}
-
-  {#if textwithHighlights}
-    <div class="article-text">
-      {@html textwithHighlights}
-    </div>
-  {/if}
-</div>
 
 {#if article.id == "SERVICES"}
   <svelte:component this={BaseServices} />
@@ -93,12 +84,32 @@
   <div class="main-flex">
     <svelte:component this={other} {query} />
 
+    {#if article.id in rul.armors}
+      <Armor armor={rul.armors[article.id]} text={textwithHighlights}/>
+    {:else if article.id in rul.units && rul.units[article.id].armor}
+      <Armor armor={rul.armors[rul.units[article.id].armor]} text={textwithHighlights} />
+    {:else}
+      {#if textwithHighlights}
+        <div class="main-table main-text">
+          {#if rul.items[article.id] && article.text}
+            <CanvasImage item={rul.items[article.id]} zoom={2} />
+          {/if}
+
+          {#if textwithHighlights}
+            <div>
+              {@html textwithHighlights}
+            </div>
+          {/if}
+        </div>
+      {/if}
+    {/if}
+
     {#if article.id in rul.units}
       <Unit unit={rul.units[article.id]} />
     {/if}
 
     {#if article.id in rul.items}
-      <Item item={rul.items[article.id]} text={textwithHighlights} />
+      <Item item={rul.items[article.id]} />
     {/if}
 
     {#if article.id in rul.baseServices}
@@ -133,14 +144,29 @@
       <MainTable item={rul.soldierBonuses[article.id]} title="Bonuses" />
     {/if}
 
-    {#if article.id in rul.commendations}
-      <Commendation com={rul.commendations[article.id]}/>
+    {#if article.id in rul.eventScripts}
+      <MainTable item={rul.eventScripts[article.id]} title="Event Script" />
+      <!--{#each rul.eventScripts[article.id].relatedEvents as event}
+        {#if event!=article.id}
+          <MainTable item={rul.events[event]} title="Event" />
+        {/if}        
+      {/each}-->
     {/if}
 
-    {#if article.id in rul.armors}
-      <Armor armor={rul.armors[article.id]} />
-    {:else if article.id in rul.units && rul.units[article.id].armor}
-      <Armor armor={rul.armors[rul.units[article.id].armor]} />
+    {#if article.id in rul.soldierTransformation    }
+      <MainTable item={rul.soldierTransformation[article.id]} title="Transfomration" />      
+    {/if}
+
+    {#if article.id in rul.soldiers    }
+      <MainTable item={rul.soldiers[article.id]} title="Soldiers" />      
+    {/if}
+
+    {#if article.id in rul.events}
+      <MainTable item={rul.events[article.id]} title="Event" />
+    {/if}
+
+    {#if article.id in rul.commendations}
+      <Commendation com={rul.commendations[article.id]} />
     {/if}
 
     <!--{#each article.lookup as researchId}
@@ -150,5 +176,7 @@
     {#if !(article.id in rul.units)}
       <Illustration id={article.image_id} />
     {/if}
+
+    <div style="height:400px">&nbsp;</div>
   </div>
 </div>

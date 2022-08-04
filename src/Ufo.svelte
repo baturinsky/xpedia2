@@ -15,7 +15,7 @@
   <tr class="table-header"> <td colspan="2">Craft</td> </tr>
   {#each sortFirstLast( ufo, { exclude: ["raceBonus", "type", "battlescapeTerrainData", "craftInventoryTile", "deployment"] } ).all as [key, prop]}
     <tr>
-      <td class="padding-right">{@html rul.tl(key)}</td>
+      <td class="padding-right">{@html rul.tr(key)}</td>
       <td>
         {#if ["modSprite"].includes(key)}
           <img
@@ -33,11 +33,11 @@
   {#if ufo.raceBonus}
   <tr><td colspan="2">
     <table class="number-table">
-      <tr><td colspan="2">{rul.tl("raceBonus")}</td><td></td>
+      <tr><td colspan="2">{rul.tr("raceBonus")}</td><td></td>
       {#each Object.keys(ufo.raceBonus).sort() as field, i}
-        <tr><td>{rul.tl(field)}</td><td>
+        <tr><td>{rul.tr(field)}</td><td>
             {#each Object.keys(ufo.raceBonus[field]).sort() as field2, i2}
-              {rul.tl(field2)}:&nbsp;<em
+              {rul.tr(field2)}:&nbsp;<em
                 ><Link href={ufo.raceBonus[field][field2]} /></em
               ><br />
             {/each}

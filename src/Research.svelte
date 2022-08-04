@@ -1,16 +1,14 @@
 <script>
   import { rul, sortFirstLast } from "./Ruleset";
   import {
-    Link,
-    Intro,
-    LinksPage,
     Value,
     LinksList,
     BaseServiceList,
+    Tr
   } from "./Components";
 
   export let research;
-  export let title = rul.tl("Research");
+  export let title = rul.tr("Research");
   let longLists = [
     "unlocks",
     "seeAlso",
@@ -39,7 +37,7 @@
     {#if longLists.includes(key) && prop && prop.length > 0}
       <tr
         ><td colspan="2" class="table-subheader" >
-          {rul.tl(key)}
+          <Tr s={key}/>
         </td></tr
       ><tr
         ><td colspan="2" class="centeredText">
@@ -49,7 +47,7 @@
     {:else if ["requiresBaseFunc"].includes(key)}
       <BaseServiceList items={prop} vertical={true} />
     {:else if key == "getOneFreeProtected"}
-      <tr><td colspan="2" class="table-subheader">{rul.tl(key)}</td></tr>
+      <tr><td colspan="2" class="table-subheader">{rul.tr(key)}</td></tr>
       {#each Object.keys(prop) as key}
         <tr><td><Value val={key} />:</td><td><LinksList items={prop[key]} /></td></tr
         >

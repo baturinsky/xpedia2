@@ -3,32 +3,43 @@ import esbuildSvelte from "esbuild-svelte";
 import sveltePreprocess from "svelte-preprocess";
 import open from "open";
 
-esbuild
-  .serve(
+let options = {
+  entryPoints: ["src/main.ts"],
+  bundle: true,
+  sourcemap: true,
+  outfile: "./bundle.js",
+  minify: false,
+  plugins: [
+    esbuildSvelte({
+      preprocess: sveltePreprocess()
+    }),
+  ],
+};
+
+let builder;
+let serve = process.argv[2] == "--serve";
+if (serve) {
+  builder = esbuild.serve(
     {
       servedir: "..",
-      port: 8200,
-      onRequest:(r)=>{
+      port: 3100,
+      onRequest: (r) => {
         console.log(r);
       }
-    },
-    {
-      entryPoints: ["src/main.ts"],
-      bundle: true,
-      sourcemap: true,
-      outfile: "./bundle.js",
-      minify: false,
-      plugins: [
-        esbuildSvelte({
-          preprocess: sveltePreprocess()
-        }),
-      ],
-    })
+    }, options)
+} else {
+  builder = esbuild.build(options);
+}
+
+builder
   .catch(error => {
     console.error(error);
     process.exit(1)
   })
-  .then(result=>{
+  .then(result => {
     console.log(result);
-    open("http://localhost:8200/xpedia2/")
+    if (serve)
+      open("http://localhost:8200/xpedia2/")
   });
+
+

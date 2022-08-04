@@ -21,7 +21,7 @@
   <table class="main-table">
     <tr>
       <td colspan="2" class="table-header"
-        >{rul.tl(title)} {rul.tl(subtitle)}</td
+        >{rul.tr(title)} {rul.tr(subtitle)}</td
       >
     </tr>
     {#each sorted.all as [key, prop]}

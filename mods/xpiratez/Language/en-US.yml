@@ -1546,6 +1546,18 @@ en-US:
   autoRange: Auto shot range
   autoShots: Number of auto shots
   battleType: Item type
+  battleType0: Geoscape-only
+  battleType1: Firearm
+  battleType2: Ammo
+  battleType3: Melee
+  battleType4: Grenade
+  battleType5: Proximity Grenade
+  battleType6: Medi-Kit
+  battleType7: Motion Scanner
+  battleType8: Mind Probe
+  battleType9: Psi-Amp
+  battleType10: Electro-flare
+  battleType10: Misc
   bigSprite: Inventory sprite
   blastRadius: Blast radius (OXC)
   blockBothHands: Blocks both hands?
@@ -1735,25 +1747,25 @@ en-US:
   SERVICES: SERVICES
   DOWNLOADS: DOWNLOADS
   STARTING BONUSES: STARTING BONUSES
-  dmg=STR_DAMAGE_NONE: CHARM
-  dmg=STR_DAMAGE_ARMOR_PIERCING: PIERCING
-  dmg=STR_DAMAGE_INCENDIARY: BURN
-  dmg=STR_DAMAGE_HIGH_EXPLOSIVE: CONCUSSIVE
-  dmg=STR_DAMAGE_LASER_BEAM: LASER
-  dmg=STR_DAMAGE_PLASMA_BEAM: PLASMA
-  dmg=STR_DAMAGE_STUN: DAZE
-  dmg=STR_DAMAGE_MELEE: CUTTING
-  dmg=STR_DAMAGE_ACID: CHEM
-  dmg=STR_DAMAGE_SMOKE: CHOKING
-  dmg=STR_DAMAGE_10: ANTI-E511
-  dmg=STR_DAMAGE_11: BIO
-  dmg=STR_DAMAGE_12: ELECTRIC
-  dmg=STR_DAMAGE_13: EMP
-  dmg=STR_DAMAGE_14: WARP
-  dmg=STR_DAMAGE_15: MIND
-  dmg=STR_DAMAGE_16: STABBING
-  dmg=STR_DAMAGE_17: HEAT
-  dmg=STR_DAMAGE_18: COLD
+  STR_DAMAGE_NONE: 💖CHARM
+  STR_DAMAGE_ARMOR_PIERCING: 🔺PIERCING
+  STR_DAMAGE_INCENDIARY: 🔥BURN
+  STR_DAMAGE_HIGH_EXPLOSIVE: 💥CONCUSSIVE
+  STR_DAMAGE_LASER_BEAM: 🔫LASER
+  STR_DAMAGE_PLASMA_BEAM: 🎆PLASMA
+  STR_DAMAGE_STUN: 🥴DAZE
+  STR_DAMAGE_MELEE: 🔪CUTTING
+  STR_DAMAGE_ACID: 🧪CHEM
+  STR_DAMAGE_SMOKE: 👔CHOKING
+  STR_DAMAGE_10: 🧬ANTI-E511
+  STR_DAMAGE_11: 🐍BIO
+  STR_DAMAGE_12: ⚡ELECTRIC
+  STR_DAMAGE_13: 🔌EMP
+  STR_DAMAGE_14: 🌌WARP
+  STR_DAMAGE_15: 🧠MIND
+  STR_DAMAGE_16: 🍴STABBING
+  STR_DAMAGE_17: 🌴HEAT
+  STR_DAMAGE_18: ⛄COLD
   STR_STARCON_GROUND_OR_UNDETECTABLE: Ground or undetectable vessels
   STR_STARCON_ACADEMY_CRUISE: Academy cruise
   STR_STARCON_SPACE_FREIGHTER: Space Freighter
@@ -1814,3 +1826,15 @@ en-US:
   dmg*stamina: dmg*stamina
   dmg=undefined: dmg=undefined
   acc*stamina: acc*stamina
+  weapon_type_0: ✈Light
+  weapon_type_1: ✈Heavy
+  weapon_type_2: ✈Missile
+  weapon_type_3: ✈Bomb
+  weapon_type_4: ✈Divebomb
+  weapon_type_5: ✈Ground
+  weapon_type_6: ✈AA
+  weapon_type_7: ✈Battery
+  weapon_type_9: ✈Shadowtech
+  weapon_type_10: ✈Cloaking
+  weapon_type_11: ✈Fixed
+  

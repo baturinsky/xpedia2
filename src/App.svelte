@@ -1,10 +1,12 @@
 <script>
-  import { tick, afterUpdate } from "svelte";
-  import { rul } from "./Ruleset";
-  import { Link, Intro, LinksPage, Value, LinksList, favicon } from "./Components";
+  import { rul, Article as ArticleRul } from "./Ruleset";
+  import { LinksPage, Tr, tr, favicon } from "./Components";
   import Article from "./Article.svelte";
   import { loadByHttp } from "./load";
-
+  import { setContext} from "svelte";
+  import { revealed, reveal, revealLock } from "./store"
+  
+  /**@type {ArticleRul}*/
   let article = null;
   let found = null;
   let query = "";
@@ -19,13 +21,25 @@
   let showDropdown = false;
   let showLanguagesDropdown = false;
   let tooltip;
+  let searching = false;
 
   let isTouch = "ontouchstart" in window;
+
+  /**
+   * 
+   * @param {string} text 
+   * @param {string} substr 
+   */
+  function contains(text, substr){
+    return text.toLowerCase().indexOf(substr) != -1;
+  }
 
   async function loadRules() {
     let { ruls, langs } = await loadByHttp();
     await rul.load({ ruls, langs });
   }
+
+  setContext("main", { revealed:()=>revealed });
 
   let rulesLoaded = loadRules();
 
@@ -33,7 +47,7 @@
     window.location.hash = "##" + id;
   }
 
-  function checkHash() {
+  async function checkHash() {
     showDropdown = showLanguagesDropdown = false;
     let hash = decodeURI(document.location.hash);
     if (hash.substr(0, 2) != "##") return;
@@ -42,21 +56,27 @@
     if (id == "MAIN") {
       query = "";
     }
+
+    searching = false;
+
     if (id) {
       let dd = id.indexOf("::");
       if (dd != -1) {
         query = id.substr(dd + 2);
         id = id.substr(0, dd);
       }
-
+      
       if (id == "SEARCH") {
-        if (query.length >= 2)
-          found = rul.search.findArticles(query).map((a) => a.id);
-        else found = 0;
+        searching = true;
+        if (query.length >= 2){
+          found = await rul.search.findArticles(query);
+          //debugger;
+          //found = result.map((a) => a.id);
+        } else found = 0;
         article = null;
       } else {
         found = null;
-        if (!article || article.id != id) article = rul.article(id);
+        if (!article || article.id != id) article = rul.article(id) || {id};
       }
 
       console.log(id);
@@ -64,10 +84,11 @@
     }
 
     if (article) {
-      if (article.section && currentSection != article.section)
-        currentSection = article.section;
-    } else {
-      currentSection = null;
+      if (article.sections) {
+        if (!article.sections.includes(currentSection)) {
+          currentSection = article.sections[0];
+        }
+      }
     }
 
     if (activeOption) {
@@ -76,7 +97,7 @@
   }
 
   function nextArticle(delta) {
-    let nextArticle = rul.findNextArticle(article, delta);
+    let nextArticle = rul.findNextArticle(article, delta, currentSection);
     if (nextArticle) {
       goTo(nextArticle.id);
     }
@@ -94,16 +115,12 @@
     );
   }
 
-  function selectSection(id) {
-    currentSection = rul.sections[id];
-  }
-
   window.onhashchange = checkHash;
 
   rulesLoaded.then(checkHash);
 
   $: {
-    console.info(article || "no article");
+    if (article) console.info(article);
     //document.documentElement.style.fontSize = hugeFont ? "24pt" : "12pt";
   }
 
@@ -131,9 +148,10 @@
   window.addEventListener("mousemove", async (e) => {
     if (tooltip) {
       let el = e.target;
-      while (el && el.attributes && !el.attributes.tooltip) el = el.parentNode;
+      while (el && el.attributes && !("tooltip" in el.attributes))
+        el = el.parentNode;
 
-      if (el && el.attributes) {
+      if (el && el.attributes && el.attributes.tooltip) {
         let idattr = el.attributes.tooltip;
         let rect = e.target.getBoundingClientRect();
         tooltip.style.left = rect.left + rect.width / 2 + "px";
@@ -161,10 +179,10 @@
 
 <svelte:head>
   {#if !article}
-    <title>XPedia</title>
+    <title>{tr("XPedia")}</title>
   {/if}
   <meta name="keywords" content="OpenXCom" />
-  <link rel='icon' type='image/png' href={favicon}>  
+  <link rel="icon" type="image/png" href={favicon} />
 </svelte:head>
 
 {#await rulesLoaded}
@@ -205,9 +223,9 @@
       <div class="navbar-button" on:mousedown={(e) => dropdown()}>
         <img src={favicon} alt="XPedia" class="xpedia-icon" />
         <nobr>
-          <span class="on-wide">{rul.str("BootyPedia")}&nbsp;</span>
+          <span class="on-wide">{rul.tr("XPedia")}&nbsp;</span>
           <span style="transform:scale(1.5,0.75); display:inline-block;">
-            v
+            ˅
           </span>
           &nbsp;
         </nobr>
@@ -220,7 +238,7 @@
         <div class="flex-horisontal" style="flex-wrap:nowrap">
           <div class="navbar-auto navbar-list">
             <a href="##MAIN" style="text-decoration:underline;">
-              {rul.tl("HOME")}
+              {rul.tr("HOME")}
             </a>
             <div style="height:0.5em;" />
             {#each rul.typeSectionsOrder as section, i}
@@ -244,6 +262,21 @@
     </a>
 
     <div class="stretcher" />
+
+    <!-- svelte-ignore a11y-mouse-events-have-key-events -->
+    <div
+      class="navbar-button {$revealed?"reveal-lock":""}"
+      id="reveal"
+      on:mouseover={(e) => {
+        reveal(true);
+      }}
+      on:mouseout={(e) => {
+        reveal(false);
+      }}
+      on:click={(e)=>revealLock()}
+    >
+      👁
+    </div>
 
     {#if rul.config && rul.config.languages && rul.config.languages.length > 1}
       <!-- svelte-ignore a11y-mouse-events-have-key-events -->
@@ -282,9 +315,10 @@
       <input
         class="input"
         type="text"
+        id="search-string"
         bind:value={query}
         on:keyup={searchKeyUp}
-        placeholder={rul.tl("Search...")}
+        placeholder={tr("Search...")}
       />
     </div>
   </nav>
@@ -296,35 +330,30 @@
         style={sortArticles ? "" : "text-decoration:line-through"}
         on:click={(e) => (sortArticles = !sortArticles)}
       >
-        {rul.tl("A-Z")}
+        <Tr s="A-Z" />
       </button>
 
-      {#each article && article.section && article.section.isType() ? rul.typeSectionsOrder : rul.sectionsOrder as section}
-        {#if !currentSection || section.id == currentSection.id}
-          <p class="menu-label">{section.title}</p>
-          <div class="menu-list">
-            {#each sortedArticles(section.articles) as option}
-              {#if article && article.id == option.id}
-                <a
-                  href={"##" + option.id}
-                  bind:this={activeOption}
-                  class="active-article-option side-link"
-                >
-                  {option.title}
-                </a>
-              {:else}
-                <a
-                  class="side-link"
-                  href={"##" + option.id}
-                  on:click={() => (ignoreNextAutoscroll = true)}
-                >
-                  {option.title}
-                </a>
-              {/if}
-            {/each}
-          </div>
-        {/if}
-      {/each}
+      <div class="menu-list">
+        {#each sortedArticles(currentSection?.articles) || [] as option}
+          {#if article && article.id == option.id}
+            <a
+              href={"##" + option.id}
+              bind:this={activeOption}
+              class="active-article-option side-link"
+            >
+              <Tr s={option.title}/>
+            </a>
+          {:else}
+            <a
+              class="side-link"
+              href={"##" + option.id}
+              on:click={() => (ignoreNextAutoscroll = true)}
+            >
+            <Tr s={option.title}/>
+            </a>
+          {/if}
+        {/each}
+      </div>
       <br />
     </nav>
   {/if}
@@ -340,20 +369,13 @@
   </button>
 
   <div class="main" style={seeSide ? "" : "padding-left:1rem;"}>
-    {#if article}
-      <Article
-        {article}
-        {query}
-        on:prev={(e) => nextArticle(-1)}
-        on:next={(e) => nextArticle(1)}
-      />
-    {:else if query}
+    {#if query && searching}
       Searching "
       <em>{query}</em>
       ":
       <br />
       {#if found && found.length > 0}
-        <LinksPage links={found} />
+        <LinksPage links={found.sort((a,b) => contains(rul.tr(a), query) > contains(rul.tr(b), query)?-1:1)} />
       {:else if query.length < 2}
         <i>Query too short</i>
       {:else if searchDelayHandle}
@@ -361,14 +383,14 @@
       {:else}
         <i>Nothing found</i>
       {/if}
-    {:else if !query}
-      <!--
-      {#each rul.sectionsOrder.concat(rul.typeSectionsOrder) as section}
-        <h1><a href={'#' + section.id}>{section.title}</a></h1>
-        <LinksPage links={section.articles.map(a => a.id)} />
-      {/each}-->
-      {@html rul.tl("Main Page")}
-    {/if}
+    {:else}
+      <Article
+      {article}
+      {query}
+      on:prev={(e) => nextArticle(-1)}
+      on:next={(e) => nextArticle(1)}
+    />
+  {/if}
   </div>
 
   <div class="tooltip fadein" bind:this={tooltip}>Tooltip</div>
