@@ -1435,27 +1435,28 @@ en-US:
   armor: Armor
   damageModifier: Damage modifiers
   stats: Stats
-  bravery: Bravery
-  firing: Firing
-  melee: Melee
-  psiSkill: VooDoo skill
-  psiStrength: VooDoo power
-  reactions: Reactions
-  stamina: Energy
-  strength: Strength
-  throwing: Throwing
-  tu: TU
+  bravery: 🎖️Bravery
+  firing: 🎯Firing
+  melee: 🤼‍♀️Melee
+  psiSkill: 👄VooDoo skill
+  psiStrength: 🍑VooDoo power
+  reactions: 🤸Reactions
+  stamina: 🏃Energy
+  strength: 💪Strength
+  throwing: 🏹Throwing
+  tu: ⏱TU
   recovery: Recovery
   energyCurrent: Energy current
   flatHundred: "*100"
   flatOne: " "
-  health: Health
+  health: ❤️Health
+  mana: 🍹Freshness
   healthCurrent: Health current
   healthNormalized: Health normalized
   manaNormalized: Freshness normalized
-  morale: Morale
-  moraleCurrent: Morale current
-  stun: Stun
+  morale: 🎖️Morale
+  moraleCurrent: 🎖️Morale current
+  stun: 🥴Stun
   stunCurrent: Stun current
   stunNormalized: Stun normalized
   allowInv: Inventory allowed?
@@ -1504,7 +1505,7 @@ en-US:
   mode: Attack type
   accuracy: Accuracy
   cost: Cost
-  energy: Energy
+  energy: 🏃Energy
   damage: Damage
   Wgt: Weight
   ArmorEffectiveness: Armor effectiveness
@@ -1701,7 +1702,7 @@ en-US:
   refund: Refund available?
   requiredItems: items required
   space: Workspace required
-  time: Time
+  time: ⏱Time
   spawnedPersonType: Person joining
   aggression: Aggression
   berserkSound: Berserk sound
@@ -1718,7 +1719,7 @@ en-US:
   panicSound: Panic sound
   psiWeapon: VooDoo weapon
   race: Faction
-  rank: Rank
+  rank: 👑Rank
   sniper: Chance of firing on spotted units
   specab: Special ability
   spotter: Spotter (turns)
@@ -1739,6 +1740,8 @@ en-US:
   allowsManufacture: Allows manufacture
   allowsResearching: Allows researching
   allowsBuilding: Allows building
+  prisonType1: Prison
+  prisonType2: Kennel
   ITEMS: ITEMS
   CONDITIONS: CONDITIONS
   CATEGORIES: CATEGORIES

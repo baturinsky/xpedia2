@@ -19,10 +19,9 @@
   import { Link, LinksPage, Value, LinksList, Tr } from "./Components";
 
   import { createEventDispatcher } from "svelte";
-import { identity } from "svelte/internal";
   const dispatch = createEventDispatcher();
 
-  export let article;
+  export let article = {} as any;
   export let query;
   let textwithHighlights;
   let other = false;
@@ -92,13 +91,13 @@ import { identity } from "svelte/internal";
       {#if textwithHighlights}
         <div class="main-table main-text">
           {#if rul.items[article.id] && article.text}
-            <CanvasImage item={rul.items[article.id]} zoom={2} />
+            <div class="article-text-image">
+              <CanvasImage item={rul.items[article.id]} zoom={2} />
+            </div>
           {/if}
 
           {#if textwithHighlights}
-            <div>
-              {@html textwithHighlights}
-            </div>
+            {@html textwithHighlights}
           {/if}
         </div>
       {/if}
@@ -158,7 +157,11 @@ import { identity } from "svelte/internal";
     {/if}
 
     {#if article.id in rul.soldiers    }
-      <MainTable item={rul.soldiers[article.id]} title="Soldiers" />      
+      <MainTable item={rul.soldiers[article.id]} title="Soldiers" sort={{first:["statCaps"],last:["armors"]}}/>      
+    {/if}
+
+    {#if article.id in rul.races    }
+      <MainTable item={rul.races[article.id]} title="Race" />      
     {/if}
 
     {#if article.id in rul.events}
@@ -177,6 +180,6 @@ import { identity } from "svelte/internal";
       <Illustration id={article.image_id} />
     {/if}
 
-    <div style="height:400px">&nbsp;</div>
+    <div style="height:200px">&nbsp;</div>
   </div>
 </div>

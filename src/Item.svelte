@@ -103,11 +103,11 @@
                 {#if item.battleType == 2}
                   <td colspan="3" />
                 {:else}
-                  <td>{rul.str("mode")}</td>
-                  <td>{rul.str("accuracy")}</td>
-                  <td style="width:30%">{rul.str("cost")}</td>
+                  <td>{rul.tr("mode")}</td>
+                  <td>{rul.tr("accuracy")}</td>
+                  <td>{rul.tr("cost")}</td>
                 {/if}
-                <td>{rul.str("damage")}</td>
+                <td>{rul.tr("damage")}</td>
               </thead>
               {#each attacks as attack}
                 <tr>
@@ -125,8 +125,8 @@
                       <Link href={attack.item.type} />
                       <br />
                       <small>
-                        {rul.str("Shots")}: {attack.item.clipSize}
-                        {rul.str("Wgt")}: {attack.item.weight}
+                        {rul.tr("Shots")}: {attack.item.clipSize}
+                        {rul.tr("Wgt")}: {attack.item.weight}
                       </small>
                     </td>
                   {:else}

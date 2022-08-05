@@ -9,8 +9,7 @@
 
   $: {
     console.log(item);
-    if(!sort.exclude)
-      sort.exclude = ["type", "name"];
+    if (!sort.exclude) sort.exclude = ["type", "name"];
     sorted = sortFirstLast(item, sort);
   }
 </script>
@@ -25,11 +24,13 @@
       >
     </tr>
     {#each sorted.all as [key, prop]}
-      <tr>
-        <td><Value val={key} /></td><td>
-          <Value val={prop} />
-        </td>
-      </tr>
+      {#if prop != []}
+        <tr>
+          <td><Value val={key} /></td><td>
+            <Value val={prop} />
+          </td>
+        </tr>
+      {/if}
     {/each}
   </table>
 {/if}

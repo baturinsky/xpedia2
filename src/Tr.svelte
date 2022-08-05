@@ -4,7 +4,17 @@
 
   export let s;
   let r = false;
-  revealed.subscribe((v)=>r=v)
+  /**@type {string}*/
+  let tr;
+  $: {
+    if (r) {
+      tr = s;
+    } else {
+      tr = rul.tr(s);
+      tr = tr.replace(/^([\u1000-\uFFFF]+)/, "<div class='inem'>$1</div>");
+    }
+  }
+  revealed.subscribe((v) => (r = v));
 </script>
 
-{@html r?s:rul.tr(s)}
+{@html tr}

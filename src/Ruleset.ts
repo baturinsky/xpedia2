@@ -27,7 +27,7 @@ function orderedFilteredEntries(item, fields) {
 
 export function sortFirstLast(item, options: SortFirsLastOptions = {}) {
   if (item == null)
-    return;
+    return {all:[]};
 
   let first = orderedFilteredEntries(item, options.first);
   let last = orderedFilteredEntries(item, options.last);
@@ -140,6 +140,9 @@ export class SoldierBonuses {
 
 export class SoldierTransformation {
   name: string;
+  forbiddenPreviousTransformations: string[];
+  blocksTransformations: string[] = [];
+
   constructor(raw: any) {
     Object.assign(this, raw);
     rul.soldierTransformation[this.name] = this;
@@ -169,6 +172,23 @@ export class Soldiers {
   }
 
 }
+
+export class Race {
+  id: string;
+  
+  constructor(raw: any) {
+    Object.assign(this, raw);
+    rul.races[this.id] = this;
+
+    Article.create({
+      id: this.id,
+      section: "RACES",
+      type_id: "RACES",
+    });      
+  }
+
+}
+
 
 
 
@@ -316,6 +336,13 @@ export class Craft {
       for (let t of this.weaponTypes.flat()) {
         rul.addCategory("weapon_type_" + t, this.type)
       }
+
+      Article.create({
+        id: this.type,
+        type_id: "CRAFT_WEAPONS",
+        section: "CRAFT_WEAPONS",
+      });
+  
   }
 }
 
@@ -833,6 +860,7 @@ export default class Ruleset {
   commendations: { [key: string]: Commendation } = {};
   soldierTransformation: { [key: string]: SoldierTransformation } = {};
   soldiers: { [key: string]: Soldiers } = {};  
+  races: { [key: string]: Race } = {};  
   manufacture: { [key: string]: Manufacture } = {};
   startingConditions: { [key: string]: StartingConditions } = {};
   events: { [key: string]: Event } = {};
@@ -1008,6 +1036,8 @@ export default class Ruleset {
       "SERVICES",
       "EVENTS",
       "EVENTSCRIPTS",
+      "CRAFT_WEAPONS",
+      "RACES",
       "SOLDIERS",
       "TRANSFORMATIONS"
     ];
@@ -1057,6 +1087,7 @@ export default class Ruleset {
 
     for (let data of this.raw.items) new Item(data);
     for (let data of this.raw.soldiers) new Soldiers(data);
+    for (let data of this.raw.alienRaces) new Race(data);
     for (let data of this.raw.armors) new Armor(data);
     for (let data of this.raw.units) new Unit(data);
     for (let data of this.raw.crafts) new Craft(data);
@@ -1066,6 +1097,14 @@ export default class Ruleset {
     for (let data of this.raw.events) new Event(data);
     for (let data of this.raw.eventScripts) new EventScript(data);
     for (let data of this.raw.soldierTransformation) new SoldierTransformation(data);
+
+    for(let t of Object.values(this.soldierTransformation)){
+      let ftt = t.forbiddenPreviousTransformations;
+      for(let f of (ftt || [])){
+        this.soldierTransformation[f]?.blocksTransformations.push(t.name);
+      }
+    }
+    
 
     if (this.raw.startingConditions)
       for (let data of this.raw.startingConditions)

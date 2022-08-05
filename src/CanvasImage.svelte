@@ -12,8 +12,7 @@
   let loaded = false;
 
   function updateImage() {
-    if(canvas == null)
-      return;
+    if (canvas == null) return;
 
     canvas.width = Math.min(maxWidth, img.naturalWidth * zoom);
     canvas.height = Math.min(maxHeight, img.naturalHeight * zoom);
@@ -47,10 +46,13 @@
   }
 </script>
 
-<a href={src} class="canvas-image">
-  <canvas
-    class="pixelated"
-    style="display:{loaded ? 'inline' : 'none'};"
-    bind:this={canvas}
-    use:prepareCanvas />
-</a>
+{#key src}
+  <a href={src} class="canvas-image">
+    <canvas
+      class="pixelated"
+      style="display:{loaded ? 'inline' : 'none'};"
+      bind:this={canvas}
+      use:prepareCanvas
+    />
+  </a>
+{/key}

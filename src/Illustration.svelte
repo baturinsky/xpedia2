@@ -8,8 +8,8 @@
   //export let maxZoom = 4;
   export let style = "";
 
-  function loaded(img){}
-  
+  function loaded(img) {}
+
   /*function loaded(img) {
     return;
     console.info(img);
@@ -32,12 +32,14 @@
 
 {#if id && rul.sprite(id)}
   <a href={rul.sprite(id)} class="illustration">
-    <img
-      style={style + (left ? "float:left" : "")}
-      on:load={(e) => loaded(e.target)}
-      on:error={(e) => noimage(e.target)}
-      alt={id || ""}
-      src={rul.sprite(id)}
-    />
+    {#key id}
+      <img
+        style={style + (left ? "float:left" : "")}
+        on:load={(e) => loaded(e.target)}
+        on:error={(e) => noimage(e.target)}
+        alt={id || ""}
+        src={rul.sprite(id)}
+      />
+    {/key}
   </a>
 {/if}
