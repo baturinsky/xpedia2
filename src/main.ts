@@ -21,9 +21,6 @@ function showPedia() {
   document.body.innerHTML = "";
   document.body.style.display = "block";
 
-  let tail = document.documentElement.outerHTML.indexOf("FOO BAR");
-  console.log({tail});
-
   new Ruleset();
   //@ts-ignore
   app = new App({
@@ -48,7 +45,7 @@ addEventListener("load", showPedia)
 addEventListener("hashchange", e => {
   if (location.hash.substring(0, 8) != "##SEARCH") {
     let input = document.getElementById("search-string");
-    input.blur();
+    input?.blur();
   }
 })
 

@@ -42,6 +42,6 @@
   {:else if b[0] == "flatOne"}
     {b[1]}
   {:else}
-    <nobr>{rul.tr(b[0])}{@html (b[1] != 1 ? `×<em>${b[1]}</em>` : "")}</nobr>
+    <nobr>{@html rul.tr(b[0])}{@html (b[1] != 1 ? `×<em>${b[1]}</em>` : "")}</nobr>
   {/if}
 {/each}

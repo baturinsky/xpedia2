@@ -30,14 +30,10 @@ body {
     -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen-Sans, Cantarell,
     "Helvetica Neue", sans-serif;
   color: var(--text);
-}
-
-html,
-body {
-  padding: 0;
-  margin: 0;
+  font-size: 12pt;
   width: 100%;
   height: 100%;
+  letter-spacing: 0pt;
 }
 
 * {
@@ -84,6 +80,7 @@ background: var(--table-main);
   display: flex;
   flex-direction: row;
   align-items: center;
+  border: 0px;
 }
 
 .main-text div {
@@ -159,7 +156,6 @@ em {
 
 h1,
 h4 {
-  margin: 10px 0px;
   color: #aaffff;
   font-variant: small-caps;
 }
@@ -207,6 +203,7 @@ h4 {
   align-items: center;
   justify-content: flex-start;
   color: var(--text);
+  flex-wrap: nowrap;
 }
 
 input::placeholder {

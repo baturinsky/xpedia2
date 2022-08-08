@@ -1,9 +1,9 @@
 import JSZip from "jszip";
-import lzs from "lz-string";
+//import lzs from "lz-string";
 import { defaultLanguage } from "./Ruleset";
 import { readYaml, dirByHttp, parseYaml } from "./util";
 
-async function loadPackedZip(text: string) {
+/*async function loadPackedZip(text: string) {
   text = text.trim();
   let jszip = new JSZip();
 
@@ -17,7 +17,35 @@ async function loadPackedZip(text: string) {
 
   let data = parsePackedYaml(text);
   return data;
+}*/
+
+export async function unpackZip(text) {
+  let jszip = new JSZip();
+  let data = await jszip.loadAsync(text, { base64: true });
+  let file = data.file("main");
+  text = await file.async("string");
+  return text;
 }
+
+export async function packZip(text) {
+  let jszip = new JSZip();
+  jszip.file("main", text)
+  let file = jszip.generateAsync({
+    type: "base64", 
+    compression: "DEFLATE",
+    compressionOptions: {
+      level: 9
+    }
+  })
+  return file;
+}
+
+/*async function testzip(){
+  let p = await packZip("hello 443")
+  console.log("zip", p, await unpackZip(p));  
+}
+
+testzip();*/
 
 function parsePackedYaml(text: string) {
   let rul: any = {};
@@ -74,10 +102,11 @@ type OXCOptions = { mods: { active: boolean, id: string }[], options: any };
 
 const OXCPath = "/", PediaPath = "";
 
-export function loadPacked() {
+export async function loadPacked() {
   let packed = window["xpedia"];
   if (packed != null) {
-    let json = lzs.decompressFromBase64(packed)
+    //let json = lzs.decompressFromBase64(packed)
+    let json = await unpackZip(packed);
     let data = JSON.parse(json);
     return data;
   }
@@ -111,7 +140,7 @@ export async function loadByHttp() {
   activeMods = [...activeMods, ...xpediaMods];
 
   let lname = options.options.language;
-  
+
   let activeModsMetadata = activeMods.map(id => modMetadataById[id])
   for (let mod of activeModsMetadata)
     mod.rulDir = mod.id == "xcom1" ? mod.dir : `${mod.dir}Ruleset/`;
@@ -134,13 +163,13 @@ async function loadLanguagesFromDirs(dirs: string[]) {
   let files: { lname: string, dir: string }[] =
     langFiles.map(
       (list, dirInd) => list.filter(file => file.substr(file.length - 4) == ".yml")
-      .map(lname => ({ lname:lname.substr(0,lname.length - 4), dir: dirs[dirInd] }))
+        .map(lname => ({ lname: lname.substr(0, lname.length - 4), dir: dirs[dirInd] }))
     ).flat();
   //debugger;
 
-  let lnames = [...new Set([...files.map(f=>f.lname),defaultLanguage,"icon"])];
+  let lnames = [...new Set([...files.map(f => f.lname), defaultLanguage, "icon"])];
 
-  
+
   let lng = {};
   //let files: { lname: string, dir: string }[] = lnames.map(lname => dirs.map(dir => ({ lname, dir }))).flat(1);
 
@@ -160,7 +189,7 @@ async function loadLanguagesFromDirs(dirs: string[]) {
       lng[lname] = { ...lng[defaultLanguage], ...lng[lname] }
     }
   }*/
-  
+
   return lng;
 }
 

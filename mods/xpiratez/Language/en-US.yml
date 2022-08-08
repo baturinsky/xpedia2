@@ -1824,6 +1824,7 @@ en-US:
   aboutxpedia: |
     <h1 id="xpedia2">xpedia2</h1>
     <p>Sequel to <a href="https://github.com/baturinsky/xpedia">https://github.com/baturinsky/xpedia</a></p>
+    <p>See git at <a href="https://github.com/baturinsky/xpedia2">https://github.com/baturinsky/xpedia2</a></p>
     <p>I&#39;m changing a lot of things around, so have created it as a separate ptoject.</p>
     <p>Currently WIP.</p>
     <h1 id="whats-new">What&#39;s new</h1>
@@ -1836,8 +1837,8 @@ en-US:
     <li>&quot;Reveal&quot; mode to see untranslated text. Use eye icon or hold shift.</li>
     </ul>
     <h1 id="how-to-use">How to use</h1>
-    <p>Unpack or clone it into a subdir of the game.</p>
+    <p>Unpack or clone from the git into a subdir of the game.</p>
     <p>Have <a href="https://nodejs.org">https://nodejs.org</a> installed.</p>
-    <p>Run <code>npm install</code> (or <code>yarn install</code> if you use) then <code>npm start</code></p>
+    <p>Run <code>npm install</code> (or <code>yarn install</code> if you use yarn), then <code>npm start</code></p>
     <p>It will read user settings to find out which mods and submods to use, then open the page.</p>
-    <p>If you run xpedia this way, you can click &quot;Export&quot; button on the main</p>  
+    <p>If you run xpedia this way, you can click &quot;Export&quot; button on the main page to get a single self-containing HTML file</p>  

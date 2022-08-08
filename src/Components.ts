@@ -11,7 +11,8 @@ import SpecialBonus from "./SpecialBonus.svelte";
 import MainTable from "./MainTable.svelte";
 import Illustration from "./Illustration.svelte";
 import { fetchAll, download, fetchText } from "./util";
-import lzs from "lz-string";
+//import lzs from "lz-string";
+import { packZip } from "./load";
 
 export { Link, Intro, LinksPage, LinksList, Value, BaseServiceList, Tr, SpecialBonus, MainTable, Illustration, Subheader, rul };
 
@@ -29,13 +30,16 @@ export async function downloadPedia() {
   let mainCSS = document.getElementById("main-css") as HTMLLinkElement;
   let style = mainCSS.href?(await fetchText(mainCSS.href)):mainCSS.innerHTML;  
 
+  //let packed = lzs.compressToBase64(JSON.stringify(rul.src))
+  let packed = await packZip(JSON.stringify(rul.src));
+
   //debugger;
 
   let html = `
 <head>
   <style>${style}</style>
   <script>
-    window.xpedia = "${lzs.compressToBase64(JSON.stringify(rul.src))}";
+    window.xpedia = "${packed}";
     window.gameDir = ".";
     window.xpediaDir = "xpedia/";
   </script>

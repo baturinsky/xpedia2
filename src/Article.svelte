@@ -93,9 +93,9 @@
     {:else}
       {#if textwithHighlights}
         <div class="main-table main-text">
-          {#if rul.items[article.id] && article.text}
+          {#if rul.items[article.id]?.sprite && article.text}
             <div class="article-text-image">
-              <CanvasImage item={rul.items[article.id]} zoom={2} />
+              <CanvasImage item={rul.items[article.id]} zoom={2}/>
             </div>
           {/if}
 

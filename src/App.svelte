@@ -7,7 +7,7 @@
   import { revealed, reveal, revealLock } from "./store";
   import Download from "./Download.svelte";
   import {delay} from "./util"
-  import swipe from "./swipe"
+  import onSwipe from "./swipe"
 
   /**@type {ArticleRul}*/
   let article = null;
@@ -41,7 +41,7 @@
   let packedData = false;
 
   async function loadRules() {
-    let data = loadPacked()
+    let data = await loadPacked()
     if(data){
       packedData = true;
       await delay(10)
@@ -163,14 +163,13 @@
     if (keyName == "ArrowLeft") nextArticle(-1);
   });
 
-  swipe(document.body, { maxTime: 1000, minTime: 50, maxDist: 150,  minDist: 30 });
-  
-  document.body.addEventListener("swipe", e=>{
-    let dir = e.detail.dir;
-    if(dir=="right") nextArticle(1)
-    if(dir=="left") nextArticle(-1)    
+  onSwipe(document.body, (right)=>{
+    if(right) 
+      nextArticle(1)
+    else
+      nextArticle(-1)    
   });
-
+  
 
   window.addEventListener("mousemove", async (e) => {
     if (tooltip) {

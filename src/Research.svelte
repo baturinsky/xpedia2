@@ -14,12 +14,13 @@
     "seeAlso",
     "requiresBaseFunc",
     "manufacture",
+    "allowsBuying",
     "freeFrom",
     "dependencies",
     "leadsTo",
     "disables",
     "getOneFree",
-    "getOneFreeProtected"
+    "getOneFreeProtected"    
   ];
 
   //let sorted = sortFirstLast(research, {last:[]});
