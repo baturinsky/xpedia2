@@ -219,6 +219,7 @@ export class Research {
   requiresBaseFunc: string[];
   lookup: string;
   seeAlso: string[];
+  allowsBuying: string[];
   spawnedItem: string;
 
   constructor(raw: any) {
@@ -801,6 +802,7 @@ export class Item {
   prisonType: number;
   maxRange: number;
   categories: string[];
+  requiresBuy: string[];
   heldBy: Set<string>;
 
   constructor(raw: any) {
@@ -1222,15 +1224,19 @@ export default class Ruleset {
 
     for (let item of Object.values(this.items)) {
       item.attacks();
-      if (item.compatibleAmmo) {
-        for (let ammoId of item.compatibleAmmo) {
-          let ammo = this.items[ammoId];
-          if (ammo) {
-            ammo.compatibleWeapons = ammo.compatibleWeapons || [];
-            ammo.compatibleWeapons.push(item.type);
-          }
+      for (let ammoId of item.compatibleAmmo || []) {
+        let ammo = this.items[ammoId];
+        if (ammo) {
+          ammo.compatibleWeapons = ammo.compatibleWeapons || [];
+          ammo.compatibleWeapons.push(item.type);
         }
       }
+      for(let rb of item.requiresBuy || []){
+        let r = this.research[rb];
+        if(r){          
+          r.allowsBuying = [...(r.allowsBuying || []), item.type];
+        }
+      }  
     }
 
     for (let research of Object.values(this.research)) {
