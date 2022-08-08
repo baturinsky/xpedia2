@@ -5,7 +5,9 @@
   import { loadByHttp, loadPacked } from "./load";
   import { setContext } from "svelte";
   import { revealed, reveal, revealLock } from "./store";
-import Download from "./Download.svelte";
+  import Download from "./Download.svelte";
+  import {delay} from "./util"
+  import swipe from "./swipe"
 
   /**@type {ArticleRul}*/
   let article = null;
@@ -36,10 +38,17 @@ import Download from "./Download.svelte";
     return text.toLowerCase().indexOf(substr) != -1;
   }
 
+  let packedData = false;
+
   async function loadRules() {
     let data = loadPacked()
-    if(!data)
+    if(data){
+      packedData = true;
+      await delay(10)
+    } else {
       data = await loadByHttp();
+    }
+      
     rul.load(data);
   }
 
@@ -153,6 +162,15 @@ import Download from "./Download.svelte";
     if (keyName == "ArrowRight") nextArticle(1);
     if (keyName == "ArrowLeft") nextArticle(-1);
   });
+
+  swipe(document.body, { maxTime: 1000, minTime: 50, maxDist: 150,  minDist: 30 });
+  
+  document.body.addEventListener("swipe", e=>{
+    let dir = e.detail.dir;
+    if(dir=="right") nextArticle(1)
+    if(dir=="left") nextArticle(-1)    
+  });
+
 
   window.addEventListener("mousemove", async (e) => {
     if (tooltip) {
@@ -427,8 +445,12 @@ import Download from "./Download.svelte";
         {/each}
       </p>
       <h4><Tr s="About XPedia"/></h4>
+      {#if !packedData}
+        <Tr s="aboutexport"/>
+        <Download text="testtext"/>
+        <br>
+      {/if}
       <Tr s="aboutxpedia"/>
-      <Download text="testtext"/>
     {/if}
   </div>
 

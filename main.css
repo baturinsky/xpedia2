@@ -29,7 +29,6 @@ body {
   font-family: "Didact Gothic", Calibri, Georgia, Helvetica, Ubuntu, Roboto,
     -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen-Sans, Cantarell,
     "Helvetica Neue", sans-serif;
-  letter-spacing: 0.1pt;
   color: var(--text);
 }
 
@@ -39,11 +38,9 @@ body {
   margin: 0;
   width: 100%;
   height: 100%;
-  text-size-adjust: none;
 }
 
 * {
-  text-size-adjust: none;
   margin: 0;
   padding: 0;
 }
@@ -995,11 +992,19 @@ a.dead {
 }
 
 select{
-  background: var(--background);
+  background: var(--border);
   color: var(--text);
+  border: 0px;  
+  cursor: pointer;
 }
 
 @media screen and (max-width: 1300px) {
+  .main-flex {
+    columns: 1;
+  }
+}
+
+@media screen and (max-width: 720px) {
   .on-wide {
     display: none;
   }
@@ -1013,12 +1018,6 @@ select{
     padding: 0;
   }
 
-  .main-flex {
-    columns: 1;
-  }
-}
-
-@media screen and (max-width: 720px) {
   .armor-column-resists {
     grid-template-columns: auto auto;
   }

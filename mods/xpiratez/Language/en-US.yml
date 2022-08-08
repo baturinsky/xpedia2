@@ -1819,4 +1819,25 @@ en-US:
   weapon_type_9: Shadowtech
   weapon_type_10: Cloaking
   weapon_type_11: Fixed  
-  aboutxpedia: See <a href="https://github.com/baturinsky/xpedia2">https://github.com/baturinsky/xpedia2</a> for details
+  About XPedia: About
+  aboutexport: If you run xpedia in node.js mode, click this to export as a single file. Will take some seconds to complete.
+  aboutxpedia: |
+    <h1 id="xpedia2">xpedia2</h1>
+    <p>Sequel to <a href="https://github.com/baturinsky/xpedia">https://github.com/baturinsky/xpedia</a></p>
+    <p>I&#39;m changing a lot of things around, so have created it as a separate ptoject.</p>
+    <p>Currently WIP.</p>
+    <h1 id="whats-new">What&#39;s new</h1>
+    <ul>
+    <li>Severless XPedia export is now made from XPedia UI (&quot;Export&quot; button on the main page)</li>
+    <li>It generates a self-sufficient HTML file that do not need additional files and directories. Just put it in game&#39;s root directory,</li>
+    <li>More info collected from ruls</li>
+    <li>Better support for multiple mods</li>
+    <li>UI rework to look better on all devices</li>
+    <li>&quot;Reveal&quot; mode to see untranslated text. Use eye icon or hold shift.</li>
+    </ul>
+    <h1 id="how-to-use">How to use</h1>
+    <p>Unpack or clone it into a subdir of the game.</p>
+    <p>Have <a href="https://nodejs.org">https://nodejs.org</a> installed.</p>
+    <p>Run <code>npm install</code> (or <code>yarn install</code> if you use) then <code>npm start</code></p>
+    <p>It will read user settings to find out which mods and submods to use, then open the page.</p>
+    <p>If you run xpedia this way, you can click &quot;Export&quot; button on the main</p>  

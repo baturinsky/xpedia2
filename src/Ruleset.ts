@@ -1079,6 +1079,8 @@ export default class Ruleset {
     if (this.convertedLangs[langName])
       return false;
 
+    console.log("CV", langName);
+
     let lang = this.langs[langName];
 
     if (this.langs.icon){
@@ -1353,9 +1355,12 @@ export default class Ruleset {
   }
 
   load({ ruls, langs }) {
-    this.src = { ruls, langs };
+    this.src = { ruls, langs:{} };
     this.modName = "Piratez";
     this.langs = langs;
+    for(let langName in this.langs){
+      this.src.langs[langName] = {...this.langs[langName]};
+    }
     const langWeight = n => n == defaultLanguage ? 1e6 : Object.keys(langs[n]).length;
     this.langNames = Object.keys(langs).sort((a, b) => langWeight(b) - langWeight(a));
     if (this.langs.icon)

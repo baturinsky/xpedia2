@@ -74,3 +74,7 @@ export function download(filename, text) {
 export async function fetchText(path){
   return (await fetch(path)).text()
 }
+
+export function delay(n:number){
+  return new Promise(r=>setTimeout(r, n));
+}
