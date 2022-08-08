@@ -38,7 +38,7 @@
 
     other = article.type_id == "OTHER" ? { BaseServices }[article.id] : false;
 
-    if (query) {
+    if (query && false) {
       for (let word of query.split()) {
         let regEx = new RegExp(word, "ig");
         textwithHighlights = textwithHighlights.replace(
@@ -52,6 +52,8 @@
 
 <svelte:head>
   <title>{rul.tr(article.title || "XPedia")}</title>
+  <!--
+  <meta property="og:title" content={rul.tr(article.title || "XPedia")} />
   {#if article.text}<meta
       property="og:description"
       content={article.text}
@@ -60,6 +62,7 @@
       property="og:image"
       content={rul.sprite(article.image_id)}
     />{/if}
+  -->
 </svelte:head>
 
 <h1>

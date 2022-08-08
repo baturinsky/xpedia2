@@ -11,7 +11,7 @@
       tr = s;
     } else {
       tr = rul.tr(s);
-      tr = tr.replace(/^([\u1000-\uFFFF]+)/, "<div class='inem'>$1</div>");
+      tr = tr?.replace(/^([\u1000-\uFFFF]+)/, "<div class='inem'>$1</div>");
     }
   }
   revealed.subscribe((v) => (r = v));

@@ -2,9 +2,10 @@
   import { rul, Article as ArticleRul } from "./Ruleset";
   import { LinksPage, Tr, tr, favicon, divider } from "./Components";
   import Article from "./Article.svelte";
-  import { loadByHttp } from "./load";
+  import { loadByHttp, loadPacked } from "./load";
   import { setContext } from "svelte";
   import { revealed, reveal, revealLock } from "./store";
+import Download from "./Download.svelte";
 
   /**@type {ArticleRul}*/
   let article = null;
@@ -24,6 +25,7 @@
   let searching = false;
 
   let isTouch = "ontouchstart" in window;
+  let lang;
 
   /**
    *
@@ -35,13 +37,20 @@
   }
 
   async function loadRules() {
-    let { ruls, langs } = await loadByHttp();
-    await rul.load({ ruls, langs });
+    let data = loadPacked()
+    if(!data)
+      data = await loadByHttp();
+    rul.load(data);
   }
 
   setContext("main", { revealed: () => revealed });
 
   let rulesLoaded = loadRules();
+
+  function selectLang(n){
+    lang = n;
+    rul.selectLang(n)
+  }
 
   function goTo(id) {
     window.location.hash = "##" + id;
@@ -69,7 +78,7 @@
       if (id == "SEARCH") {
         searching = true;
         if (query.length >= 2) {
-          found = await rul.search.findArticles(query);
+          found = await rul.search[rul.langName].findArticles(query);
           //debugger;
           //found = result.map((a) => a.id);
         } else found = 0;
@@ -181,7 +190,9 @@
   {#if !article}
     <title>{tr("XPedia")}</title>
   {/if}
+  <meta charset='utf8'>
   <meta name="keywords" content="OpenXCom" />
+  <style src="main.css"/>
   <link rel="icon" type="image/png" href={favicon} />
 </svelte:head>
 
@@ -213,6 +224,7 @@
     </svg>
   </div>
 {:then}
+{#key lang}
   <nav class="navbar flex-horisontal">
     <!-- svelte-ignore a11y-mouse-events-have-key-events -->
     <div
@@ -220,14 +232,13 @@
       on:mouseover={(e) => dropdown(true)}
       on:mouseout={(e) => dropdown(false)}
     >
-      <div class="navbar-button" on:mousedown={(e) => dropdown()}>
-        <img src={favicon} alt="XPedia" class="xpedia-icon" />
-        <nobr>
-          <span class="on-wide">{rul.tr("XPedia")}&nbsp;</span>
+      <div class="navbar-button dropdown-button" on:mousedown={(e) => dropdown()}>
+          <img src={favicon} alt="XPedia" class="xpedia-icon" />        
+          <nobr>
+            <span class="on-wide">{rul.tr("XPedia")}&nbsp;</span>
           <span style="transform:scale(1.5,0.75); display:inline-block;">
             ˅
           </span>
-          &nbsp;
         </nobr>
       </div>
 
@@ -242,12 +253,12 @@
             </a>
             <div style="height:0.5em;" />
             {#each rul.sectionsOrder as section, i}
-              <a href={"##" + section.id}>{section.title}</a>
+              <a href={"##" + section.id}>{rul.tr(section.id)}</a>
             {/each}
           </div>
           <div class="navbar-custom navbar-list">
             {#each rul.typeSectionsOrder as section, i}
-              <a href={"##" + section.id}>{section.title}</a>
+              <a href={"##" + section.id}>{rul.tr(section.id)}</a>
             {/each}
           </div>
         </div>
@@ -258,7 +269,7 @@
       class="navbar-button navbar-current-article"
       href={"##" + (currentSection ? currentSection.id : "MAIN")}
     >
-      {currentSection ? currentSection.title : ""}
+      {currentSection ? rul.tr(currentSection.id) : ""}
     </a>
 
     <div class="stretcher" />
@@ -310,6 +321,12 @@
         <span style="font-size:75%">A</span>
       </button>
     {/if}
+
+    <select on:change={e=>{selectLang(e.target.value)}}>
+      {#each rul.langNames as langName}
+        <option selected={lang == langName} value={langName}>{rul.str(langName) || langName}</option>
+      {/each}
+    </select>
 
     <div class="navbar-search">
       <input
@@ -409,8 +426,12 @@
           <a href={"##" + section.id}>{section.title}</a>
         {/each}
       </p>
+      <h4><Tr s="About XPedia"/></h4>
+      <Tr s="aboutxpedia"/>
+      <Download text="testtext"/>
     {/if}
   </div>
 
   <div class="tooltip fadein" bind:this={tooltip}>Tooltip</div>
+{/key}
 {/await}

@@ -1,55 +1,9 @@
-import JSYaml from "js-yaml";
 import JSZip from "jszip";
-const defaultLanguage = "en-US"
-//let dirFilesRegex = /<a[^>]*?href=(["\'])?((?:.(?!\1|>))*.?)\1?/gi;
-let dirFilesRegex = /<\s*a[^>]*>(.*?)<\s*\/\s*a>/gi;
+import lzs from "lz-string";
+import { defaultLanguage } from "./Ruleset";
+import { readYaml, dirByHttp, parseYaml } from "./util";
 
-export async function dirByHttp(path, full = false) {
-  let text = await readTextFile(path);
-  let matches: string[], files: string[] = [];
-  while (matches = dirFilesRegex.exec(text)) {
-    if (matches[1] != "../")
-      files.push(full ? path + matches[1] : matches[1]);
-  }
-  return files;
-}
-
-export function loadMods(modNames = ["Piratez"]) {
-
-}
-
-export async function readTextFile(path: string) {
-  let text: string;
-  try {
-    text = await (await fetch(path)).text();
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
-  return text;
-}
-
-export async function readYaml(path: string) {
-  let text = await readTextFile(path);
-  let parsed = parseYaml(text, path);
-  return parsed as any;
-}
-
-function parseYaml(file: string, filename: string) {
-  try {
-    return JSYaml.load(file, {
-      json: true,
-      filename,
-      onWarning: (e) => {
-        console.error(e.message);
-      }
-    });
-  } catch (e) {
-    console.error(e.message);
-  }
-}
-
-async function loadPacked(text: string) {
+async function loadPackedZip(text: string) {
   text = text.trim();
   let jszip = new JSZip();
 
@@ -118,15 +72,26 @@ function parsePackedYaml(text: string) {
 
 type OXCOptions = { mods: { active: boolean, id: string }[], options: any };
 
+const OXCPath = "/", PediaPath = "";
+
+export function loadPacked() {
+  let packed = window["xpedia"];
+  if (packed != null) {
+    let json = lzs.decompressFromBase64(packed)
+    let data = JSON.parse(json);
+    return data;
+  }
+}
+
 export async function loadByHttp() {
   let [options, modDirs, xpediaDirs]: [OXCOptions, string[], string[]] =
     await Promise.all([
-      readYaml("/user/options.cfg"),
-      dirByHttp("/user/mods/", true),
-      dirByHttp("mods/", true)
+      readYaml(`${OXCPath}user/options.cfg`),
+      dirByHttp(`${OXCPath}user/mods/`, true),
+      dirByHttp(`${PediaPath}mods/`, true)
     ])
 
-  modDirs = ["/standard/xcom1/", ...modDirs]
+  modDirs = [`${OXCPath}standard/xcom1/`, ...modDirs]
   let allModDirs = [...modDirs, ...xpediaDirs]
   let modMetadataById = {};
   let modMetadata = await Promise.all(allModDirs.map(dir => readYaml(`${dir}/metadata.yml`)))
@@ -146,28 +111,39 @@ export async function loadByHttp() {
   activeMods = [...activeMods, ...xpediaMods];
 
   let lname = options.options.language;
+  
   let activeModsMetadata = activeMods.map(id => modMetadataById[id])
   for (let mod of activeModsMetadata)
     mod.rulDir = mod.id == "xcom1" ? mod.dir : `${mod.dir}Ruleset/`;
 
-  let lnames = [lname, "ru"];
-
   let langDirs = activeModsMetadata.map(m => `${m.dir}Language/`);
+
   langDirs.splice(1, 0, "/standard/xcom1/Language/OXCE/");
 
   let [ruls, langs] = await Promise.all(
     [loadRulsFromMods(activeModsMetadata),
-    loadLanguagesFromDirs(lnames, activeModsMetadata.map(m => `${m.dir}Language/`))]
+    loadLanguagesFromDirs(activeModsMetadata.map(m => `${m.dir}Language/`))]
   );
 
   return { ruls, langs }
 }
 
-async function loadLanguagesFromDirs(lnames: string[], dirs: string[]) {
-  if (lnames.indexOf(defaultLanguage) == -1)
-    lnames.unshift(defaultLanguage);
+async function loadLanguagesFromDirs(dirs: string[]) {
+
+  let langFiles = await Promise.all(dirs.map(path => dirByHttp(path)));
+  let files: { lname: string, dir: string }[] =
+    langFiles.map(
+      (list, dirInd) => list.filter(file => file.substr(file.length - 4) == ".yml")
+      .map(lname => ({ lname:lname.substr(0,lname.length - 4), dir: dirs[dirInd] }))
+    ).flat();
+  //debugger;
+
+  let lnames = [...new Set([...files.map(f=>f.lname),defaultLanguage,"icon"])];
+
+  
   let lng = {};
-  let files: { lname: string, dir: string }[] = lnames.map(lname => dirs.map(dir => ({ lname, dir }))).flat(1);
+  //let files: { lname: string, dir: string }[] = lnames.map(lname => dirs.map(dir => ({ lname, dir }))).flat(1);
+
   let data = await Promise.all(files.map(f => {
     let path = `${f.dir}${f.lname}.yml`;
     return readYaml(path)
@@ -178,26 +154,27 @@ async function loadLanguagesFromDirs(lnames: string[], dirs: string[]) {
       lng[lname] = { ...(lng[lname] || {}), ...file[lname] }
     }
   }
-  for (let lname of lnames) {
+
+  /*for (let lname of lnames) {
     if (lname != defaultLanguage) {
       lng[lname] = { ...lng[defaultLanguage], ...lng[lname] }
     }
-  }
+  }*/
+  
   return lng;
 }
 
-async function loadRulsFromMods(mods: { id: string, rulDir: string }[]) {
+async function loadRulsFromMods(mods: { id: string, rulDir: string, dir: string }[]) {
   let dirLists = await Promise.all(mods.map(mod => dirByHttp(mod.rulDir)));
   dirLists = dirLists.map(files => files.filter(name => name.substr(-4) == ".rul"))
   let dirLists2: { mod: string, path: string }[][] = [];
   for (let i in mods) {
-    dirLists2[i] = dirLists[i].map(name => ({ mod: mods[i].id, path: `${mods[i].rulDir}${name}` }))
+    dirLists2[i] = dirLists[i].map(name => ({ mod: mods[i].id, path: `${mods[i].rulDir}${name}`, modDir: mods[i].dir }))
   }
   let files = dirLists2.flat(1);
   let ruls = await Promise.all(files.map(async file => {
     let data = await readYaml(file.path);
     return { ...data, file }
   }))
-  //console.log(ruls.map(r=>[r.file.path, r]));
   return ruls;
 }

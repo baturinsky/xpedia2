@@ -15,9 +15,14 @@ function unescape(s) {
 let app: App;
 
 function showPedia() {
+  enableKeys();
+
   let rulesText = unescape(document.body.textContent);
   document.body.innerHTML = "";
   document.body.style.display = "block";
+
+  let tail = document.documentElement.outerHTML.indexOf("FOO BAR");
+  console.log({tail});
 
   new Ruleset();
   //@ts-ignore
@@ -27,7 +32,18 @@ function showPedia() {
   });
 };
 
+
+async function test() {
+  let { ruls, langs } = await loadByHttp();
+  let rul = new Ruleset()
+  rul.load({ ruls, langs });
+}
+
+
 addEventListener("load", showPedia)
+
+//test();
+
 
 addEventListener("hashchange", e => {
   if (location.hash.substring(0, 8) != "##SEARCH") {
@@ -36,13 +52,6 @@ addEventListener("hashchange", e => {
   }
 })
 
-async function test() {
-  let { ruls, langs } = await loadByHttp();
-  let rul = new Ruleset()
-  await rul.load({ ruls, langs });
-}
-
-//test();
 
 export default app;
 
@@ -51,7 +60,7 @@ const enabledQ = false;
 function enableKeys() {
 
   addEventListener("keydown", e => {
-    console.log(e);
+    //console.log(e);
     switch (e.code) {
       case "KeyQ":
         if (!enabledQ)
@@ -79,6 +88,3 @@ function enableKeys() {
   })
 
 }
-
-
-enableKeys();

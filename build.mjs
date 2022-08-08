@@ -7,7 +7,7 @@ let options = {
   entryPoints: ["src/main.ts"],
   bundle: true,
   sourcemap: true,
-  outfile: "./bundle.js",
+  outfile: "./xpedia.js",
   minify: false,
   plugins: [
     esbuildSvelte({
@@ -17,8 +17,8 @@ let options = {
 };
 
 let builder;
-let serve = process.argv[2] == "--serve";
-if (serve) {
+let keys = new Set(process.argv.filter(k=>k.substring(0,2)=="--").map(k=>k.substring(2)));
+if (keys.has("serve")) {
   builder = esbuild.serve(
     {
       servedir: "..",
@@ -27,6 +27,8 @@ if (serve) {
         console.log(r);
       }
     }, options)
+} else if(keys.has("minify")){
+  builder = esbuild.build({...options, minify: true});
 } else {
   builder = esbuild.build(options);
 }
@@ -38,7 +40,7 @@ builder
   })
   .then(result => {
     console.log(result);
-    if (serve)
+    if (keys.has("serve"))
       open("http://localhost:8200/xpedia2/")
   });
 

@@ -15,7 +15,7 @@
   function soundsFrom(sounds) {
     if (!sounds) return [];
     if (!sounds.length) sounds = [sounds];
-    return sounds.map((s) => rul.path + rul.sounds[s]).filter((s) => s);
+    return sounds.map((s) => rul.sounds[s]).filter((s) => s);
   }
 
   $: {
@@ -237,13 +237,13 @@
               <audio controls src={sound}>Audio tag not working</audio>
             {/each}
           {:else if ["floorSprite", "handSprite"].includes(key)}
-            <a style="vertical-align:top" href={rul.specialSprite(key, prop)}>
+            <a style="vertical-align:top" href={rul.obsSprite(key, prop)}>
               {prop}
             </a>
             <img
               class="item-img sprite"
               alt={prop}
-              src={rul.specialSprite(key, prop)}
+              src={rul.obsSprite(key, prop)}
             />
           {:else if key == "prisonType"}
             <Link href={"prisonType" + prop} />

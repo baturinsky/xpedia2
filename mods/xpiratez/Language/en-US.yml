@@ -1435,28 +1435,28 @@ en-US:
   armor: Armor
   damageModifier: Damage modifiers
   stats: Stats
-  bravery: 🎖️Bravery
-  firing: 🎯Firing
-  melee: 🤼‍♀️Melee
-  psiSkill: 👄VooDoo skill
-  psiStrength: 🍑VooDoo power
-  reactions: 🤸Reactions
-  stamina: 🏃Energy
-  strength: 💪Strength
-  throwing: 🏹Throwing
-  tu: ⏱TU
+  bravery: Bravery
+  firing: Firing
+  melee: Melee
+  psiSkill: VooDoo skill
+  psiStrength: VooDoo power
+  reactions: Reactions
+  stamina: Energy
+  strength: Strength
+  throwing: Throwing
+  tu: TU
   recovery: Recovery
   energyCurrent: Energy current
   flatHundred: "*100"
   flatOne: " "
-  health: ❤️Health
-  mana: 🍹Freshness
+  health: Health
+  mana: Freshness
   healthCurrent: Health current
   healthNormalized: Health normalized
   manaNormalized: Freshness normalized
-  morale: 🎖️Morale
-  moraleCurrent: 🎖️Morale current
-  stun: 🥴Stun
+  morale: Morale
+  moraleCurrent: Morale current
+  stun: Stun
   stunCurrent: Stun current
   stunNormalized: Stun normalized
   allowInv: Inventory allowed?
@@ -1505,7 +1505,7 @@ en-US:
   mode: Attack type
   accuracy: Accuracy
   cost: Cost
-  energy: 🏃Energy
+  energy: Energy
   damage: Damage
   Wgt: Weight
   ArmorEffectiveness: Armor effectiveness
@@ -1702,7 +1702,6 @@ en-US:
   refund: Refund available?
   requiredItems: items required
   space: Workspace required
-  time: ⏱Time
   spawnedPersonType: Person joining
   aggression: Aggression
   berserkSound: Berserk sound
@@ -1719,7 +1718,6 @@ en-US:
   panicSound: Panic sound
   psiWeapon: VooDoo weapon
   race: Faction
-  rank: 👑Rank
   sniper: Chance of firing on spotted units
   specab: Special ability
   spotter: Spotter (turns)
@@ -1750,25 +1748,6 @@ en-US:
   SERVICES: SERVICES
   DOWNLOADS: DOWNLOADS
   STARTING BONUSES: STARTING BONUSES
-  STR_DAMAGE_NONE: 💖CHARM
-  STR_DAMAGE_ARMOR_PIERCING: 🔺PIERCING
-  STR_DAMAGE_INCENDIARY: 🔥BURN
-  STR_DAMAGE_HIGH_EXPLOSIVE: 💥CONCUSSIVE
-  STR_DAMAGE_LASER_BEAM: 🔫LASER
-  STR_DAMAGE_PLASMA_BEAM: 🎆PLASMA
-  STR_DAMAGE_STUN: 🥴DAZE
-  STR_DAMAGE_MELEE: 🔪CUTTING
-  STR_DAMAGE_ACID: 🧪CHEM
-  STR_DAMAGE_SMOKE: 👔CHOKING
-  STR_DAMAGE_10: 🧬ANTI-E511
-  STR_DAMAGE_11: 🐍BIO
-  STR_DAMAGE_12: ⚡ELECTRIC
-  STR_DAMAGE_13: 🔌EMP
-  STR_DAMAGE_14: 🌌WARP
-  STR_DAMAGE_15: 🧠MIND
-  STR_DAMAGE_16: 🍴STABBING
-  STR_DAMAGE_17: 🌴HEAT
-  STR_DAMAGE_18: ⛄COLD
   STR_STARCON_GROUND_OR_UNDETECTABLE: Ground or undetectable vessels
   STR_STARCON_ACADEMY_CRUISE: Academy cruise
   STR_STARCON_SPACE_FREIGHTER: Space Freighter
@@ -1829,15 +1808,15 @@ en-US:
   dmg*stamina: dmg*stamina
   dmg=undefined: dmg=undefined
   acc*stamina: acc*stamina
-  weapon_type_0: ✈Light
-  weapon_type_1: ✈Heavy
-  weapon_type_2: ✈Missile
-  weapon_type_3: ✈Bomb
-  weapon_type_4: ✈Divebomb
-  weapon_type_5: ✈Ground
-  weapon_type_6: ✈AA
-  weapon_type_7: ✈Battery
-  weapon_type_9: ✈Shadowtech
-  weapon_type_10: ✈Cloaking
-  weapon_type_11: ✈Fixed
-  
+  weapon_type_0: Light
+  weapon_type_1: Heavy
+  weapon_type_2: Missile
+  weapon_type_3: Bomb
+  weapon_type_4: Divebomb
+  weapon_type_5: Ground
+  weapon_type_6: AA
+  weapon_type_7: Battery
+  weapon_type_9: Shadowtech
+  weapon_type_10: Cloaking
+  weapon_type_11: Fixed  
+  aboutxpedia: See <a href="https://github.com/baturinsky/xpedia2">https://github.com/baturinsky/xpedia2</a> for details

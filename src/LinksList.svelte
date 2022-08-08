@@ -1,6 +1,4 @@
 <script>
-  import { filter } from "jszip";
-
   import { Link, divider, LinksList, Value } from "./Components";
   import { rul } from "./Ruleset";
 

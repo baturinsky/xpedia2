@@ -10,7 +10,7 @@
         class="facility sprite"
         onerror="this.onerror=null; this.src='xpedia/0.jpg'"
         alt="X"
-        src={rul.specialSprite('baseSprite', prop * 1 + x * size + y)} />
+        src={rul.obsSprite('baseSprite', prop * 1 + x * size + y)} />
     {/each}
   {/each}
 </div>

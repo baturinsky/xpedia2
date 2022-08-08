@@ -30,7 +30,7 @@
                 this.src = emptyImg;
               }}
               alt="X"
-              src={rul.specialSprite("baseSprite", prop * 1 + 33)}
+              src={rul.obsSprite("baseSprite", prop * 1 + 33)}
             />
           {:else if ["requiresBaseFunc"].includes(key)}
             <LinksList items={prop} />
