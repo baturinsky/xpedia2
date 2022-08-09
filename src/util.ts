@@ -78,3 +78,14 @@ export async function fetchText(path){
 export function delay(n:number){
   return new Promise(r=>setTimeout(r, n));
 }
+
+//export const camelToSnakeCase = str => str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+
+export function camelToUnderscore(key) {
+  var result = key.replace( /([A-Z])/g, " $1" );
+  return result.split(' ').join('_').toLowerCase();
+}
+
+export function getFlagEmoji(countryCode){
+  return String.fromCodePoint(...[...countryCode.toUpperCase()].map(x=>0x1f1a5+x.charCodeAt()));
+}

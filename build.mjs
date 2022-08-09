@@ -41,7 +41,7 @@ builder
   .then(result => {
     console.log(result);
     if (keys.has("serve"))
-      open("http://localhost:8200/xpedia2/")
+      open("http://localhost:3100/xpedia2/")
   });
 
 

@@ -31,7 +31,7 @@
 </script>
 
 {#if id && rul.sprite(id)}
-  <a href={rul.sprite(id)} class="illustration">
+  <div class="illustration">
     {#key id}
       <img
         style={style + (left ? "float:left" : "")}
@@ -41,5 +41,5 @@
         src={rul.sprite(id)}
       />
     {/key}
-  </a>
+  </div>
 {/if}

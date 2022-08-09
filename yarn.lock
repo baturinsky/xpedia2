@@ -57,6 +57,11 @@ core-util-is@~1.0.0:
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.3.tgz#a6042d3634c2b27e9328f837b965fac83808db85"
   integrity sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==
 
+country-code-to-flag@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/country-code-to-flag/-/country-code-to-flag-0.1.2.tgz#c3f8e9247e120882611803fedb0017b6f90488af"
+  integrity sha512-RUvPIfz0mlws7Gd+xlP/Yv0umrKeTjPNyEpKgnjwpj4MfRUP0veRAankp2hyW79j4m0SAMX00D5anDHJ8ZAVhw==
+
 define-lazy-prop@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/define-lazy-prop/-/define-lazy-prop-2.0.0.tgz#3f7ae421129bcaaac9bc74905c98a0009ec9ee7f"

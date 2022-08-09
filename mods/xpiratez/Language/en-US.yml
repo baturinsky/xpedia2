@@ -1740,14 +1740,6 @@ en-US:
   allowsBuilding: Allows building
   prisonType1: Prison
   prisonType2: Kennel
-  ITEMS: ITEMS
-  CONDITIONS: CONDITIONS
-  CATEGORIES: CATEGORIES
-  RESEARCH: RESEARCH
-  MANUFACTURE: MANUFACTURE
-  SERVICES: SERVICES
-  DOWNLOADS: DOWNLOADS
-  STARTING BONUSES: STARTING BONUSES
   STR_STARCON_GROUND_OR_UNDETECTABLE: Ground or undetectable vessels
   STR_STARCON_ACADEMY_CRUISE: Academy cruise
   STR_STARCON_SPACE_FREIGHTER: Space Freighter
@@ -1820,6 +1812,7 @@ en-US:
   weapon_type_10: Cloaking
   weapon_type_11: Fixed  
   About XPedia: About
+  en-US:
   aboutexport: If you run xpedia in node.js mode, click this to export as a single file. Will take some seconds to complete.
   aboutxpedia: |
     <h1 id="xpedia2">xpedia2</h1>

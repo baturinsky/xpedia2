@@ -23,6 +23,7 @@
 
 html {
   background: var(--background);
+  font-size: 12pt;
 }
 
 body {
@@ -30,10 +31,13 @@ body {
     -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen-Sans, Cantarell,
     "Helvetica Neue", sans-serif;
   color: var(--text);
-  font-size: 12pt;
   width: 100%;
   height: 100%;
   letter-spacing: 0pt;
+}
+
+table {
+  font-size: inherit;
 }
 
 * {
@@ -46,6 +50,15 @@ nobr {
   page-break-inside: avoid;
   break-inside: avoid;
 }
+
+.clickable{
+  cursor: pointer;
+}
+
+.clickable:hover{
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
 
 a {
   color: var(--link);
@@ -68,7 +81,7 @@ background: var(--table-main);
 }*/
 
 .main-table {
-  border: solid 0.2px var(--border);
+  border: solid 1px var(--border);
   border-collapse: collapse;
   width: 100%;
   max-width: 90vw;
@@ -993,6 +1006,15 @@ select{
   color: var(--text);
   border: 0px;  
   cursor: pointer;
+}
+
+.select-language .navbar-dropdown{
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
+.select-language .navbar-dropdown div{
+  padding: 0.2rem;
 }
 
 @media screen and (max-width: 1300px) {

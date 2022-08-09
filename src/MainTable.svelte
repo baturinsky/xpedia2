@@ -9,7 +9,7 @@
 
   $: {
     console.log(item);
-    if (!sort.exclude) sort.exclude = ["type", "name"];
+    if (!sort.exclude) sort.exclude = ["type", "name", "id"];
     sorted = sortFirstLast(item, sort);
   }
 </script>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { rul } from "./Ruleset";
+  import { rul, Article } from "./Ruleset";
   import Illustration from "./Illustration.svelte";
   import Item from "./Item.svelte";
   import Armor from "./Armor.svelte";
@@ -21,6 +21,7 @@
   import { createEventDispatcher } from "svelte";
   const dispatch = createEventDispatcher();
 
+  /**@type {Article}*/
   export let article = {} as any;
   export let query;
   let textwithHighlights;
@@ -36,7 +37,7 @@
       if (lookup) textwithHighlights = rul.tr(lookup);
     }
 
-    other = article.type_id == "OTHER" ? { BaseServices }[article.id] : false;
+    other = article.section == "OTHER" ? { BaseServices }[article.id] : false;
 
     if (query && false) {
       for (let word of query.split()) {
@@ -74,11 +75,11 @@
 
 {#if article.id == "SERVICES"}
   <svelte:component this={BaseServices} />
-{:else if article.type_id == "CONDITIONS"}
+{:else if article.section == "CONDITIONS"}
   <Conditions conditions={rul.startingConditions[article.id]} />
-{:else if article.type_id == "CATEGORIES"}
+{:else if article.section == "CATEGORIES"}
   <LinksPage links={rul.categories[article.id]} />
-{:else if article.type_id == "PEDIA" || article.type_id == "TYPE"}
+{:else if article.section == article.id}
   <LinksPage links={rul.sections[article.id].articles.map((a) => a.id)} />
 {/if}
 
@@ -134,14 +135,6 @@
       <Facility facility={rul.facilities[article.id]} />
     {/if}
 
-    {#if article.id in rul.manufacture}
-      <Manufacture manufacture={rul.manufacture[article.id]} />
-    {/if}
-
-    {#if article.id in rul.research}
-      <Research research={rul.research[article.id]} />
-    {/if}
-
     {#if article.id in rul.soldierBonuses}
       <MainTable item={rul.soldierBonuses[article.id]} title="Bonuses" />
     {/if}
@@ -156,7 +149,7 @@
     {/if}
 
     {#if article.id in rul.soldierTransformation    }
-      <MainTable item={rul.soldierTransformation[article.id]} title="Transfomration" />      
+      <MainTable item={rul.soldierTransformation[article.id]} title="Transformation" />      
     {/if}
 
     {#if article.id in rul.soldiers    }
@@ -175,9 +168,13 @@
       <Commendation com={rul.commendations[article.id]} />
     {/if}
 
-    <!--{#each article.lookup as researchId}
-        <Research research={rul.research[researchId]} title={researchId} />
-      {/each}-->
+    {#if article.id in rul.manufacture}
+      <Manufacture manufacture={rul.manufacture[article.id]} />
+    {/if}
+
+    {#if article.id in rul.research}
+      <Research research={rul.research[article.id]} />
+    {/if}
 
     {#if !(article.id in rul.units)}
       <Illustration id={article.image_id} />

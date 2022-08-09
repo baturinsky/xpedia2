@@ -10,12 +10,13 @@
 
 <table class="main-table base-services">
 
-  <tr class="table-header"><td><Tr s="Facility"/></td><td><Tr s="Service"/></td></tr>
-  {#each Object.entries(rul.baseServices) as service}
-    <tr class={service[0] == query?"highlight":""}>
-      <td><a class=".services" color=cyan href={'##' + service[0]}>{@html rul.tr(service[0])}</a></td>
+  <tr class="table-header"><td><Tr s="Service"/></td><td><Tr s="Facility"/></td></tr>
+  {#each rul.sortStrings(Object.keys(rul.baseServices)) as name}
+    {@const items = rul.baseServices[name]}
+    <tr class={name == query?"highlight":""}>
+      <td><a class=".services" color=cyan href={'##' + name}><Tr s={rul.tr(name)}/></a></td>
       <td>
-        <LinksList items={service[1].providedBy} />
+        <LinksList items={items.providedBy} />
       </td>
     </tr>
   {/each}

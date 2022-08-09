@@ -20,7 +20,7 @@
   let searchDelayHandle = null;
   let seeSide = true;
   let hugeFont = false;
-  let allowHugeFont = false;
+  let allowHugeFont = true;
   let showDropdown = false;
   let showLanguagesDropdown = false;
   let tooltip;
@@ -139,7 +139,7 @@
 
   $: {
     if (article) console.info(article);
-    //document.documentElement.style.fontSize = hugeFont ? "24pt" : "12pt";
+    document.documentElement.style.fontSize = hugeFont ? "18pt" : "12pt";
   }
 
   let sortArticles = false;
@@ -266,16 +266,16 @@
         <div class="flex-horisontal" style="flex-wrap:nowrap">
           <div class="navbar-auto navbar-list">
             <a href="##MAIN" style="text-decoration:underline;">
-              {rul.tr("HOME")}
+              <Tr s={"HOME"}/>
             </a>
             <div style="height:0.5em;" />
             {#each rul.sectionsOrder as section, i}
-              <a href={"##" + section.id}>{rul.tr(section.id)}</a>
+              <a href={"##" + section.id}><Tr s={section.id}/></a>
             {/each}
           </div>
           <div class="navbar-custom navbar-list">
             {#each rul.typeSectionsOrder as section, i}
-              <a href={"##" + section.id}>{rul.tr(section.id)}</a>
+              <a href={"##" + section.id}><Tr s={section.id}/></a>
             {/each}
           </div>
         </div>
@@ -288,8 +288,6 @@
     >
       {currentSection ? rul.tr(currentSection.id) : ""}
     </a>
-
-    <div class="stretcher" />
 
     <!-- svelte-ignore a11y-mouse-events-have-key-events -->
     <div
@@ -306,10 +304,19 @@
       👁
     </div>
 
-    {#if rul.config && rul.config.languages && rul.config.languages.length > 1}
+    <div class="stretcher" />
+
+    {#if allowHugeFont}
+      <button class="navbar-button" on:click={(e) => (hugeFont = !hugeFont)}>
+        <span style="font-size:150%">A</span>
+        <span style="font-size:75%">A</span>
+      </button>
+    {/if}    
+
+    {#if rul.langNames?.length > 1}
       <!-- svelte-ignore a11y-mouse-events-have-key-events -->
       <div
-        class="navbar-dropdown-container"
+        class="navbar-dropdown-container select-language"
         on:mouseover={(e) => !isTouch && (showLanguagesDropdown = true)}
         on:mouseout={(e) => !isTouch && (showLanguagesDropdown = false)}
       >
@@ -317,7 +324,7 @@
           class="navbar-button"
           on:mousedown={(e) => (showLanguagesDropdown = !showLanguagesDropdown)}
         >
-          <big>Aあ</big>
+          <big><Tr s={rul.langName}/></big>
         </div>
         <div
           class="navbar-dropdown"
@@ -325,25 +332,19 @@
             ? "visibility:visible"
             : "visibility:hidden"}
         >
-          {#each rul.config.languages as lang}
-            <a href="{lang.save_as}##{id}">{lang.name}</a>
+          {#each rul.langNames as lang}
+            <div class="clickable" on:click={e=>selectLang(lang)}><nobr><Tr s={lang}/></nobr></div>
           {/each}
         </div>
       </div>
     {/if}
 
-    {#if allowHugeFont}
-      <button class="navbar-button" on:click={(e) => (hugeFont = !hugeFont)}>
-        <span style="font-size:150%">A</span>
-        <span style="font-size:75%">A</span>
-      </button>
-    {/if}
-
+    <!--
     <select on:change={e=>{selectLang(e.target.value)}}>
       {#each rul.langNames as langName}
         <option selected={lang == langName} value={langName}>{rul.str(langName) || langName}</option>
       {/each}
-    </select>
+    </select>-->
 
     <div class="navbar-search">
       <input
@@ -375,7 +376,7 @@
               bind:this={activeOption}
               class="active-article-option side-link"
             >
-              <Tr s={option.title} />
+              <Tr s={option.id} />
             </a>
           {:else}
             <a
@@ -383,7 +384,7 @@
               href={"##" + option.id}
               on:click={() => (ignoreNextAutoscroll = true)}
             >
-              <Tr s={option.title} />
+              <Tr s={option.id} />
             </a>
           {/if}
         {/each}

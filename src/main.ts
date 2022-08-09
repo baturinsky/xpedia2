@@ -41,7 +41,6 @@ addEventListener("load", showPedia)
 
 //test();
 
-
 addEventListener("hashchange", e => {
   if (location.hash.substring(0, 8) != "##SEARCH") {
     let input = document.getElementById("search-string");
