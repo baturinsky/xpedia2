@@ -69,8 +69,8 @@
 <h1>
   <nobr><Tr s={article.title} /></nobr>
   <span style="flex:1" />
-  <button class="page-turn" on:click={(e) => dispatch("prev")}>&lt;</button>
-  <button class="page-turn" on:click={(e) => dispatch("next")}>&gt;</button>
+  <button class="page-turn" on:click={(e) => dispatch("prev")}>⮜</button>
+  <button class="page-turn" on:click={(e) => dispatch("next")}>⮞</button>
 </h1>
 
 {#if article.id == "SERVICES"}

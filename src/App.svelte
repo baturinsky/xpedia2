@@ -3,7 +3,7 @@
   import { LinksPage, Tr, tr, favicon, divider } from "./Components";
   import Article from "./Article.svelte";
   import { loadByHttp, loadPacked } from "./load";
-  import { setContext } from "svelte";
+  import { afterUpdate, setContext } from "svelte";
   import { revealed, reveal, revealLock } from "./store";
   import Download from "./Download.svelte";
   import {delay} from "./util"
@@ -25,9 +25,30 @@
   let showLanguagesDropdown = false;
   let tooltip;
   let searching = false;
+  let saveLoaded = false;
 
   let isTouch = "ontouchstart" in window;
   let lang;
+
+  afterUpdate(()=>{
+    if(saveLoaded)
+      saveState();
+  })
+
+  function saveState(){
+    localStorage.xpediaSettings = JSON.stringify({hugeFont, seeSide, lang, sortArticles});
+  }
+
+  function loadState(){
+    let data = JSON.parse(localStorage.xpediaSettings);
+    if(data && typeof data == "object"){
+      hugeFont = data.hugeFont;
+      seeSide = data.seeSide;
+      sortArticles = data.sortArticles;
+      selectLang(data.lang);      
+    }      
+    saveLoaded = true;
+  }
 
   /**
    *
@@ -50,6 +71,8 @@
     }
       
     rul.load(data);
+    await delay(10);
+    loadState();
   }
 
   setContext("main", { revealed: () => revealed });
@@ -57,8 +80,8 @@
   let rulesLoaded = loadRules();
 
   function selectLang(n){
-    lang = n;
-    rul.selectLang(n)
+    if(rul.selectLang(n))
+      lang = n;    
   }
 
   function goTo(id) {
@@ -444,6 +467,12 @@
           <a href={"##" + section.id}>{section.title}</a>
         {/each}
       </p>
+      <h4><Tr s="Mods"/></h4>
+      <ul>
+        {#each rul.mods as mod}
+          <li>{mod.name} {mod.version}</li>
+        {/each}
+      </ul>
       <h4><Tr s="About XPedia"/></h4>
       {#if !packedData}
         <Tr s="aboutexport"/>

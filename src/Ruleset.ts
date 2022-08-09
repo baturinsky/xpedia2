@@ -859,13 +859,13 @@ export default class Ruleset {
   handSprite: string[] = [];
   baseSprite: string[] = [];*/
   sounds: string[] = [];
-  modName: string;
   config: any;
   baseServices: { [key: string]: Service } = {};
   redirect: { [key: string]: string } = {};
 
   lang: { [key: string]: string } = {};
   langs: { [key: string]: { [key: string]: string } } = {};
+  mods: { [key: string]: { [key: string]: string } } = {};
   langName: string;
   langNames: string[];
   convertedLangs = {};
@@ -1296,9 +1296,9 @@ export default class Ruleset {
     rul = this;
   }
 
-  load({ ruls, langs }) {
-    this.src = { ruls, langs:{} };
-    this.modName = "Piratez";
+  load({ ruls, langs, mods }) {
+    this.src = { ruls, langs:{}, mods };
+    this.mods = mods;
     this.langs = langs;
     for(let langName in this.langs){
       this.src.langs[langName] = {...this.langs[langName]};
@@ -1325,6 +1325,11 @@ export default class Ruleset {
   }
 
   selectLang(name: string) {
+    if(!this.langs[name]){
+      console.log("no language", name);
+      return false;
+    }
+
     this.langName = name
 
     if (name == defaultLanguage) {
@@ -1336,6 +1341,8 @@ export default class Ruleset {
 
     if(!this.search[name])
       this.search[name] = new Search();
+    
+    return true;
   }
 
   addToSection(article: Article, sectionId: string) {

@@ -31,9 +31,8 @@ function showPedia() {
 
 
 async function test() {
-  let { ruls, langs } = await loadByHttp();
   let rul = new Ruleset()
-  rul.load({ ruls, langs });
+  rul.load(await loadByHttp());
 }
 
 

@@ -153,8 +153,8 @@ export async function loadByHttp() {
     [loadRulsFromMods(activeModsMetadata),
     loadLanguagesFromDirs(activeModsMetadata.map(m => `${m.dir}Language/`))]
   );
-
-  return { ruls, langs }
+  
+  return { ruls, langs, mods: activeModsMetadata }
 }
 
 async function loadLanguagesFromDirs(dirs: string[]) {

@@ -679,11 +679,12 @@ svg {
 }
 
 .page-turn {
-  border-radius: 50%;
-  height: 2rem;
-  width: 2rem;
-  margin: 0.5rem;
+  height: 4vmin;
+  width: 5vmin;
+  margin: 0.5vmin;
   font-size: 70%;
+  border: 0px;  
+  background: var(--background);
 }
 
 h1 {
