@@ -3,11 +3,22 @@
   import { Link, LinksList, Tr  } from "./Components";
 
   export let val;
+  export let obs = null;
   export let depth = 2;
+
+  $:{
+    if(obs){
+      console.log(rul.obsSprite(obs,val))
+    }
+  }
 </script>
 
 {#if depth == 0}
 ...
+{:else if val == null}
+‒
+{:else if obs}
+  <img src={rul.obsSprite(obs,val)} alt={val} style="max-width:320px"/>
 {:else if Array.isArray(val)}
   <LinksList items={val} vertical={false} />
 {:else if val instanceof Object}

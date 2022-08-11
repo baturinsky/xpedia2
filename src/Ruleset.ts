@@ -5,11 +5,10 @@ import { camelToUnderscore, delay, getFlagEmoji } from './util';
 //import countryCodeToFlag from "country-code-to-flag";
 
 export let rul!: Ruleset;
-export type SortFirsLastOptions = { first?: string[], last?: string[], exclude?: string[] }
+export type SortFirsLastOptions = { first?: string[], last?: string[], exclude?: string[], sortBy?:Function }
 export const defaultLanguage = "en-US"
 
-const obsTables = { "BIGOBS.PCK": "big", "FLOOROB.PCK": "floor", "HANDOB.PCK": "hand", "BASEBITS.PCK": "base" };
-
+const obsTables = { "BIGOBS.PCK": "big", "FLOOROB.PCK": "floor", "HANDOB.PCK": "hand", "BASEBITS.PCK": "base",  "INTICON.PCK":"icon" };
 
 function orderedFilteredEntries(item, fields) {
   if (item == null)
@@ -23,11 +22,15 @@ export function sortFirstLast(item, options: SortFirsLastOptions = {}) {
 
   let first = orderedFilteredEntries(item, options.first);
   let last = orderedFilteredEntries(item, options.last);
-  let exclude = orderedFilteredEntries(item, [...(options.exclude || []), "id"]);
+  let exclude = orderedFilteredEntries(item, [...(options.exclude || []), ...["id", "list", "name"]]);
   let special = new Set([...(options.first || []), ...(options.last || []), ...(options.exclude || [])]);
   let misc = Object.entries(item).filter(([k, v]) => !special.has(k));
-  misc = misc.sort((a, b) => a[0] > b[0] ? 1 : -1)
-  let all = [...first, ...misc.sort((a, b) => a[0] > b[0] ? 1 : -1), ...last]
+  if(options.sortBy){
+    misc = misc.sort((a, b) => options.sortBy(a[1]) > options.sortBy(b[1]) ? 1 : -1)
+  } else {
+    misc = misc.sort((a, b) => a[0] > b[0] ? 1 : -1)
+  }
+  let all = [...first, ...misc, ...last]
   return { first, misc, last, exclude, all };
 }
 
@@ -63,6 +66,16 @@ export class Entry {
     });
   }
 
+  sortField(field, noTitle=false){
+    if(field == "id" && !noTitle)
+      return this.title;
+    return this[field];
+  }
+
+  get title(){
+    return rul.tr(this.id);
+  }
+
   static reserve(raw: any, collection) {
     let id = raw.id || raw.name || raw.type;
     if (rul[collection][id]) {
@@ -93,6 +106,20 @@ export class Entry {
   }
 
 }
+
+export class MissionScript extends Entry {
+  researchTriggers;
+  researchNeeded : string[];
+  researchForbidden : string[];
+  constructor(raw){
+    super(raw, "missionScripts")
+    if(this.researchTriggers){
+      this.researchNeeded = Object.keys(this.researchTriggers).filter(k=>this.researchTriggers[k]);
+      this.researchForbidden = Object.keys(this.researchTriggers).filter(k=>!this.researchTriggers[k]);
+    }
+  }
+}
+
 
 export class Soldiers extends Entry {
   armors: string[];
@@ -239,8 +266,6 @@ export class AlienDeployment extends Entry {
 
   constructor(raw: any) {
     super(raw, "alienDeployments");
-    let condition = rul.startingConditions[this.startingCondition];
-    if (condition) condition.deployments.push(this.type);
     let allItems = new Set<string>();
     for (let d of this.data || []) {
       if (Array.isArray(d.itemSets)) {
@@ -266,12 +291,14 @@ export class CraftWeapon extends Entry {
 }
 
 export class Craft extends Entry {
-  startingConditions: string[] = [];
+  startingConditions: string[];
   weaponTypes: string[][];
-  allWeaponTypes: string[] = [];
+  allWeaponTypes: string[];
+  sprite: number;
 
   constructor(raw: any) {
     super(raw, "crafts");
+    this.allWeaponTypes = this.allWeaponTypes || [];
     if (this.weaponTypes) {
       for (let slot in this.weaponTypes) {
         if (!Array.isArray(this.weaponTypes[slot]))
@@ -285,6 +312,7 @@ export class Craft extends Entry {
       }
       this.allWeaponTypes = [...new Set(this.allWeaponTypes)];
     }
+    //this.sprite = rul.obsSprite("baseSprite", +this.sprite + 33);
   }
 }
 
@@ -309,17 +337,14 @@ export class Facility extends Entry {
 }
 
 export class StartingConditions extends Entry {
-  allowedCraft: string[] = [];
-  allowedItemCategories: string[] = [];
-  allowedArmors: string[] = [];
-  allowedVehicles: string[] = [];
-  deployments: string[] = [];
+  allowedCraft: string[];
+  allowedItemCategories: string[];
+  allowedArmors: string[];
+  allowedVehicles: string[];
+  deployments: string[];
 
-  constructor(raw: any) {
+  constructor(raw: any) {    
     super(raw, "startingConditions")
-    rul.lang[this.type] = rul.tr(this.type.substr(11));
-    for (let craft of this.allowedCraft)
-      rul.crafts[craft].startingConditions.push(this.type);
   }
 }
 
@@ -336,6 +361,8 @@ export class Stats {
   psiSkill: number;
   melee: number;
 }
+
+export const statsList = ["tu", "stamina", "health", "bravery", "reactions", "firing", "throwing", "strength", "psiStrength", "psiSkill", "melee"];
 
 export class Unit extends Entry {
   stats: Stats;
@@ -639,17 +666,18 @@ export class Sprite {
 
 }
 
-export class Armor {
-  type: string;
+export class Armor extends Entry {
   sprite: string;
   dollSprites: { [key: string]: string[] } = {};
+  damageModifier: number[];
   armor: { [key: string]: number } = {};
   users: string[];
   [key: string]: any;
 
   constructor(raw: any) {
-    Object.assign(this, raw);
-    rul.armors[raw.type] = this;
+    super(raw, "armors")
+    if(!this.size)
+      this.size = 1;
 
     if (this.layersDefinition) {
       let prefix = this.layersDefaultPrefix;
@@ -704,10 +732,19 @@ export class Armor {
       }
     }
   }
+
+  sortField(n){
+    if(statsList.includes(n))
+      return this.stats?this.stats[n] || 0:0;
+    if(damageTypes.includes(n))
+      return (this.damageModifier[damageTypes.indexOf(n)] || 0) * 100;
+    return this[n];
+  }
+
 }
 
 export class Item extends Entry {
-  sprite: string;
+  //sprite: string;
   battleType: number;
   invWidth: number;
   invHeight: number;
@@ -743,15 +780,17 @@ export class Item extends Entry {
   requiresBuy: string[];
   heldBy: Set<string>;
 
+  get sprite(){
+    if (this.bigSprite) {
+      return rul.obsSprite("big", +this.bigSprite);
+    }  
+  }
+
   constructor(raw: any) {
     super(raw, "items")    
 
     this.invWidth = this.invWidth || 1;
     this.invHeight = this.invHeight || 1;
-
-    if (this.bigSprite) {
-      this.sprite = rul.obsSprite("big", +this.bigSprite);
-    }
 
     let t = this as any;
 
@@ -858,11 +897,8 @@ export default class Ruleset {
   startingConditions: { [key: string]: StartingConditions } = {};
   events: { [key: string]: Event } = {};
   eventScripts: { [key: string]: EventScript } = {};
-  obs = { big: [], floor: [], hand: [], base: [] };
-  /*bigSprite: string[] = [];
-  floorSprite: string[] = [];
-  handSprite: string[] = [];
-  baseSprite: string[] = [];*/
+  missionScripts: { [key: string]: MissionScript } = {};
+  obs = { big: [], floor: [], hand: [], base: [], icon: [] };
   sounds: string[] = [];
   config: any;
   baseServices: { [key: string]: Service } = {};
@@ -1065,6 +1101,10 @@ export default class Ruleset {
     crosslink(this.alienDeployments, "enviroEffects", this.enviroEffects, "deployments");
     crosslink(this.craftWeapons, "weaponType", this.weaponTypes, "weapons", "weaponTypes");
     crosslink(this.crafts, "allWeaponTypes", this.weaponTypes, "crafts", "weaponTypes");
+    crosslink(this.startingConditions, "allowedCraft", this.crafts, "startingConditions");
+    crosslink(this.alienDeployments, "startingCondition", this.startingConditions, "deployments");
+    crosslink(this.missionScripts, "researchNeeded", this.research, "unlocksMissions");    
+    crosslink(this.missionScripts, "researchForbidden", this.research, "stopsMissions");    
 
     for (let facility of Object.values(this.facilities)) {
       if (facility.buildCostItems) {
@@ -1325,7 +1365,7 @@ export const entryConstructors = {
   eventScripts: EventScript,
   soldierTransformation: SoldierTransformation,
   startingConditions: StartingConditions,
-  missionScripts: Entry,
+  missionScripts: MissionScript,
   alienMissions: Entry,
   alienDeployments: AlienDeployment,
   research: Research,
@@ -1392,3 +1432,7 @@ function crosslink(collection1, prop1, collection2, prop2, prefix?) {
     backLink(t.id, t[prop1], collection2, prop2, prefix);
   }
 }
+
+/*function nullIfEmpty(a){
+  return a?.length == 0?undefined:a;
+}*/

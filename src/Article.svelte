@@ -1,12 +1,15 @@
 <script lang="ts">
-  import { rul } from "./Ruleset";
+  import { rul, sortFirstLast, damageTypes, Stats, statsList } from "./Ruleset";
   import Illustration from "./Illustration.svelte";
   import Conditions from "./Conditions.svelte";
   import BaseServices from "./BaseServices.svelte";
+  import TableSort from "./TableSort.svelte"
+  import SectionTable from "./SectionTable.svelte"
   import { Link, LinksPage, Value, LinksList, Tr } from "./Components";
 
   import { createEventDispatcher } from "svelte";
-import ArticleBody from "./ArticleBody.svelte";
+  import ArticleBody from "./ArticleBody.svelte";
+
   const dispatch = createEventDispatcher();
 
   /**@type {Article}*/
@@ -14,6 +17,7 @@ import ArticleBody from "./ArticleBody.svelte";
   export let query;
   let textwithHighlights;
   let other = false;
+  let aId;
 
   $: {
     if(article == null)
@@ -26,6 +30,7 @@ import ArticleBody from "./ArticleBody.svelte";
     }
 
     other = article.section == "OTHER" ? { BaseServices }[article.id] : false;
+    aId = article.id;
   }
 </script>
 
@@ -53,9 +58,23 @@ import ArticleBody from "./ArticleBody.svelte";
 
 {#if article.id == "SERVICES"}
   <svelte:component this={BaseServices} />
-{:else if article.section == "CONDITIONS"}
+{:else if article.id == "FACILITIES"}
+  <SectionTable {aId}
+    entries={Object.values(rul.facilities)} 
+    fields={["size", "monthlyCost", "storage", "personnel","workshops", "aliens"]}
+    extraFields={["buildCost", "buildTime", "prisonType", "manaRecoveryPerDay", "sickBayAbsoluteBonus", "sickBayRelativeBonus"]}
+  />
+{:else if article.id == "CRAFTS"}
+  <SectionTable {aId} entries={Object.values(rul.crafts)} fields={["speedMax","soldiers"]}/>
+{:else if article.id == "ARMORS"}
+  <SectionTable {aId}
+    entries={Object.values(rul.armors)} 
+    fields={["size", "frontArmor", "sideArmor", "rearArmor", "underArmor"]}
+    extraFields={[...damageTypes, ...statsList]}
+  />
+{:else if article.id == "CONDITIONS"}
   <Conditions conditions={rul.startingConditions[article.id]} />
-{:else if article.section == "CATEGORIES"}
+{:else if article.id == "CATEGORIES"}
   <LinksPage links={rul.categories[article.id]} />
 {:else if article.section == article.id}
   <LinksPage links={rul.sections[article.id].articles.map((a) => a.id)} />

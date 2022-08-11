@@ -75,11 +75,6 @@ a:hover {
   background: var(--table-secondary);
 }
 
-/*
-.main-table > tr:nth-child(even) {
-background: var(--table-main);
-}*/
-
 .main-table {
   border: solid 1px var(--border);
   border-collapse: collapse;
@@ -595,6 +590,13 @@ button {
   padding: 1em;
 }
 
+.crafts-grid{
+  display: grid;
+  grid-template-columns: repeat(6, auto);
+  justify-content: left;
+  gap: 1rem;
+}
+
 .navbar-custom{
   display: grid;
   grid-template-columns: auto auto;
@@ -1034,6 +1036,50 @@ select{
 
 button.download{
   padding:0.5rem;
+}
+
+
+
+
+.section-table{
+  border: solid 1px var(--border);
+  margin-bottom: 3px;
+}
+
+.section-table td{ 
+  text-align: center;
+}
+
+.section-table thead{
+  cursor: pointer; 
+  user-select: none;
+}
+
+.section-table thead td{
+  max-width: 30rem;
+}
+
+
+.section-table tbody td{ 
+  padding: 0.1pt;
+  text-align: center;
+}
+
+
+.section-table > tr:nth-child(odd) {
+  background: var(--table-secondary);
+}
+
+.extra-fields {
+  margin-bottom: 1rem;
+}
+
+.extra-fields .off {
+  opacity: 0.6;
+}
+
+.sublist{
+  margin-left: 0.5rem;
 }
 
 @media screen and (max-width: 1300px) {

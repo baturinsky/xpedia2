@@ -45,9 +45,11 @@
   {#each Object.keys(items) as subfield, j}
     <div class={j > 0 && "top-border"}>
       {#if !Array.isArray(items)}
-        <Value val={subfield} depth={depth-1}/> :
+          <Value val={subfield} depth={depth-1}/> :
       {/if}
-      <Value val={items[subfield]} depth={depth-1}/>
+      <div class="sublist">
+        <Value val={items[subfield]} depth={depth-1}/>
+      </div>
     </div>
   {/each}
 {:else if items.length == null}
@@ -60,7 +62,9 @@
   <span class="links-list">
     {#each sorter(items.map((i) => i?.type || i)) as item, i}
       {#if Array.isArray(item)}
-        <LinksList items={item} depth={depth-1}/>
+        <div class="sublist">
+          <LinksList items={item} depth={depth-1}/>
+        </div>
       {:else}
         {@html divider(i, { vertical, cols })}<Link href={item} />
       {/if}

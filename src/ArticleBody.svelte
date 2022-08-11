@@ -49,7 +49,7 @@ const renderers = {
   soldiers: {sort:{first:["statCaps"],last:["armors"]}},
   alienRaces: {title:"Race"},
   events: {},
-  missionScripts: {},
+  missionScripts: {sort:{exclude:["researchNeeded", "researchForbidden"]}},
   alienMissions: {},
   startingConditions: {},
   enviroEffects: {},
@@ -78,6 +78,6 @@ const renderers = {
   {#if typeof ren == "function"}
     <svelte:component this={ren} entry={rul[key][id]} {text}/>
   {:else}
-    <MainTable entry={rul[key][id]} title={ren.title!=null?ren.title:singular(key)}/>
+    <MainTable entry={rul[key][id]} sort={ren.sort} title={ren.title!=null?ren.title:singular(key)}/>
   {/if}
 {/each}

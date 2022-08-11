@@ -8,8 +8,7 @@
   let sorted;
 
   $: {
-    console.log(entry);
-    if (!sort.exclude) sort.exclude = ["type", "name", "id"];
+    console.log(entry, sort);
     sorted = sortFirstLast(entry, sort);
   }
 </script>
