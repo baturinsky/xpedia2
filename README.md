@@ -1,4 +1,6 @@
 # xpedia2
+Check out https://baturinsky.com/xpedia for live version with N.1 XPiratez loaded in
+
 Sequel to https://github.com/baturinsky/xpedia
 
 I'm changing a lot of things around, so have created it as a separate ptoject.
