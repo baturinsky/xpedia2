@@ -2,10 +2,10 @@
   import { rul } from "./Ruleset";
   import { Value, LinksList, emptyImg } from "./Components";
 
-  export let craft;
+  export let entry;
 
   $: {
-    console.info(craft);
+    console.info(entry);
   }
 </script>
 
@@ -13,7 +13,7 @@
   <tr class="table-header">
     <td colspan="2">{rul.tr("Craft")}</td>
   </tr>
-  {#each Object.entries(craft).sort( (a, b) => (a[0] > b[0] ? 1 : -1) ) as [key, prop]}
+  {#each Object.entries(entry).sort( (a, b) => (a[0] > b[0] ? 1 : -1) ) as [key, prop]}
     {#if !["type", "battlescapeTerrainData", "craftInventoryTile", "deployment"].includes(key)}
       <tr>
         <Value val={key} />
@@ -34,8 +34,6 @@
             />
           {:else if ["requiresBaseFunc"].includes(key)}
             <LinksList items={prop} />
-          {:else if ["weaponTypes"].includes(key)}
-            <LinksList items={prop.map(slot=>(slot.map?slot:[slot]).map(t=>"weapon_type_"+t))} />
           {:else}
             <Value val={prop} />
           {/if}

@@ -1,12 +1,12 @@
 <script>
-  import { rul, sortFirstLast } from "./Ruleset";
+  import { rul, sortFirstLast, damageTypes } from "./Ruleset";
   import SpecialBonus from "./SpecialBonus.svelte";
   import Link from "./Link.svelte";
   import CanvasImage from "./CanvasImage.svelte";
   import Value from "./Value.svelte";
   import AlterList from "./AlterList.svelte";
 
-  export let item;
+  export let entry;
   let title;
   let attacks;
   let sorted;
@@ -19,19 +19,21 @@
   }
 
   $: {
-    attacks = item.attacks().slice();
+    console.info(entry);
+
+    attacks = entry.attacks().slice();
     title =
-      (item.battleType ? rul.tr("battleType" + item.battleType) + " " : "") +
+      (entry.battleType ? rul.tr("battleType" + entry.battleType) + " " : "") +
       rul.tr("Item");
 
-    if (item.compatibleAmmo)
-      for (let ammoId of item.compatibleAmmo) {
+    if (entry.compatibleAmmo)
+      for (let ammoId of entry.compatibleAmmo) {
         let ammo = rul.items[ammoId];
         let ammoAttack = ammo.attacks()[0];
         attacks.push(ammoAttack);
       }
 
-    sorted = sortFirstLast(item, {
+    sorted = sortFirstLast(entry, {
       first: [
         "costBuy",
         "costSell",
@@ -58,19 +60,19 @@
         "categories",
         "armors",
         "compatibleWeapons",
-        "compatibleAmmo",
         "clipSize",
         "liveAlien",
         "recover",
         "prisonType",
         "manufacture",
         "componentOf",
+        "deployments"
       ],
       exclude: [
         "requiresBuy",
         "sprite",
         "type",
-        "ammo",
+        "compatibleAmmo",
         "_attacks",
         "damageAlter",
         "accuracyMelee",
@@ -86,21 +88,20 @@
     console.info(attacks);
   }
 
-  console.info(item);
 </script>
 
 <table class="main-table">
   <tr class="table-header">
     <td colspan="2">{title}</td>
   </tr>
-  {#if (item.sprite && item.sprite != "Resources/Blanks/Blank.png") || attacks.length > 0}
+  {#if (entry.sprite && entry.sprite != "Resources/Blanks/Blank.png") || attacks.length > 0}
     <tr>
       <td colspan="2" class="td-attacks-table">
         <div>
           {#if attacks.length > 0}
             <table class="attacks-table">
               <thead>
-                {#if item.battleType == 2}
+                {#if entry.battleType == 2}
                   <td colspan="3" />
                 {:else}
                   <td>{rul.tr("mode")}</td>
@@ -175,22 +176,22 @@
                         {attack.pellets > 1 ? " ×" + attack.pellets : ""}
                       <br />
                       {#if attack.damageType}
-                        <Link href={rul.damageTypes[attack.damageType]} />
+                        <Link href={damageTypes[attack.damageType]} />
                       {/if}
                     {/if}
                   </td>
                 </tr>
 
-                {#if attack.mode == "melee" && item.meleeAlter}
-                  <AlterList items={item.meleeAlter} />
+                {#if attack.mode == "melee" && entry.meleeAlter}
+                  <AlterList items={entry.meleeAlter} />
                 {/if}
 
                 {#if attack.mode == "ammo" && attack.alter}
                   <AlterList items={attack.alter} />
                 {/if}
               {/each}
-              {#if item.damageAlter && item.battleType != 2}
-                <AlterList items={item.damageAlter} />
+              {#if entry.damageAlter && entry.battleType != 2}
+                <AlterList items={entry.damageAlter} />
               {/if}
             </table>
           {/if}
@@ -248,7 +249,7 @@
           {:else if key == "prisonType"}
             <Link href={"prisonType" + prop} />
           {:else if key == "costBuy"}
-            <Value val={prop} /> <Value val={item.requiresBuy || ""} />
+            <Value val={prop} /> <Value val={entry.requiresBuy || ""} />
           {:else}
             <Value val={prop} />
           {/if}

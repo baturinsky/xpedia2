@@ -4,14 +4,14 @@
   import { Link, LinksPage, Value, LinksList } from "./Components";
   import FacilitySprite from "./FacilitySprite.svelte";
 
-  export let facility;
+  export let entry;
   let seeStorageTiles = false;
   let size = 1;
 
   $: {
-    size = facility.size || 1;
+    size = entry.size || 1;
     console.log(size);
-    console.info(facility);
+    console.info(entry);
   }
 </script>
 
@@ -19,7 +19,7 @@
   <tr class="table-header">
     <td colspan="2">{rul.tr('Facility')}</td>
   </tr>
-  {#each sortFirstLast(facility, {first:["spriteShape"], exclude:["spriteFacility"]}).all as [key, prop]}
+  {#each sortFirstLast(entry, {first:["spriteShape"], exclude:["spriteFacility"]}).all as [key, prop]}
     {#if !['type', 'battlescapeTerrainData', 'craftInventoryTile', 'deployment'].includes(key)}
       <tr>
         <td class="padding-right">
@@ -54,9 +54,9 @@
           {:else if ['provideBaseFunc', 'requiresBaseFunc', 'forbiddenBaseFunc'].includes(key)}
             <LinksList items={prop} vertical={true} />
           {:else if ['spriteFacility', 'spriteShape'].includes(key)}
-            {#if facility.spriteFacility}
+            {#if entry.spriteFacility}
               <FacilitySprite {size} {prop} bottom={true}/>
-              <FacilitySprite {size} prop={facility.spriteFacility}/>
+              <FacilitySprite {size} prop={entry.spriteFacility}/>
             {:else}
               <FacilitySprite {size} {prop}/>
             {/if}            

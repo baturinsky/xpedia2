@@ -53,12 +53,10 @@
 {:else if items.length == null}
   <span class="links-list">
     {#each sorter(Object.keys(items)) as field, i}
-      {@html divider(i, { vertical, cols })}‏‏‎‎<nobr
-        ><Value val={items[field]}  depth={depth-1}/> <Link href={field} /></nobr
-      >
+    {@html divider(i, { vertical, cols })}‏‏‎‎<Link href={field} /> › <Value val={items[field]}  depth={depth-1}/>
     {/each}
   </span>
-{:else}
+{:else if items.map}
   <span class="links-list">
     {#each sorter(items.map((i) => i?.type || i)) as item, i}
       {#if Array.isArray(item)}
@@ -68,4 +66,6 @@
       {/if}
     {/each}
   </span>
+{:else}
+  {@debug items}
 {/if}

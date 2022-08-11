@@ -1,20 +1,20 @@
 <script lang="ts">
   import { Value, rul } from "./Components";
   import { sortFirstLast, SortFirsLastOptions } from "./Ruleset";
-  export let item;
+  export let entry;
   export let sort: SortFirsLastOptions = {};
   export let title: string;
   export let subtitle = "";
   let sorted;
 
   $: {
-    console.log(item);
+    console.log(entry);
     if (!sort.exclude) sort.exclude = ["type", "name", "id"];
-    sorted = sortFirstLast(item, sort);
+    sorted = sortFirstLast(entry, sort);
   }
 </script>
 
-{#if item == null}
+{#if entry == null}
   NULL
 {:else}
   <table class="main-table">

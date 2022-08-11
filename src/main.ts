@@ -1,7 +1,7 @@
-import Ruleset from "./Ruleset";
+import Ruleset, { loadRules } from "./Ruleset";
 import App from "./App.svelte";
 import { loadByHttp } from "./load";
-import { reveal, revealLock } from "./store";
+import { reveal, loaded } from "./store";
 
 function unescape(s) {
   let lookup = {
@@ -17,14 +17,17 @@ let app: App;
 function showPedia() {
   enableKeys();
 
-  let rulesText = unescape(document.body.textContent);
   document.body.innerHTML = "";
   document.body.style.display = "block";
-
+  
   new Ruleset();
+
+  loadRules().then(()=>{
+    loaded.set(true)
+  })
+
   //@ts-ignore
   app = new App({
-    props: { source: rulesText },
     target: document.body
   });
 };

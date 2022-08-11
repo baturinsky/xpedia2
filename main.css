@@ -122,6 +122,8 @@ background: var(--table-main);
 .main-table td {
   padding: 2px 5px;
   vertical-align: top;
+  max-width: 90vw;
+  break-inside: auto;
 }
 
 .main-table > tr > td:first-child {
@@ -168,6 +170,8 @@ em {
 }
 
 h1,
+h2,
+h3,
 h4 {
   color: #aaffff;
   font-variant: small-caps;
@@ -175,6 +179,11 @@ h4 {
 
 h4 {
   border-bottom: solid 1px var(--border);
+}
+
+h2{
+  text-align: center;
+  margin: 0.4rem;
 }
 
 .table-subheader {
@@ -584,6 +593,11 @@ button {
 
 .languages-dropdown a {
   padding: 1em;
+}
+
+.navbar-custom{
+  display: grid;
+  grid-template-columns: auto auto;
 }
 
 .navbar-custom a,
@@ -1016,6 +1030,10 @@ select{
 
 .select-language .navbar-dropdown div{
   padding: 0.2rem;
+}
+
+button.download{
+  padding:0.5rem;
 }
 
 @media screen and (max-width: 1300px) {

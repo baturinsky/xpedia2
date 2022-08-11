@@ -33,7 +33,6 @@
 
   $: {
     if (item) {
-      console.log(item);
       src = rul.sprite(item.sprite);
       maxWidth = 32 * item.invWidth;
       maxHeight = 32 * item.invHeight;

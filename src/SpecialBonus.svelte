@@ -1,5 +1,6 @@
 <script>
   import { rul } from "./Ruleset";
+  import Value from "./Value.svelte";
 
   export let bonus;
   export let plus = false;
@@ -14,13 +15,13 @@
           if (b != 0) {
             power = power * 1 + 1;
             flat.push([
-              rul.tr(type) + (power == 1 ? "" : "<sup>" + power + "</sup>"),
+              `<a href="##${type}">${rul.tr(type)}</a>` + (power == 1 ? "" : "<sup>" + power + "</sup>"),
               b,
             ]);
           }
         }
       } else {
-        if (bonus[type] != 0) flat.push([type, bonus[type]]);
+        if (bonus[type] != 0) flat.push([`<a href="##${type}">${rul.tr(type)}</a>`, bonus[type]]);
       }
     }
     flat = flat.sort((a, b) => (a[0] == "flatHundred" || a[0] == "flatOne" || a[0] < b[0] ? -1 : 1));
@@ -42,6 +43,6 @@
   {:else if b[0] == "flatOne"}
     {b[1]}
   {:else}
-    <nobr>{@html rul.tr(b[0])}{@html (b[1] != 1 ? `×<em>${b[1]}</em>` : "")}</nobr>
+    <nobr>{@html b[0]}{@html (b[1] != 1 ? `×<em>${b[1]}</em>` : "")}</nobr>
   {/if}
 {/each}

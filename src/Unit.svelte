@@ -1,14 +1,14 @@
 <script>
   import { Value, rul } from "./Components";
   import { sortFirstLast } from "./Ruleset";
-  export let unit;
+  export let entry;
   let sorted;
 
   $: {
-    console.log(unit);
-    sorted = sortFirstLast(unit, {
+    console.log(entry);
+    sorted = sortFirstLast(entry, {
       first: ["stats", "armor", "canSurrender"],
-      last: Object.keys(unit).filter((s) => s.indexOf("ound") != -1),
+      last: Object.keys(entry).filter((s) => s.indexOf("ound") != -1),
       exclude: ["type"],
     });
   }

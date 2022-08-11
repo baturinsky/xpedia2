@@ -3,10 +3,10 @@
   import { Link, LinksPage, Value } from "./Components";
   import Item from "./Item.svelte";
 
-  export let weapon;
+  export let entry;
 
   $: {
-    console.log(weapon);
+    console.log(entry);
   }
 </script>
 
@@ -14,7 +14,7 @@
   <tr class="table-header">
     <td colspan="2">Weapon</td>
   </tr>
-  {#each Object.entries(weapon).sort((a, b) => (a[0] > b[0] ? 1 : -1)) as prop}
+  {#each Object.entries(entry).sort((a, b) => (a[0] > b[0] ? 1 : -1)) as prop}
     {#if !["type"].includes(prop[0])}
       <tr>
         <td class="padding-right">
@@ -27,10 +27,10 @@
     {/if}
   {/each}
 </table>
-{#if weapon.launcher}
+{#if entry.launcher}
   <Item
-    item={rul.items[weapon.launcher]}
-    title={"Launcher: " + rul.tr(weapon.launcher)}
+    entry={rul.items[entry.launcher]}
+    title={"Launcher: " + rul.tr(entry.launcher)}
   />
 {/if}
 <!--{#if weapon.clip}

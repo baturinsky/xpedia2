@@ -1,15 +1,18 @@
 icon:
+  rank: 👑 
   bravery: 🎖️
   firing: 🎯
   melee: 🤼‍♀️
   psiSkill: 👄
   psiStrength: 🍑
+  psi: 💃
   reactions: 🤸
   stamina: 🏃
   energy: 🏃
   strength: 💪
   throwing: 🏹
   tu: ⌛
+  tuCurrent: ⌛
   health: ❤️
   healthCurrent: ❤️
   healthNormalized: ❤️

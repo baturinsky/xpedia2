@@ -1,5 +1,5 @@
 <script>
-  import { rul, sortFirstLast } from "./Ruleset";
+  import { rul, sortFirstLast, damageTypes } from "./Ruleset";
   import {
     Link,
     LinksPage,
@@ -11,7 +11,7 @@
   } from "./Components";
   import Subheader from "./Subheader.svelte";
 
-  export let armor;
+  export let entry;
   export let text;
   let dollColumns = 6;
   let seeAllVariants = false;
@@ -25,23 +25,23 @@
   };
 
   $: {
-    console.log(armor);
+    console.log(entry);
 
     seeAlso = [];
     if (
-      "storeItem" in armor &&
-      armor.storeItem != "STR_NONE" &&
-      armor.storeItem != armor.type
+      "storeItem" in entry &&
+      entry.storeItem != "STR_NONE" &&
+      entry.storeItem != entry.type
     ) {
-      seeAlso.push(armor.storeItem);
+      seeAlso.push(entry.storeItem);
     }
-    if ("users" in armor) {
-      for (let item of armor.users.filter(
+    if ("users" in entry) {
+      for (let item of entry.users.filter(
         (s) =>
           s.substr(0, 8) != "INV_NULL" &&
-          s != armor.type &&
+          s != entry.type &&
           "##" + s != window.location.hash &&
-          s != armor.type
+          s != entry.type
       )) {
         seeAlso.push(item);
       }
@@ -62,7 +62,7 @@
   <tr>
     <td colspan="2">
       <div class="armors">
-        {#if Object.keys(armor.dollSprites).length > 1}
+        {#if Object.keys(entry.dollSprites).length > 1}
           <p>
             <button
               class="btn-hover-effect btn-hover-effect--effect-1"
@@ -73,8 +73,8 @@
           </p>
         {/if}
 
-        {#if armor.dollSprites}
-          {#each Object.keys(armor.dollSprites).sort( (a, b) => rul.bodiesCompare( [a, b] ) ) as body, i}
+        {#if entry.dollSprites}
+          {#each Object.keys(entry.dollSprites).sort( (a, b) => rul.bodiesCompare( [a, b] ) ) as body, i}
             {#if seeAllVariants || i == 0}
               <div
                 class="armor"
@@ -85,7 +85,7 @@
                 {#if seeAllVariants}
                   <div class="armor-variant">{body}</div>
                 {/if}
-                {#each armor.dollSprites[body] as url, j}
+                {#each entry.dollSprites[body] as url, j}
                   <img
                     src={url}
                     alt={body}
@@ -100,7 +100,7 @@
             style={`min-height:${
               (seeAllVariants
                 ? (Math.floor(
-                    Object.keys(armor.dollSprites).length / dollColumns
+                    Object.keys(entry.dollSprites).length / dollColumns
                   ) +
                     1) *
                   120
@@ -118,13 +118,13 @@
     <td colspan="2">
       <div class="flex-horisontal" style="max-width: 95vw;">
         {#each ["stats", "armor", "damageModifier" /*, "recovery"*/] as prop}
-          {#if armor[prop]}
+          {#if entry[prop]}
             <div class="armor-column {prop == "damageModifier" && "armor-column-resists"}">
               <header><Tr s={prop}/></header>
-              {#each sortFirstLast(armor[prop]).all as [key, val], i}
+              {#each sortFirstLast(entry[prop]).all as [key, val], i}
                 <div>
                     {#if prop == "damageModifier"}                    
-                      <Link href={rul.damageTypes[key]} />
+                      <Link href={damageTypes[key]} />
                     {:else}
                       <Value val={key} />
                     {/if}
@@ -163,7 +163,7 @@
     </td>
   </tr>
 
-  {#each sortFirstLast( armor, { exclude: ["recovery", "type", "layersDefinition", "spriteFaceColor", "spriteHairColor", "spriteUtileColor", "spriteFaceGroup", "spriteHairGroup", "spriteUtileGroup", "customArmorPreviewIndex", "dollSprites", "layersDefaultPrefix", "frontArmor", "sideArmor", "rearArmor", "underArmor", "spriteInv", "scripts", "armor", "damageModifier", "stats"] } ).all as [key, prop]}
+  {#each sortFirstLast( entry, { exclude: ["recovery", "type", "layersDefinition", "spriteFaceColor", "spriteHairColor", "spriteUtileColor", "spriteFaceGroup", "spriteHairGroup", "spriteUtileGroup", "customArmorPreviewIndex", "dollSprites", "layersDefaultPrefix", "frontArmor", "sideArmor", "rearArmor", "underArmor", "spriteInv", "scripts", "armor", "damageModifier", "stats"] } ).all as [key, prop]}
     <tr>
       <td>
         <Value val={key} />
@@ -197,7 +197,7 @@
     </tr>
   {/each}
   <Subheader text="recovery" />
-  {#each sortFirstLast(armor.recovery).all as [key2, bonus], i}
+  {#each sortFirstLast(entry.recovery).all as [key2, bonus], i}
     <tr>
       <td>
         <Value val={key2} />

@@ -1,7 +1,7 @@
 import JSZip from "jszip";
 //import lzs from "lz-string";
 import { defaultLanguage } from "./Ruleset";
-import { readYaml, dirByHttp, parseYaml } from "./util";
+import { readYaml, dirByHttp, parseYaml, delay } from "./util";
 
 /*async function loadPackedZip(text: string) {
   text = text.trim();

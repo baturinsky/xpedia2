@@ -4,7 +4,6 @@
 
   export let items;
 
-  console.log("alter ", items);
 </script>
 
 <tr>

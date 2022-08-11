@@ -12,3 +12,5 @@ export function revealLock(on?) {
   revealedLock = on==undefined?!revealedLock:on;
   revealed.update(v => revealedLock);
 }
+
+export const loaded = writable(false);

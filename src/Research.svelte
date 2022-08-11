@@ -7,7 +7,7 @@
     Tr
   } from "./Components";
 
-  export let research;
+  export let entry;
   export let title = rul.tr("Research");
   let longLists = [
     "unlocks",
@@ -26,7 +26,7 @@
   //let sorted = sortFirstLast(research, {last:[]});
 
   $: {
-    console.log(research);
+    console.log(entry);
   }
 </script>
 
@@ -34,7 +34,7 @@
   <tr class="table-header">
     <td colspan="2">{title}</td>
   </tr>
-  {#each sortFirstLast( research, { last: longLists, exclude: ["name"] } ).all as [key, prop]}
+  {#each sortFirstLast( entry, { last: longLists, exclude: ["name"] } ).all as [key, prop]}
     {#if longLists.includes(key) && prop && prop.length > 0}
       <tr
         ><td colspan="2" class="table-subheader" >

@@ -1771,56 +1771,30 @@ en-US:
   STR_STARCON_SPACE: Space
   STR_STARCON_EXO: Exosuits only
   STR_STARCON_HIDEOUT: Hideout defense
-  dmg*strength: dmg*strength
-  acc*flatHundred: acc*flatHundred
-  acc*melee: acc*melee
-  dmg*bravery: dmg*bravery
-  dmg*rank: dmg*rank
-  acc*firing: acc*firing
-  acc*bravery: acc*bravery
-  acc*rank: acc*rank
-  dmg*melee: dmg*melee
-  dmg*throwing: dmg*throwing
-  acc*throwing: acc*throwing
-  dmg*psiStrength: dmg*psiStrength
-  acc*psiStrength: acc*psiStrength
-  acc*psiSkill: acc*psiSkill
-  acc*reactions: acc*reactions
-  dmg*reactions: dmg*reactions
-  acc*strength: acc*strength
-  dmg*health: dmg*health
-  dmg*tu: dmg*tu
-  dmg*firing: dmg*firing
-  dmg*psi: dmg*psi
-  dmg*psiSkill: dmg*psiSkill
-  acc*psi: acc*psi
-  dmg*flatHundred: dmg*flatHundred
-  dmg*tuCurrent: dmg*tuCurrent
-  dmg*moraleCurrent: dmg*moraleCurrent
-  dmg*stamina: dmg*stamina
-  dmg=undefined: dmg=undefined
-  acc*stamina: acc*stamina
-  weapon_type_0: Light
-  weapon_type_1: Heavy
-  weapon_type_2: Missile
-  weapon_type_3: Bomb
-  weapon_type_4: Divebomb
-  weapon_type_5: Ground
-  weapon_type_6: AA
-  weapon_type_7: Battery
-  weapon_type_9: Shadowtech
-  weapon_type_10: Cloaking
-  weapon_type_11: Fixed  
+  rank: Rank
+  psi: VooDoo
+  tuCurrent: Current TU
+  weaponType0: Light
+  weaponType1: Heavy
+  weaponType2: Missile
+  weaponType3: Bomb
+  weaponType4: Divebomb
+  weaponType5: Ground
+  weaponType6: AA
+  weaponType7: Battery
+  weaponType9: Shadowtech
+  weaponType10: Cloaking
+  weaponType11: Fixed  
   About XPedia: About
   en-US:
   aboutexport: If you run xpedia in node.js mode, click this to export as a single file. Will take some seconds to complete.
   aboutxpedia: |
-    <h1 id="xpedia2">xpedia2</h1>
+    <h4 id="xpedia2">xpedia2</h4>
     <p>Sequel to <a href="https://github.com/baturinsky/xpedia">https://github.com/baturinsky/xpedia</a></p>
     <p>See git at <a href="https://github.com/baturinsky/xpedia2">https://github.com/baturinsky/xpedia2</a></p>
     <p>I&#39;m changing a lot of things around, so have created it as a separate ptoject.</p>
     <p>Currently WIP.</p>
-    <h1 id="whats-new">What&#39;s new</h1>
+    <h4 id="whats-new">What&#39;s new</h4>
     <ul>
     <li>Severless XPedia export is now made from XPedia UI (&quot;Export&quot; button on the main page)</li>
     <li>It generates a self-sufficient HTML file that do not need additional files and directories. Just put it in game&#39;s root directory,</li>
@@ -1829,7 +1803,7 @@ en-US:
     <li>UI rework to look better on all devices</li>
     <li>&quot;Reveal&quot; mode to see untranslated text. Use eye icon or hold shift.</li>
     </ul>
-    <h1 id="how-to-use">How to use</h1>
+    <h4 id="how-to-use">How to use</h4>
     <p>Unpack or clone from the git into a subdir of the game.</p>
     <p>Have <a href="https://nodejs.org">https://nodejs.org</a> installed.</p>
     <p>Run <code>npm install</code> (or <code>yarn install</code> if you use yarn), then <code>npm start</code></p>

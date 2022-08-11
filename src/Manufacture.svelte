@@ -2,10 +2,10 @@
   import { rul } from "./Ruleset";
   import { Link, LinksList, LinksPage, Value } from "./Components";
 
-  export let manufacture;
+  export let entry;
 
   $: {
-    console.log(manufacture);
+    console.log(entry);
   }
 </script>
 
@@ -15,14 +15,14 @@
   <td colspan="2">{rul.str("Manufacture")}</td>
 </tr>
 
-{#if "randomProducedItems" in manufacture}
+{#if "randomProducedItems" in entry}
   <tr
     ><td colspan="2" class="table-subheader"><Value val={"randomProducedItems"}/></td></tr
   >
   <tr
     ><td colspan="2">
       <table class="number-table" width="100%" style="margin:0px">
-        {#each manufacture.randomProducedItems as chance}
+        {#each entry.randomProducedItems as chance}
           {#if Object.keys(chance[1]).length == 0}
             <tr><td colspan="2" style="text-align:center;">NOTHING</td></tr>
           {/if}
@@ -34,7 +34,7 @@
               colspan="2"
               style="text-align:center; border-bottom: solid 0.3px #382C44;"
               >×{chance[0]} / {(
-                (chance[0] / manufacture.chanceSum) *
+                (chance[0] / entry.chanceSum) *
                 100
               ).toFixed(3)}%</td
             ></tr
@@ -45,7 +45,7 @@
   >
 {/if}
 
-{#each Object.entries(manufacture).sort( (a, b) => (a[0] > b[0] ? 1 : -1) ) as prop}
+{#each Object.entries(entry).sort( (a, b) => (a[0] > b[0] ? 1 : -1) ) as prop}
   {#if !["name", "randomProducedItems"].includes(prop[0])}
     <tr>
       <td class="padding-right">

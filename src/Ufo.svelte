@@ -4,16 +4,16 @@
 
   import { Link, LinksPage, Value } from "./Components";
 
-  export let ufo;
+  export let entry;
 
   $: {
-    console.info(ufo);
+    console.info(entry);
   }
 </script>
 
 <table class="main-table">
   <tr class="table-header"> <td colspan="2">Craft</td> </tr>
-  {#each sortFirstLast( ufo, { exclude: ["raceBonus", "type", "battlescapeTerrainData", "craftInventoryTile", "deployment"] } ).all as [key, prop]}
+  {#each sortFirstLast( entry, { exclude: ["raceBonus", "type", "battlescapeTerrainData", "craftInventoryTile", "deployment"] } ).all as [key, prop]}
     <tr>
       <td class="padding-right">{@html rul.tr(key)}</td>
       <td>
@@ -30,15 +30,15 @@
       </td>
     </tr>
   {/each}
-  {#if ufo.raceBonus}
+  {#if entry.raceBonus}
   <tr><td colspan="2">
     <table class="number-table">
       <tr><td colspan="2">{rul.tr("raceBonus")}</td><td></td>
-      {#each Object.keys(ufo.raceBonus).sort() as field, i}
+      {#each Object.keys(entry.raceBonus).sort() as field, i}
         <tr><td>{rul.tr(field)}</td><td>
-            {#each Object.keys(ufo.raceBonus[field]).sort() as field2, i2}
+            {#each Object.keys(entry.raceBonus[field]).sort() as field2, i2}
               {rul.tr(field2)}:&nbsp;<em
-                ><Link href={ufo.raceBonus[field][field2]} /></em
+                ><Link href={entry.raceBonus[field][field2]} /></em
               ><br />
             {/each}
           </td></tr

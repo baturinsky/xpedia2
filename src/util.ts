@@ -89,3 +89,7 @@ export function camelToUnderscore(key) {
 export function getFlagEmoji(countryCode){
   return String.fromCodePoint(...[...countryCode.toUpperCase()].map(x=>0x1f1a5+x.charCodeAt()));
 }
+
+export function singular(s:string){
+  return s.substring(s.length-1) == "s"?s.substring(0,s.length-1):s;
+}
