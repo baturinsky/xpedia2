@@ -52,29 +52,38 @@
 <h1>
   <nobr><Tr s={article.title} /></nobr>
   <span style="flex:1" />
-  <button class="page-turn" on:click={(e) => dispatch("prev")}>⮜</button>
-  <button class="page-turn" on:click={(e) => dispatch("next")}>⮞</button>
+  <button class="page-turn" on:click={(e) => dispatch("prev")}>⇦</button>
+  <button class="page-turn" on:click={(e) => dispatch("next")}>⇨</button>
 </h1>
+
+<div class="section-list"><Value val={article.sections.map(s=>s.id).filter(id=>id!=article.id)}/>&nbsp;</div> 
 
 {#if article.id == "SERVICES"}
   <svelte:component this={BaseServices} />
 {:else if article.id == "FACILITIES"}
   <SectionTable {aId}
     entries={Object.values(rul.facilities)} 
-    fields={["size", "monthlyCost", "storage", "personnel","workshops", "aliens"]}
-    extraFields={["buildCost", "buildTime", "prisonType", "manaRecoveryPerDay", "sickBayAbsoluteBonus", "sickBayRelativeBonus"]}
+    fields={["size", "monthlyCost", "storage", "personnel","workshops", "kennel", "prison"]}
+    extraFields={["buildCost", "buildTime", "manaRecoveryPerDay", "sickBayAbsoluteBonus", "sickBayRelativeBonus"]}
+  />
+{:else if article.id == "COMMENDATIONS"}
+  <SectionTable {aId} 
+    entries={Object.values(rul.commendations)} 
+    fields={["description", ...statsList, "visibilityAtDark"]}
+    extraFields={["visibilityAtDay", "camouflageAtDark", "camouflageAtDay"]}
   />
 {:else if article.id == "CRAFTS"}
-  <SectionTable {aId} entries={Object.values(rul.crafts)} fields={["speedMax","soldiers"]}/>
+  <SectionTable {aId} entries={Object.values(rul.crafts)} fields={["speedMax","soldiers", "vehicles", "weapons", "damageMax"]}/>
 {:else if article.id == "ARMORS"}
   <SectionTable {aId}
     entries={Object.values(rul.armors)} 
     fields={["size", "frontArmor", "sideArmor", "rearArmor", "underArmor"]}
-    extraFields={[...damageTypes, ...statsList]}
+    extraFields={[...damageTypes, ...statsList, "visibilityAtDark", "visibilityAtDay", "camouflageAtDark", "camouflageAtDay"]}
+    filters={Object.keys(rul.soldiers)}
   />
 {:else if article.id == "CONDITIONS"}
   <Conditions conditions={rul.startingConditions[article.id]} />
-{:else if article.id == "CATEGORIES"}
+{:else if article.section == "CATEGORIES"}
   <LinksPage links={rul.categories[article.id]} />
 {:else if article.section == article.id}
   <LinksPage links={rul.sections[article.id].articles.map((a) => a.id)} />
@@ -82,7 +91,7 @@
 
 <div style="max-width:100%">
   <div class="main-flex">
-    <svelte:component this={other} {query} />
+    <svelte:component this={other} {query} />    
 
     <ArticleBody id={article.id} text={textwithHighlights}/>
     

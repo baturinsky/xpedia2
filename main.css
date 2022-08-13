@@ -19,6 +19,7 @@
   --table-main: #180c24;
   --dead-link: #ffffff;
   --link: #90ee90;
+  --title: #aaffff;
 }
 
 html {
@@ -168,12 +169,13 @@ h1,
 h2,
 h3,
 h4 {
-  color: #aaffff;
+  color: var(--title);
   font-variant: small-caps;
 }
 
 h4 {
   border-bottom: solid 1px var(--border);
+  margin-top: 1rem;
 }
 
 h2{
@@ -1044,6 +1046,7 @@ button.download{
 .section-table{
   border: solid 1px var(--border);
   margin-bottom: 3px;
+  border-collapse: collapse;
 }
 
 .section-table td{ 
@@ -1066,12 +1069,22 @@ button.download{
 }
 
 
-.section-table > tr:nth-child(odd) {
+.section-table > tbody > tr:nth-child(even) {
   background: var(--table-secondary);
 }
 
+.section-table > thead {
+  background-color: var(--table-secondary);
+}
+
+.section-table > thead td{
+  cursor: move;
+  border: solid 1px var(--border);
+  padding: 0.1rem;
+}
+
 .extra-fields {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .extra-fields .off {
@@ -1080,6 +1093,31 @@ button.download{
 
 .sublist{
   margin-left: 0.5rem;
+}
+
+.section-list{
+  font-size:70%;
+  margin-top: -1.2rem;
+  margin-bottom: -0.3rem;
+}
+
+.section-list a{
+  color: var(--title);
+  opacity: 80%;
+  padding: 0.5rem 0rem;
+  display: inline-block;
+}
+
+.section-table tbody td.st-description{
+  text-align: left;  
+}
+
+.section-table tbody td.st-id{
+  line-break: loose;
+}
+
+.section-has-table{
+  text-decoration: underline;
 }
 
 @media screen and (max-width: 1300px) {

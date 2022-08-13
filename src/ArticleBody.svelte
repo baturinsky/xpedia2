@@ -31,7 +31,6 @@ $:{
 }
 
 const renderers = {
-  alienDeployments: {},
   stats: {},
   elements: {},
   armors: Armor,
@@ -58,6 +57,7 @@ const renderers = {
   commendations: Commendation,
   manufacture: Manufacture,
   research: Research,
+  alienDeployments: {sort:{first:["startingCondition","loot"]}},
 }
 
 </script>

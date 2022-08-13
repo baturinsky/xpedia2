@@ -1,12 +1,13 @@
 <script>
-  import { rul, Article as ArticleRul } from "./Ruleset";
+  import { rul, packedData, Article as ArticleRul } from "./Ruleset";
   import { LinksPage, Tr, tr, favicon, divider } from "./Components";
   import Article from "./Article.svelte";
   import CogAnimation from "./CogAnimation.svelte";
   import { afterUpdate, setContext } from "svelte";
-  import { revealed, reveal, revealLock, loaded } from "./store";
+  import { revealed, reveal, revealLock, loaded, linksPageSorted } from "./store";
   import Download from "./Download.svelte";
   import onSwipe from "./swipe";
+  import { useCache } from "./load";
 
   /**@type {ArticleRul}*/
   let article = null;
@@ -25,8 +26,8 @@
   let tooltip;
   let searching = false;
   let saveLoaded = false;
-  let packedData = false;
-
+  let sortArticles = false;
+  
   let isTouch = "ontouchstart" in window;
   let lang;
 
@@ -39,27 +40,28 @@
     }
   })
 
-  afterUpdate(() => {
-    if (saveLoaded) saveState();
-  });
+  linksPageSorted.subscribe(v=>saveState())
 
   function saveState() {
+    console.log("ss", localStorage.xpediaSettings);
     localStorage.xpediaSettings = JSON.stringify({
       hugeFont,
       seeSide,
       lang,
       sortArticles,
+      linksPageSorted: linksPageSorted.value
     });
   }
 
   export function loadState() {
     try {
+      console.log("ls", localStorage.xpediaSettings);
       let data = JSON.parse(localStorage.xpediaSettings);
       if (data && typeof data == "object") {
         hugeFont = data.hugeFont;
         seeSide = data.seeSide;
         sortArticles = data.sortArticles;
-        lang == data.lang;
+        linksPageSorted.set(data.linksPageSorted);
         selectLang(data.lang);
       }
     } catch (e) {
@@ -134,7 +136,7 @@
     }
 
     if (activeOption) {
-      activeOption.scrollIntoView({ behavior: "auto", block: "center" });
+      setTimeout(()=>activeOption?.scrollIntoView({ behavior: "smooth", block: "center" }), 50);
     }
   }
 
@@ -162,9 +164,8 @@
   $: {
     if (article) console.info(article);
     document.documentElement.style.fontSize = hugeFont ? "18pt" : "12pt";
+    if (saveLoaded) saveState();
   }
-
-  let sortArticles = false;
 
   function dropdown(val = null) {
     if (val === null) {
@@ -176,7 +177,7 @@
 
   $: sortedArticles = (articles) =>
     sortArticles
-      ? articles.slice().sort((a, b) => (a.title > b.title ? 1 : -1))
+      ? [...articles||[]].sort((a, b) => (a.title > b.title ? 1 : -1))
       : articles;
 
   document.addEventListener("keydown", (event) => {
@@ -189,6 +190,17 @@
     if (right) nextArticle(1);
     else nextArticle(-1);
   });
+
+  /*document.body.addEventListener("touchstart", (e)=>{
+    let tag = e.target.tag;
+    if(tag != "A" && tag != "BUTTON" && e.changedTouches && e.changedTouches.length>0){
+      let x = e.changedTouches[0].pageX;
+      if(x<window.innerWidth/2)
+        nextArticle(-1);
+      else
+      nextArticle(1);
+    }    
+  })*/
 
   window.addEventListener("mousemove", async (e) => {
     if (tooltip) {
@@ -273,8 +285,10 @@
               {/each}
             </div>
             <div class="navbar-custom navbar-list">
-              {#each rul.typeSectionsOrder as section, i}
-                <a href={"##" + section.id}><Tr s={section.id} /></a>
+              {#each rul.sortedTypeSections() as section, i}
+                <a href={"##" + section.id} class={
+                  ["FACILITIES", "COMMENDATIONS", "CRAFTS", "ARMORS"].includes(section.id) && "section-has-table"
+                }><Tr s={section.id} /></a>
               {/each}
             </div>
           </div>
@@ -305,6 +319,15 @@
 
       <div class="stretcher" />
 
+      {#if !packedData}
+        <button class="navbar-button" on:click={(e) => {
+          useCache("wipe");
+          location.reload();
+        }}>
+          ⭯
+        </button>
+      {/if}
+
       {#if allowHugeFont}
         <button class="navbar-button" on:click={(e) => (hugeFont = !hugeFont)}>
           <span style="font-size:150%">A</span>
@@ -319,13 +342,13 @@
           on:mouseover={(e) => !isTouch && (showLanguagesDropdown = true)}
           on:mouseout={(e) => !isTouch && (showLanguagesDropdown = false)}
         >
-          <div
+          <button
             class="navbar-button"
             on:mousedown={(e) =>
               (showLanguagesDropdown = !showLanguagesDropdown)}
           >
             <big><Tr s={rul.langName} /></big>
-          </div>
+          </button>
           <div
             class="navbar-dropdown"
             style={showLanguagesDropdown
@@ -405,14 +428,14 @@
       <span style="font-size:150%">≡</span>
     </button>
 
-    <div class="main" style={seeSide ? "" : "padding-left:1rem;"}>
+    <div class="main" id="main" style={seeSide ? "" : "padding-left:1rem;"}>
       {#if query && searching}
         Searching "
         <em>{query}</em>
         ":
         <br />
         {#if found && found.length > 0}
-          <LinksPage
+          <LinksPage 
             links={found.sort((a, b) =>
               contains(rul.tr(a), query) > contains(rul.tr(b), query) ? -1 : 1
             )}
@@ -456,7 +479,8 @@
         {#if !packedData}
           <h4><Tr s="Export" /></h4>
           <Tr s="aboutexport" /><br />
-          <Download text="testtext" />
+          <Download title="Export all languages" />
+          <Download title="Export current ({rul.tr(rul.langName)}) only" onlyCurrent={true} />
           <br />
         {/if}
         <Tr s="aboutxpedia" />

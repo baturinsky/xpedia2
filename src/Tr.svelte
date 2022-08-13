@@ -3,6 +3,7 @@
   import { revealed } from "./store.ts";
 
   export let s;
+  export let simple = false;
   export let nobr = 100;
 
   let r = false;
@@ -12,7 +13,7 @@
     if (r) {
       tr = s;
     } else {
-      tr = rul.tr(s);
+      tr = rul.tr(s, simple);
       if(typeof tr == "string")
         tr = tr.replace(/^([\u1000-\uFFFF]+)/, "<div class='inem'>$1</div>");
     }

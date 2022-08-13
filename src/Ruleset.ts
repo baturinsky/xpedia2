@@ -1,14 +1,13 @@
 import SearchApi from 'js-worker-search';
 import { emptyImg } from "./Components";
-import { loadByHttp, loadPacked } from './load';
-import { camelToUnderscore, delay, getFlagEmoji } from './util';
-//import countryCodeToFlag from "country-code-to-flag";
+import { loadByHttp, loadPacked, useCache } from './load';
+import { camelToUnderscore, delay, getFlagEmoji, removeByValue } from './util';
 
 export let rul!: Ruleset;
-export type SortFirsLastOptions = { first?: string[], last?: string[], exclude?: string[], sortBy?:Function }
+export type SortFirsLastOptions = { first?: string[], last?: string[], exclude?: string[], sortBy?: Function }
 export const defaultLanguage = "en-US"
 
-const obsTables = { "BIGOBS.PCK": "big", "FLOOROB.PCK": "floor", "HANDOB.PCK": "hand", "BASEBITS.PCK": "base",  "INTICON.PCK":"icon" };
+const obsTables = { "BIGOBS.PCK": "big", "FLOOROB.PCK": "floor", "HANDOB.PCK": "hand", "BASEBITS.PCK": "base", "INTICON.PCK": "icon" };
 
 function orderedFilteredEntries(item, fields) {
   if (item == null)
@@ -22,10 +21,10 @@ export function sortFirstLast(item, options: SortFirsLastOptions = {}) {
 
   let first = orderedFilteredEntries(item, options.first);
   let last = orderedFilteredEntries(item, options.last);
-  let exclude = orderedFilteredEntries(item, [...(options.exclude || []), ...["id", "list", "name"]]);
-  let special = new Set([...(options.first || []), ...(options.last || []), ...(options.exclude || [])]);
+  let exclude = orderedFilteredEntries(item, options.exclude);
+  let special = new Set([...(options.first || []), ...(options.last || []), ...(options.exclude || []), "id", "list", "name"]);
   let misc = Object.entries(item).filter(([k, v]) => !special.has(k));
-  if(options.sortBy){
+  if (options.sortBy) {
     misc = misc.sort((a, b) => options.sortBy(a[1]) > options.sortBy(b[1]) ? 1 : -1)
   } else {
     misc = misc.sort((a, b) => a[0] > b[0] ? 1 : -1)
@@ -53,7 +52,7 @@ export class Entry {
   id: string;
   armors: string[];
   constructor(raw: any, collection: string) {
-    Object.assign(this, raw);
+    Object.assign(this, JSON.parse(JSON.stringify(raw)));
 
     if (rul[collection] == null)
       rul[collection] = {};
@@ -66,13 +65,13 @@ export class Entry {
     });
   }
 
-  sortField(field, noTitle=false){
-    if(field == "id" && !noTitle)
+  sortField(field, noTitle = false) {
+    if (field == "id" && !noTitle)
       return this.title;
     return this[field];
   }
 
-  get title(){
+  get title() {
     return rul.tr(this.id);
   }
 
@@ -109,13 +108,13 @@ export class Entry {
 
 export class MissionScript extends Entry {
   researchTriggers;
-  researchNeeded : string[];
-  researchForbidden : string[];
-  constructor(raw){
+  researchNeeded: string[];
+  researchForbidden: string[];
+  constructor(raw) {
     super(raw, "missionScripts")
-    if(this.researchTriggers){
-      this.researchNeeded = Object.keys(this.researchTriggers).filter(k=>this.researchTriggers[k]);
-      this.researchForbidden = Object.keys(this.researchTriggers).filter(k=>!this.researchTriggers[k]);
+    if (this.researchTriggers) {
+      this.researchNeeded = Object.keys(this.researchTriggers).filter(k => this.researchTriggers[k]);
+      this.researchForbidden = Object.keys(this.researchTriggers).filter(k => !this.researchTriggers[k]);
     }
   }
 }
@@ -207,18 +206,31 @@ export class SoldierTransformation extends Entry {
 }
 
 
-export class Commendation {
-  type: string;
+export class Commendation extends Entry {
   soldierBonusTypes: any[];
   criteria;
   killCriteria;
+  finalBonus: Entry;
 
   constructor(raw: any) {
-    Object.assign(this, raw);
-    rul.commendations[this.type] = this;
+    super(raw, "commendations")
     if (this.killCriteria)
       this.killCriteria = this.killCriteria.flat(2);
+    this.finalBonus = this.soldierBonusTypes && rul.soldierBonuses[this.soldierBonusTypes[this.soldierBonusTypes.length-1]];
   }
+
+
+  sortField(n) {
+    let fb = this.finalBonus;
+    if(fb && n!="id"){
+      if(fb[n])
+        return fb[n];
+      if (statsList.includes(n))
+        return fb.stats ? fb.stats[n] || 0 : 0;
+    }
+      
+    return this[n];
+  }  
 }
 
 export class Research extends Entry {
@@ -262,7 +274,7 @@ export class Service {
 export class AlienDeployment extends Entry {
   startingCondition: string;
   data: any[];
-  items: string[];
+  loot: string[];
 
   constructor(raw: any) {
     super(raw, "alienDeployments");
@@ -274,7 +286,7 @@ export class AlienDeployment extends Entry {
           allItems.add(item)
       }
     }
-    this.items = [...allItems];
+    this.loot = [...allItems];
   }
 }
 
@@ -285,6 +297,7 @@ export class CraftWeapon extends Entry {
   constructor(raw: any) {
     super(raw, "craftWeapons");
     Service.add("canBuy", this.type, this.requiresBuyBaseFunc);
+    //if(Number.isInteger(this.weaponType))
     this.weaponType = "weaponType" + (this.weaponType || 0)
     Entry.reserve({ id: this.weaponType }, "weaponTypes");
   }
@@ -334,6 +347,15 @@ export class Facility extends Entry {
       Service.add("providedBy", this.type, [`prisonType${this.prisonType || 1}`]);
     }
   }
+
+  get kennel(){
+    return this.prisonType==2?this.aliens:null;
+  }
+
+  get prison(){
+    return this.prisonType==2?null:this.aliens;
+  }
+
 }
 
 export class StartingConditions extends Entry {
@@ -343,7 +365,7 @@ export class StartingConditions extends Entry {
   allowedVehicles: string[];
   deployments: string[];
 
-  constructor(raw: any) {    
+  constructor(raw: any) {
     super(raw, "startingConditions")
   }
 }
@@ -548,7 +570,8 @@ export class Article {
     if (id in rul.articles) {
       let article = rul.articles[id];
       if (section && !article.sections.find(s => s.id == section)) {
-        article.sections.push(rul.sections[section])
+        article.addToSection(section);
+        //article.sections.push(rul.sections[section])
         rul.sections[section].add(article);
       }
       return article;
@@ -560,8 +583,8 @@ export class Article {
     this.id = raw.id;
     this._text = raw.text;
     this._title = raw.title || raw.id;
-    if (!(this.id in rul.lang))
-      rul.lang[this.id] = this.title;
+    /*if (!(this.id in rul.lang))
+      rul.lang[this.id] = this.title;*/
     this.image_id = raw.image_id;
     //this.type_id = raw.type_id || "-1";
     rul.articles[this.id] = this;
@@ -583,7 +606,9 @@ export class Article {
 
     if (this.id != section.id) section.add(this);
 
-    this.sections.push(section);
+    if(!this.sections.includes(section))
+      this.sections.push(section)
+
     return section;
   }
 
@@ -676,7 +701,7 @@ export class Armor extends Entry {
 
   constructor(raw: any) {
     super(raw, "armors")
-    if(!this.size)
+    if (!this.size)
       this.size = 1;
 
     if (this.layersDefinition) {
@@ -733,11 +758,14 @@ export class Armor extends Entry {
     }
   }
 
-  sortField(n){
-    if(statsList.includes(n))
-      return this.stats?this.stats[n] || 0:0;
-    if(damageTypes.includes(n))
+  sortField(n) {
+    if (statsList.includes(n))
+      return this.stats ? this.stats[n] || 0 : 0;
+    if (damageTypes.includes(n))
       return (this.damageModifier[damageTypes.indexOf(n)] || 0) * 100;
+    if(rul.soldiers[n]){
+      return this.units?.includes(n);
+    }
     return this[n];
   }
 
@@ -780,14 +808,14 @@ export class Item extends Entry {
   requiresBuy: string[];
   heldBy: Set<string>;
 
-  get sprite(){
+  get sprite() {
     if (this.bigSprite) {
       return rul.obsSprite("big", +this.bigSprite);
-    }  
+    }
   }
 
   constructor(raw: any) {
-    super(raw, "items")    
+    super(raw, "items")
 
     this.invWidth = this.invWidth || 1;
     this.invHeight = this.invHeight || 1;
@@ -812,14 +840,14 @@ export class Item extends Entry {
       this.compatibleAmmo = [...(this.compatibleAmmo || []), ...Object.values(this.ammo).map(a => a.compatibleAmmo).flat()]
     }
 
-    for (let k in this.damageBonus || []){
+    for (let k in this.damageBonus || []) {
       let b = this.damageBonus[k];
-      if(b != 0)
+      if (b != 0)
         backLink(this.id, [k], "stats", "weaponDamage");
-      if(Array.isArray(b)){
-        for(let p in b)
-          if(b[p]>0)
-            backLink(this.id, [k], "stats", "weaponDamage**" + (+p+1));
+      if (Array.isArray(b)) {
+        for (let p in b)
+          if (b[p] > 0)
+            backLink(this.id, [k], "stats", "weaponDamage**" + (+p + 1));
       }
     }
 
@@ -871,7 +899,7 @@ export default class Ruleset {
   sectionsOrder: Section[] = [];
   typeSectionsOrder: Section[] = [];
   sprites: { [key: string]: Sprite } = {};
-  src: any;
+  src: {ruls, langs, mods};
   raw: any = {};
   search: { [key: string]: Search } = {};
   ourArmors: string[];
@@ -923,10 +951,6 @@ export default class Ruleset {
 
   sound(id: number) {
     return this.sounds[id];
-  }
-
-  str(id: string) {
-    return this.lang[id] || id;
   }
 
   obsSprite(type: string, num: number) {
@@ -1029,15 +1053,13 @@ export default class Ruleset {
     if (this.convertedLangs[langName])
       return false;
 
-    console.log("CV", langName);
-
     let lang = this.langs[langName];
 
-    if (this.langs.icon) {
+    /*if (this.langs.icon) {
       for (let k in this.langs.icon) {
         lang[k] = this.langs.icon[k] + (lang[k] || "")
       }
-    }
+    }*/
 
     for (let k in lang) {
       let text: string = lang[k];
@@ -1097,14 +1119,14 @@ export default class Ruleset {
     }
 
     crosslink(this.soldierTransformation, "forbiddenPreviousTransformations", this.soldierTransformation, "blocksTransformations");
-    crosslink(this.alienDeployments, "items", this.items, "deployments");
+    crosslink(this.alienDeployments, "loot", this.items, "loot");
     crosslink(this.alienDeployments, "enviroEffects", this.enviroEffects, "deployments");
     crosslink(this.craftWeapons, "weaponType", this.weaponTypes, "weapons", "weaponTypes");
     crosslink(this.crafts, "allWeaponTypes", this.weaponTypes, "crafts", "weaponTypes");
     crosslink(this.startingConditions, "allowedCraft", this.crafts, "startingConditions");
     crosslink(this.alienDeployments, "startingCondition", this.startingConditions, "deployments");
-    crosslink(this.missionScripts, "researchNeeded", this.research, "unlocksMissions");    
-    crosslink(this.missionScripts, "researchForbidden", this.research, "stopsMissions");    
+    crosslink(this.missionScripts, "researchNeeded", this.research, "unlocksMissions");
+    crosslink(this.missionScripts, "researchForbidden", this.research, "stopsMissions");
 
     for (let facility of Object.values(this.facilities)) {
       if (facility.buildCostItems) {
@@ -1180,6 +1202,10 @@ export default class Ruleset {
 
   }
 
+  sortedTypeSections(){
+    return this.sortStrings(this.typeSectionsOrder.map(s=>s.id)).map(id=>this.sections[id]);
+  }
+
   parseArticles(data: any) {
     for (let articleData of data) {
       if (articleData.id) {
@@ -1203,21 +1229,22 @@ export default class Ruleset {
     }
   }
 
-  tr(str, separ = " ") {
+  str(id: string) {
+    return this.lang[id] || id;
+  }
+
+  tr(str, simple=false) {
+    //debugger;
+    //console.log(str);
     if (str == null)
       return "";
-    //console.log("tr", str, rul.lang[str]);
+    //console.log("tr", str, rul.lang[str]);  
+
+    let icon = this.langs?.icon?this.langs.icon[str]:null;
 
     if (str in rul.lang) {
       str = rul.lang[str]
-      if (str == null)
-        return "";
-      if (str.substr(0, 4) != "STR_")
-        return str;
-    }
-
-    if (typeof str == "string") {
-
+    } else if (typeof str == "string") {
       if (this.lang[fieldNames[str]]) return this.lang[fieldNames[str]];
 
       if (str.substr(0, 4) == "STR_")
@@ -1225,10 +1252,14 @@ export default class Ruleset {
 
       if (str.includes("_") && str.search(/[a-z]/) == -1)
         str = str.replace(/_/g, " ");
-      else str = str.replace(/([^A-Z0-9])([A-Z0-9])/g, "$1" + separ + "$2");
-      str = str.substr(0, 1).toUpperCase() + str.substr(1).toLowerCase();
-    }
+      else str = str.replace(/([^A-Z0-9])([A-Z0-9])/g, "$1 $2");
+        str = str.substr(0, 1).toUpperCase() + str.substr(1).toLowerCase();
+    }    
 
+    if(icon && !simple)
+      str = str==null?null:icon + str;
+
+    //console.log(str);
     return str;
   }
 
@@ -1256,7 +1287,7 @@ export default class Ruleset {
 
     for (let name of this.langNames) {
       if (!this.langs[defaultLanguage][name]) {
-        let country = name.match(/([a-z]+)(\-[0-9]+)?$/i);
+        let country = name.match(/([a-z]+)/i);
         if (country?.length > 0) {
           let flag = getFlagEmoji(country[1]);
           if (flag)
@@ -1267,7 +1298,13 @@ export default class Ruleset {
 
     this.parse(ruls);
     this.convertLang(defaultLanguage);
-    this.selectLang(defaultLanguage)
+    let l = Object.keys(this.langs);
+    if(l.length==3){
+      debugger;
+      this.selectLang(l.find(n=>n!=defaultLanguage && n!="icon"));
+    } else {
+      this.selectLang(defaultLanguage)
+    }
   }
 
   selectLang(name: string) {
@@ -1322,14 +1359,19 @@ export default class Ruleset {
   }
 }
 
+export let packedData;
+
 export async function loadRules() {
   let data = await loadPacked();
-  let packedData = false;
   if (data) {
     packedData = true;
     await delay(10);
   } else {
-    data = await loadByHttp();
+    data = await useCache("load");
+    if(!data){
+      data = await loadByHttp();
+      useCache(data);
+    }
   }
 
   rul.load(data);

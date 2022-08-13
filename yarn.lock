@@ -481,6 +481,11 @@ strip-indent@^3.0.0:
   dependencies:
     min-indent "^1.0.0"
 
+svelte-drag@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/svelte-drag/-/svelte-drag-3.1.0.tgz#ef542f4232ec00c60c80b16f6a9419726e27de60"
+  integrity sha512-l3XwToVhHcVultoPhDMr+Z7EmORl0Jac2IX0cAwFmr/SKfZ952xQP/WSS7/Kdu4Nn49mdskViMhsw3zh4RoBRw==
+
 svelte-meta-tags@^2.6.1:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/svelte-meta-tags/-/svelte-meta-tags-2.6.1.tgz#7235ed77924bbf715085ad27f2a213b416d25921"

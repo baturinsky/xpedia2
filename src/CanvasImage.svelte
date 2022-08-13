@@ -46,12 +46,12 @@
 </script>
 
 {#key src}
-  <a href={src} class="canvas-image">
+  <span href={src} class="canvas-image">
     <canvas
       class="pixelated"
       style="display:{loaded ? 'inline' : 'none'};"
       bind:this={canvas}
       use:prepareCanvas
     />
-  </a>
+  </span>
 {/key}

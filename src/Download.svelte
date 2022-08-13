@@ -1,6 +1,9 @@
 <script>
-  import {downloadPedia} from "./Components"
+  import {exportPedia} from "./Components"
+  import { Tr } from "./Components";
+  export let title = "Export";
+  export let onlyCurrent = false;
 </script>
 
 <!--<a href="data:text/plain;charset=utf-8,{encodeURIComponent(text)}" filename="Pedia">Download</a>-->
-<button class="download" on:click={() => downloadPedia()}>Export</button>
+<button class="download" on:click={() => exportPedia(onlyCurrent)}><Tr s={title}/></button>

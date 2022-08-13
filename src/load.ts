@@ -34,7 +34,7 @@ export async function packZip(text) {
     type: "base64", 
     compression: "DEFLATE",
     compressionOptions: {
-      level: 9
+      level: 6
     }
   })
   return file;
@@ -206,4 +206,38 @@ async function loadRulsFromMods(mods: { id: string, rulDir: string, dir: string 
     return { ...data, file }
   }))
   return ruls;
+}
+
+export function useCache(data) {
+  return new Promise((done) => {
+    let request = indexedDB.open("xpedia", 1);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      const store = db.createObjectStore("cache", { keyPath: "id" })
+    }
+
+    request.onsuccess = () => {
+      const db = request.result;
+      const transaction = db.transaction("cache", "readwrite");
+      const store = transaction.objectStore("cache");
+
+      if (data == "load"){
+        const query = store.get(1);
+        query.onsuccess = () => {
+          let data = query.result?.data;          
+          done(data?JSON.parse(data):null);
+        };        
+      } else {
+        if(data == "wipe")
+          store.delete(1);
+        else
+          store.put({ id: 1, data: JSON.stringify(data) });
+        done([]);
+      }
+
+      transaction.oncomplete = () => {
+        db.close();        
+      }
+    }
+  })
 }

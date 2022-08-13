@@ -16,7 +16,6 @@
       if(Object.keys(b).length>0)
         buf[i] = b;
     }
-    console.log("buf", buf);
     bonuses = buf;
   }
 </script>

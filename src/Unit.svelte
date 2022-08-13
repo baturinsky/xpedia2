@@ -18,16 +18,8 @@
   <tr> <td colspan="2" class="table-header">{rul.tr("Unit")}</td> </tr>
   {#each sorted.all as [key, prop]}
     <tr>
-      <td><Value val={key} /></td><td>
-        {#if key == "builtInWeaponSets"}
-          {#each prop as v, i}
-            <div class={i==0?"":"top-border"}>
-              <Value val={v} />
-            </div>
-          {/each}
-        {:else}
-          <Value val={prop} />
-        {/if}
+      <td><Value val={key} simple={true}/></td><td>
+        <Value val={prop} />
       </td>
     </tr>
   {/each}

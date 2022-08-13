@@ -5,6 +5,8 @@
   export let val;
   export let obs = null;
   export let depth = 2;
+  export let simple = false;
+  export let nobr = 100;
 
   $:{
     if(obs){
@@ -27,7 +29,7 @@
   <span style="color:{val?'lime':'red'}"><Tr s={val.toString()}/></span>
 {:else if !isNaN(+val)}
   <em class="num">{val.toLocaleString()}</em>
-{:else if rul.article(val)}
+{:else if rul.article(val) && !simple}
   <Link href={val}/>
 {:else if rul.sprite(val, true)}
   <img src={rul.sprite(val)} alt={val} style="max-width:320px"/>
@@ -35,7 +37,7 @@
   {#if 'tip_' + val in rul.lang}
     <span tooltip={'tip_' + val}><Tr s={val}/><sup class="tipmark">?</sup></span>
   {:else}
-    <Tr s={val}/>
+    <Tr s={val} {simple} {nobr}/>
   {/if}
   
 {/if}

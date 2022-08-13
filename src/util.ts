@@ -86,10 +86,26 @@ export function camelToUnderscore(key) {
   return result.split(' ').join('_').toLowerCase();
 }
 
-export function getFlagEmoji(countryCode){
-  return String.fromCodePoint(...[...countryCode.toUpperCase()].map(x=>0x1f1a5+x.charCodeAt()));
+export function getFlagEmoji(countryCode:string){
+  return countryCode.toUpperCase()
+  //return String.fromCodePoint(...[...countryCode.toUpperCase()].map(x=>0x1f1a5+x.charCodeAt()));
 }
 
 export function singular(s:string){
   return s.substring(s.length-1) == "s"?s.substring(0,s.length-1):s;
+}
+
+export function removeByValue<T>(arr:T[], item:T) {
+  const ind = arr.indexOf(item);
+  if (ind !== -1) {
+    arr.splice(ind, 1);
+    return true;
+  }
+  return false;
+}
+
+export function addIfNew<T>(arr:T[], item:T) {
+  const ind = arr.indexOf(item);
+  if (ind == -1)
+    arr.push(item);
 }

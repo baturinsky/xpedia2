@@ -38,6 +38,7 @@
         "costBuy",
         "costSell",
         "monthlySalary",
+        "monthlyMaintenance",
         "invHeight",
         "invWidth",
         "weight",
@@ -66,7 +67,7 @@
         "prisonType",
         "manufacture",
         "componentOf",
-        "deployments"
+        "loot"
       ],
       exclude: [
         "requiresBuy",
