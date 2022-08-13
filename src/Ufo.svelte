@@ -13,7 +13,7 @@
 
 <table class="main-table">
   <tr class="table-header"> <td colspan="2">Craft</td> </tr>
-  {#each sortFirstLast( entry, { exclude: ["raceBonus", "type", "battlescapeTerrainData", "craftInventoryTile", "deployment"] } ).all as [key, prop]}
+  {#each sortFirstLast( entry, { last: ["raceBonus", "type", "battlescapeTerrainData", "craftInventoryTile", "deployment"] } ).all as [key, prop]}
     <tr>
       <td class="padding-right">{@html rul.tr(key)}</td>
       <td>

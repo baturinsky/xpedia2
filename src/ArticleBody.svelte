@@ -52,7 +52,7 @@ const renderers = {
   alienMissions: {},
   startingConditions: {},
   enviroEffects: {},
-  terrains: {},
+  terrains: {sort:{last:["mapBlocks"]}},
   mapScripts: {},
   commendations: Commendation,
   manufacture: Manufacture,
@@ -61,6 +61,7 @@ const renderers = {
 }
 
 </script>
+
 
 {#if !armor && text}
   <div class="main-table main-text">

@@ -37,6 +37,7 @@
       first: [
         "costBuy",
         "costSell",
+        "tuUse",
         "monthlySalary",
         "monthlyMaintenance",
         "invHeight",
@@ -67,7 +68,10 @@
         "prisonType",
         "manufacture",
         "componentOf",
-        "loot"
+        "loot",
+        "ufos",
+        "terrains",
+        "spawnUnit"        
       ],
       exclude: [
         "requiresBuy",

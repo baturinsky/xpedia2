@@ -1,8 +1,8 @@
 import JSZip from "jszip";
 //import lzs from "lz-string";
-import { defaultLanguage } from "./Ruleset";
-import { readYaml, dirByHttp, parseYaml, delay } from "./util";
-
+import { readYaml, dirByHttp, parseYaml, delay, readTextFile } from "./util";
+import { loadingFile } from "./store";
+ 
 /*async function loadPackedZip(text: string) {
   text = text.trim();
   let jszip = new JSZip();
@@ -157,30 +157,47 @@ export async function loadByHttp() {
   return { ruls, langs, mods: activeModsMetadata }
 }
 
+const extRegexp = /^(.+)\.([0-9a-z\-]+)?$/i;
+
+function splitName(name){
+  let m = name.match(extRegexp);
+  return m?{body:m[1],ext:m[2]}:{body:name,ext:""};
+}
+
+
+
 async function loadLanguagesFromDirs(dirs: string[]) {
 
   let langFiles = await Promise.all(dirs.map(path => dirByHttp(path)));
   let files: { lname: string, dir: string }[] =
     langFiles.map(
-      (list, dirInd) => list.filter(file => file.substr(file.length - 4) == ".yml")
-        .map(lname => ({ lname: lname.substr(0, lname.length - 4), dir: dirs[dirInd] }))
+      (list, dirInd) => list.filter(file => ["yml", "html", "txt"].includes(splitName(file).ext))
+        .map(lname => ({ lname, dir: dirs[dirInd] }))
     ).flat();
   //debugger;
-
-  let lnames = [...new Set([...files.map(f => f.lname), defaultLanguage, "icon"])];
-
 
   let lng = {};
   //let files: { lname: string, dir: string }[] = lnames.map(lname => dirs.map(dir => ({ lname, dir }))).flat(1);
 
+
   let data = await Promise.all(files.map(f => {
-    let path = `${f.dir}${f.lname}.yml`;
-    return readYaml(path)
+    let path = `${f.dir}${f.lname}`;
+    return splitName(f.lname).ext == "yml"?readYaml(path):readTextFile(path);
   }))
-  for (let file of data) {
-    if (typeof file == "object") {
-      let lname = Object.keys(file)[0]
-      lng[lname] = { ...(lng[lname] || {}), ...file[lname] }
+
+  for (let i in data) {
+    let text = data[i];
+    let fname = files[i].lname;
+    if (typeof text == "object") {
+      let lname =  Object.keys(text)[0]
+      lng[lname] = { ...(lng[lname] || {}), ...text[lname] }
+    } else {
+      let split = splitName(fname);
+      if(split.ext != "yml"){
+        let split2 = splitName(split.body);
+        lng[split2.ext] = lng[split2.ext] || {};
+        lng[split2.ext][split2.body] = text;
+      }
     }
   }
 
@@ -241,3 +258,29 @@ export function useCache(data) {
     }
   })
 }
+
+
+export let packedData;
+
+export async function loadRules(rul) {
+  loadingFile.set("loading from js")
+  let data = await loadPacked();
+  if (data) {
+    packedData = true;
+    loadingFile.set("")
+    await delay(10);
+  } else {
+    loadingFile.set("loading from cache")
+    data = await useCache("load");
+    if(!data){
+      loadingFile.set("loading from local files")
+      data = await loadByHttp();
+      useCache(data);
+    }
+  }
+
+  loadingFile.update(t => t + " parsing")
+  rul.load(data);
+  await delay(10);
+}
+

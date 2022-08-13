@@ -1,13 +1,20 @@
 <script>
-  import { rul, packedData, Article as ArticleRul } from "./Ruleset";
+  import { rul, Article as ArticleRul } from "./Ruleset";
   import { LinksPage, Tr, tr, favicon, divider } from "./Components";
   import Article from "./Article.svelte";
   import CogAnimation from "./CogAnimation.svelte";
   import { afterUpdate, setContext } from "svelte";
-  import { revealed, reveal, revealLock, loaded, linksPageSorted } from "./store";
+  import {
+    revealed,
+    reveal,
+    revealLock,
+    loaded,
+    linksPageSorted,
+    loadingFile,
+  } from "./store";
   import Download from "./Download.svelte";
   import onSwipe from "./swipe";
-  import { useCache } from "./load";
+  import { useCache, packedData } from "./load";
 
   /**@type {ArticleRul}*/
   let article = null;
@@ -27,30 +34,37 @@
   let searching = false;
   let saveLoaded = false;
   let sortArticles = false;
-  
+
   let isTouch = "ontouchstart" in window;
   let lang;
 
   setContext("main", { revealed: () => revealed });
 
-  loaded.subscribe((done)=>{
-    if(done){
+  loaded.subscribe((done) => {
+    if (done) {
       loadState();
       checkHash();
     }
-  })
+  });
 
-  linksPageSorted.subscribe(v=>saveState())
+  let _linksPageSorted;
+  linksPageSorted.subscribe((v) => {
+    _linksPageSorted = v;
+    saveState()
+  });
+
 
   function saveState() {
-    console.log("ss", localStorage.xpediaSettings);
+    if(!saveLoaded)
+      return;
     localStorage.xpediaSettings = JSON.stringify({
       hugeFont,
       seeSide,
       lang,
       sortArticles,
-      linksPageSorted: linksPageSorted.value
+      linksPageSorted: _linksPageSorted,
     });
+    console.log("ss", localStorage.xpediaSettings);
   }
 
   export function loadState() {
@@ -81,6 +95,7 @@
 
   function selectLang(n) {
     if (rul.selectLang(n)) lang = n;
+    saveState();
   }
 
   function goTo(id) {
@@ -136,12 +151,25 @@
     }
 
     if (activeOption) {
-      setTimeout(()=>activeOption?.scrollIntoView({ behavior: "smooth", block: "center" }), 50);
+      centerOnArticle();
     }
   }
 
+  function centerOnArticle() {
+    setTimeout(
+      () =>
+        activeOption?.scrollIntoView({ behavior: "smooth", block: "center" }),
+      50
+    );
+  }
+
   function nextArticle(delta) {
-    let nextArticle = rul.findNextArticle(article, delta, currentSection);
+    let nextArticle = rul.findNextArticle(
+      article,
+      delta,
+      currentSection,
+      sortArticles
+    );
     if (nextArticle) {
       goTo(nextArticle.id);
     }
@@ -163,8 +191,7 @@
 
   $: {
     if (article) console.info(article);
-    document.documentElement.style.fontSize = hugeFont ? "18pt" : "12pt";
-    if (saveLoaded) saveState();
+    document.documentElement.style.fontSize = hugeFont ? "18pt" : "12pt";    
   }
 
   function dropdown(val = null) {
@@ -177,7 +204,7 @@
 
   $: sortedArticles = (articles) =>
     sortArticles
-      ? [...articles||[]].sort((a, b) => (a.title > b.title ? 1 : -1))
+      ? [...(articles || [])].sort((a, b) => (a.title > b.title ? 1 : -1))
       : articles;
 
   document.addEventListener("keydown", (event) => {
@@ -245,8 +272,9 @@
 </svelte:head>
 
 {#if !$loaded}
+  {$loadingFile}
   <div class="centered">
-    <CogAnimation scale={2}/>
+    <CogAnimation scale={2} />
   </div>
 {:else}
   {#key lang}
@@ -286,9 +314,16 @@
             </div>
             <div class="navbar-custom navbar-list">
               {#each rul.sortedTypeSections() as section, i}
-                <a href={"##" + section.id} class={
-                  ["FACILITIES", "COMMENDATIONS", "CRAFTS", "ARMORS"].includes(section.id) && "section-has-table"
-                }><Tr s={section.id} /></a>
+                <a
+                  href={"##" + section.id}
+                  class={[
+                    "FACILITIES",
+                    "COMMENDATIONS",
+                    "CRAFTS",
+                    "ARMORS",
+                  ].includes(section.id) && "section-has-table"}
+                  ><Tr s={section.id} /></a
+                >
               {/each}
             </div>
           </div>
@@ -312,7 +347,7 @@
         on:mouseout={(e) => {
           reveal(false);
         }}
-        on:click={(e) => revealLock()}
+        on:click={(e) => {revealLock();saveState();}}
       >
         👁
       </div>
@@ -320,10 +355,13 @@
       <div class="stretcher" />
 
       {#if !packedData}
-        <button class="navbar-button" on:click={(e) => {
-          useCache("wipe");
-          location.reload();
-        }}>
+        <button
+          class="navbar-button"
+          on:click={(e) => {
+            useCache("wipe");
+            location.reload();
+          }}
+        >
           ⭯
         </button>
       {/if}
@@ -388,7 +426,11 @@
         <button
           class="side-sort-button"
           style={sortArticles ? "" : "text-decoration:line-through"}
-          on:click={(e) => (sortArticles = !sortArticles)}
+          on:click={(e) => {
+            sortArticles = !sortArticles;
+            centerOnArticle();
+            saveState();
+          }}
         >
           <Tr s="A-Z" />
         </button>
@@ -407,7 +449,7 @@
               <a
                 class="side-link"
                 href={"##" + option.id}
-                on:click={() => (ignoreNextAutoscroll = true)}
+                on:click={() => {ignoreNextAutoscroll = true}}
               >
                 <Tr s={option.id} />
               </a>
@@ -422,6 +464,7 @@
       class="side-hide-button"
       on:click={(e) => {
         if (e.button == 0) seeSide = !seeSide;
+        saveState();
       }}
       style={seeSide ? "" : "left:1em;"}
     >
@@ -435,17 +478,14 @@
         ":
         <br />
         {#if found && found.length > 0}
-          <LinksPage 
-            links={found.sort((a, b) =>
-              contains(rul.tr(a), query) > contains(rul.tr(b), query) ? -1 : 1
-            )}
-          />
+          <LinksPage  links={found.filter(a=>contains(rul.tr(a), query))}/><br/>
+          <LinksPage  links={found.filter(a=>!contains(rul.tr(a), query))} title=" "/>
         {:else if query.length < 2}
           <i>Query too short</i>
         {:else if searchDelayHandle || searchinInProgres}
-          <CogAnimation size={0.5}/>
+          <CogAnimation size={0.5} />
         {:else}
-          <i><Tr s="Nothing found"/></i>
+          <i><Tr s="Nothing found" /></i>
         {/if}
       {:else if article}
         <Article
@@ -480,7 +520,10 @@
           <h4><Tr s="Export" /></h4>
           <Tr s="aboutexport" /><br />
           <Download title="Export all languages" />
-          <Download title="Export current ({rul.tr(rul.langName)}) only" onlyCurrent={true} />
+          <Download
+            title="Export current ({rul.tr(rul.langName)}) only"
+            onlyCurrent={true}
+          />
           <br />
         {/if}
         <Tr s="aboutxpedia" />

@@ -41,7 +41,7 @@
           <Tr s={key}/>
         </td></tr
       ><tr
-        ><td colspan="2" class="centeredText">
+        ><td colspan="2" class="centered-text">
           <LinksList items={prop} />
         </td></tr
       >

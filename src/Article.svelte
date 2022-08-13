@@ -49,6 +49,8 @@
   -->
 </svelte:head>
 
+{#key  article?.id}  
+
 <h1>
   <nobr><Tr s={article.title} /></nobr>
   <span style="flex:1" />
@@ -83,10 +85,12 @@
   />
 {:else if article.id == "CONDITIONS"}
   <Conditions conditions={rul.startingConditions[article.id]} />
-{:else if article.section == "CATEGORIES"}
-  <LinksPage links={rul.categories[article.id]} />
 {:else if article.section == article.id}
   <LinksPage links={rul.sections[article.id].articles.map((a) => a.id)} />
+{/if}
+
+{#if article.section == "CATEGORIES" && article.id != "CATEGORIES"}
+  <LinksPage links={rul.categories[article.id]} />
 {/if}
 
 <div style="max-width:100%">
@@ -102,3 +106,4 @@
     <div style="height:200px">&nbsp;</div>
   </div>
 </div>
+{/key}

@@ -1,6 +1,6 @@
-import Ruleset, { loadRules } from "./Ruleset";
+import Ruleset, {rul} from "./Ruleset";
 import App from "./App.svelte";
-import { loadByHttp } from "./load";
+import { loadByHttp, loadRules } from "./load";
 import { reveal, loaded } from "./store";
 
 function unescape(s) {
@@ -22,7 +22,7 @@ function showPedia() {
   
   new Ruleset();
 
-  loadRules().then(()=>{
+  loadRules(rul).then(()=>{
     loaded.set(true)
   })
 

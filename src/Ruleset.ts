@@ -76,7 +76,7 @@ export class Entry {
   }
 
   static reserve(raw: any, collection) {
-    let id = raw.id || raw.name || raw.type;
+    let id = raw.id || raw.type || raw.name;
     if (rul[collection][id]) {
       return rul[collection][id];
     } else {
@@ -93,7 +93,8 @@ export class Entry {
   }
 
   set name(val) {
-    this.id = val;
+    if(this.id == null)
+      this.id = val;
   }
 
   get type() {
@@ -226,7 +227,7 @@ export class Commendation extends Entry {
       if(fb[n])
         return fb[n];
       if (statsList.includes(n))
-        return fb.stats ? fb.stats[n] || 0 : 0;
+        return fb["stats"] ? fb["stats"][n] || 0 : 0;
     }
       
     return this[n];
@@ -389,6 +390,7 @@ export const statsList = ["tu", "stamina", "health", "bravery", "reactions", "fi
 export class Unit extends Entry {
   stats: Stats;
   armor: string;
+  race: string;
   builtInWeaponSets: string[][];
 
   constructor(raw: any) {
@@ -583,10 +585,7 @@ export class Article {
     this.id = raw.id;
     this._text = raw.text;
     this._title = raw.title || raw.id;
-    /*if (!(this.id in rul.lang))
-      rul.lang[this.id] = this.title;*/
     this.image_id = raw.image_id;
-    //this.type_id = raw.type_id || "-1";
     rul.articles[this.id] = this;
 
     let id = raw.id;
@@ -926,6 +925,9 @@ export default class Ruleset {
   events: { [key: string]: Event } = {};
   eventScripts: { [key: string]: EventScript } = {};
   missionScripts: { [key: string]: MissionScript } = {};
+  alienMissions: { [key: string]: Entry } = {};
+  ufos: { [key: string]: Entry } = {};
+  terrains: { [key: string]: Entry } = {};
   obs = { big: [], floor: [], hand: [], base: [], icon: [] };
   sounds: string[] = [];
   config: any;
@@ -1054,12 +1056,9 @@ export default class Ruleset {
       return false;
 
     let lang = this.langs[langName];
-
-    /*if (this.langs.icon) {
-      for (let k in this.langs.icon) {
-        lang[k] = this.langs.icon[k] + (lang[k] || "")
-      }
-    }*/
+    if(lang.ALREADYCONVERTED)
+      return;
+    lang.ALREADYCONVERTED = "true";
 
     for (let k in lang) {
       let text: string = lang[k];
@@ -1073,6 +1072,7 @@ export default class Ruleset {
       }
     }
 
+    
     this.convertedLangs[langName] = true;
     return true;
   }
@@ -1118,6 +1118,20 @@ export default class Ruleset {
       this.parseType(typeName, typeConstructor);
     }
 
+    function blockItems(blocks){
+      if(blocks == null)
+        return [];
+      blocks = Object.values(blocks || []);
+      if(blocks == null)
+        return [];
+      blocks = blocks.flat();
+      let x = blocks.map(b=>b.randomizedItems || []).flat().map(c=>c?.itemList || []).flat();
+      let y = blocks.map(b=>b.items?Object.keys(b.items):[]).flat();
+      return [...x,...y];
+    }
+
+    crosslink(this.units, "race", "alienRaces", "hasThisRace");
+    crosslink(this.alienRaces, "members", "units", "memberOf");
     crosslink(this.soldierTransformation, "forbiddenPreviousTransformations", this.soldierTransformation, "blocksTransformations");
     crosslink(this.alienDeployments, "loot", this.items, "loot");
     crosslink(this.alienDeployments, "enviroEffects", this.enviroEffects, "deployments");
@@ -1127,6 +1141,11 @@ export default class Ruleset {
     crosslink(this.alienDeployments, "startingCondition", this.startingConditions, "deployments");
     crosslink(this.missionScripts, "researchNeeded", this.research, "unlocksMissions");
     crosslink(this.missionScripts, "researchForbidden", this.research, "stopsMissions");
+    crosslink(this.alienMissions, t=>Object.values(t.raceWeights)?.map(w=>Object.keys(w)).flat(), "alienRaces", "missions");
+    crosslink(this.ufos, t=>blockItems(t.battlescapeTerrainData?.mapBlocks), this.items, "ufos");
+    crosslink(this.terrains, t=>blockItems(t.mapBlocks), this.items, "terrains");
+    crosslink(this.terrains, "civilianTypes", this.units, "terrains");
+    crosslink(this.items, "spawnUnit", this.units, "spawnedBy");
 
     for (let facility of Object.values(this.facilities)) {
       if (facility.buildCostItems) {
@@ -1216,17 +1235,24 @@ export default class Ruleset {
     }
   }
 
-  findNextArticle(current: Article, delta: number, currentSection: Section) {
+  findNextArticle(current: Article, delta: number, currentSection: Section, sorted = false) {
     if (!current) return null;
     if (!currentSection)
       currentSection = current.sections[0];
     let list = currentSection ? currentSection.articles : this.articlesOrder;
+    if(sorted){
+      list = this.sortArticlesByName(list);
+    }
     let index = list.findIndex((a) => a.id == current.id);
     if (index != undefined) {
       let nextIndex = index + delta;
       let nextArticle = list[nextIndex];
       return nextArticle;
     }
+  }
+
+  sortArticlesByName(list:Article[]){
+    return this.sortStrings(list.map(a=>a.id)).map(id=>this.articles[id]);
   }
 
   str(id: string) {
@@ -1300,7 +1326,6 @@ export default class Ruleset {
     this.convertLang(defaultLanguage);
     let l = Object.keys(this.langs);
     if(l.length==3){
-      debugger;
       this.selectLang(l.find(n=>n!=defaultLanguage && n!="icon"));
     } else {
       this.selectLang(defaultLanguage)
@@ -1359,26 +1384,6 @@ export default class Ruleset {
   }
 }
 
-export let packedData;
-
-export async function loadRules() {
-  let data = await loadPacked();
-  if (data) {
-    packedData = true;
-    await delay(10);
-  } else {
-    data = await useCache("load");
-    if(!data){
-      data = await loadByHttp();
-      useCache(data);
-    }
-  }
-
-  rul.load(data);
-  await delay(10);
-}
-
-
 const fieldNames = {
   dependencies: "STR_DEPENDS_ON",
   seeAlso: "STR_ITEM_REQUIRED",
@@ -1418,7 +1423,7 @@ export const entryConstructors = {
   terrains: Entry,
   mapScripts: Entry,
   weaponTypes: Entry,
-  stats: Entry
+  stats: Entry,
 }
 
 export const damageTypes = [
@@ -1470,8 +1475,9 @@ function backLink(id: string, list: string[], to: any, field: string, collection
 }
 
 function crosslink(collection1, prop1, collection2, prop2, prefix?) {
+  let f = typeof prop1 === "function"?prop1:t=>t[prop1];
   for (let t of [...Object.values(collection1)] as { id: string }[]) {
-    backLink(t.id, t[prop1], collection2, prop2, prefix);
+    backLink(t.id, f(t), collection2, prop2, prefix);
   }
 }
 

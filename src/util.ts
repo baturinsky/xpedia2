@@ -1,4 +1,5 @@
 import JSYaml from "js-yaml";
+import { loadingFile } from "./store";
 
 export async function fetchAll(files) {
   return Object.fromEntries(
@@ -15,6 +16,7 @@ export async function readTextFile(path: string) {
   let text: string;
   try {
     text = await (await fetch(path)).text();
+    loadingFile.update(t => t + " " + path);
   } catch (e) {
     console.error(e);
     return null;
