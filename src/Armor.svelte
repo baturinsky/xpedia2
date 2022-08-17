@@ -123,11 +123,7 @@
               <header><Tr s={prop}/></header>
               {#each sortFirstLast(entry[prop]).all as [key, val], i}
                 <div>
-                    {#if prop == "damageModifier"}                    
-                      <Link href={damageTypes[key]} />
-                    {:else}
-                      <Value val={key} />
-                    {/if}
+                  <Value val={prop=="damageModifier"?damageTypes[key]:key} icon="monospace" />
                 </div>
                   <div>
                     {#if "recovery" == prop}
@@ -135,7 +131,7 @@
                         {#if j != 0}
                           <br />
                         {/if}
-                        <Value val={subfield} />
+                        <Value val={subfield}/>
                         :
                         <em>
                           <Value val={val[subfield]} />

@@ -9,25 +9,20 @@
 
   import { createEventDispatcher } from "svelte";
   import ArticleBody from "./ArticleBody.svelte";
+import Research from "./Research.svelte";
 
   const dispatch = createEventDispatcher();
 
   /**@type {Article}*/
   export let article = {} as any;
   export let query;
-  let textwithHighlights;
+  let text;
   let other = false;
   let aId;
 
   $: {
     if(article == null)
       debugger;
-    textwithHighlights = article.text || "";
-
-    if (textwithHighlights == "") {
-      let lookup = rul.research[article.id]?.lookup;
-      if (lookup) textwithHighlights = rul.tr(lookup);
-    }
 
     other = article.section == "OTHER" ? { BaseServices }[article.id] : false;
     aId = article.id;
@@ -52,7 +47,7 @@
 {#key  article?.id}  
 
 <h1>
-  <nobr><Tr s={article.title} /></nobr>
+  <nobr><Tr s={article.id} /></nobr>
   <span style="flex:1" />
   <button class="page-turn" on:click={(e) => dispatch("prev")}>⇦</button>
   <button class="page-turn" on:click={(e) => dispatch("next")}>⇨</button>
@@ -97,7 +92,14 @@
   <div class="main-flex">
     <svelte:component this={other} {query} />    
 
-    <ArticleBody id={article.id} text={textwithHighlights}/>
+    {#if article.requires && article.requires != article.id}
+      <Tr s="Research required:"/>
+      {#each article.requires || [] as req}
+        <Value val={req}/>
+      {/each}
+    {/if}
+
+    <ArticleBody id={article.id} text={article.text}/>    
     
     {#if !(article.id in rul.units)}
       <Illustration id={article.image_id} />

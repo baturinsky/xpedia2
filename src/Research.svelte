@@ -12,15 +12,15 @@
   let longLists = [
     "unlocks",
     "seeAlso",
-    "requiresBaseFunc",
-    "manufacture",
     "allowsBuying",
     "freeFrom",
     "dependencies",
     "leadsTo",
     "disables",
     "getOneFree",
-    "getOneFreeProtected"    
+    "getOneFreeProtected",
+    "requiresBaseFunc",
+    "manufacture",
   ];
 
   //let sorted = sortFirstLast(research, {last:[]});

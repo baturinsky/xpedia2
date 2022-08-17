@@ -1,16 +1,20 @@
 <script>
   import { rul, sortFirstLast, damageTypes } from "./Ruleset";
+  import {Tr, Link, Value} from "./Components"
   import SpecialBonus from "./SpecialBonus.svelte";
-  import Link from "./Link.svelte";
   import CanvasImage from "./CanvasImage.svelte";
-  import Value from "./Value.svelte";
   import AlterList from "./AlterList.svelte";
+  import UseCost from "./UseCost.svelte";
+  import SecondaryTable from "./SecondaryTable.svelte";
 
+  /**@type {typeof import("./Ruleset").Item}*/
   export let entry;
   let title;
   let attacks;
   let sorted;
   let anal = false;
+
+  let hand1bonus;
 
   function soundsFrom(sounds) {
     if (!sounds) return [];
@@ -26,6 +30,17 @@
       (entry.battleType ? rul.tr("battleType" + entry.battleType) + " " : "") +
       rul.tr("Item");
 
+    title = `${entry.weight?entry.weight + rul.tr("kg"):""}  
+${entry.invWidth>1||entry.invHeight>1?`${entry.invWidth}×${entry.invHeight}`:""}
+${entry.clipSize>0?entry.clipSize + rul.tr("-shot"):""}
+${title}`
+
+    let ohpen = (entry.oneHandedPenalty || entry.battleType == 3?67:50);
+
+    hand1bonus = entry.twoHanded?(entry.blockBothHands?
+      rul.tr("2hand only", {icon:"compact"}):`${rul.tr("1hand", {icon:"compact"})} ${ohpen}%`)
+      :"";
+
     if (entry.compatibleAmmo)
       for (let ammoId of entry.compatibleAmmo) {
         let ammo = rul.items[ammoId];
@@ -35,43 +50,36 @@
 
     sorted = sortFirstLast(entry, {
       first: [
+        "fixedWeapon",
         "costBuy",
         "costSell",
         "tuUse",
         "monthlySalary",
         "monthlyMaintenance",
-        "invHeight",
-        "invWidth",
-        "weight",
-        "size",
+        "size",        
         "isConsumable",
-        "maxRange",
         "medikitTargetSelf",
         "medikitType",
         "stimulant",
         "stunRecovery",
-        "dropoff",
-        "costPrime",
         "costUnprime",
-        "twoHanded",
-        "blockBothHands",
-        "oneHandedPenalty",        
-        "kneelBonus",
         "blastRadius",
         "requires",
         "categories",
         "armors",
         "compatibleWeapons",
-        "clipSize",
         "liveAlien",
         "recover",
         "prisonType",
-        "manufacture",
-        "componentOf",
         "loot",
         "ufos",
         "terrains",
-        "spawnUnit"        
+        "spawnUnit",     
+        "powerRangeReduction",
+        "powerRangeThreshold",
+        "commendations",
+        "manufacture",
+        "componentOf",
       ],
       exclude: [
         "requiresBuy",
@@ -109,11 +117,14 @@
                 {#if entry.battleType == 2}
                   <td colspan="3" />
                 {:else}
-                  <td>{rul.tr("mode")}</td>
-                  <td>{rul.tr("accuracy")}</td>
-                  <td>{rul.tr("cost")}</td>
+                  <td><Tr s="mode"/></td>
+                  <td>
+                    <Tr s="accuracy"/> <Tr s="kneeling"/> {entry.kneelBonus||120}% {@html hand1bonus}
+                    -{entry.dropoff}/<Tr s="tile"/>
+                  </td>
+                  <td><Tr s="cost"/></td>
                 {/if}
-                <td>{rul.tr("damage")}</td>
+                <td><Tr s="damage"/></td>
               </thead>
               {#each attacks as attack}
                 <tr>
@@ -146,25 +157,18 @@
                       {#if attack.range}
                         {@html rul
                           .str("at !N! m")
-                          .replace("!N!", `<em>${attack.range}</em>`)}
+                          .replace("!N!", `<em class="${attack.range==entry.maxRange?"bad":""}">${entry.minRange?entry.minRange+"-":""}${attack.range}</em>`)}
                       {/if}<br/>
                       <SpecialBonus bonus={attack.accuracyMultiplier} />
                     </td>
                     <td>
-                      <nobr>
-                        <em>{attack.cost.time}</em>
-                        {attack.flatTime ? "" : "%"}
-                        <small>{rul.str("TU")}</small>
-                      </nobr>
-                      {#each Object.keys(attack.cost) as res}
-                        {#if res != "time" && attack.cost[res] != 0}
-                          <br />
-                          <nobr>
-                            <Value val={attack.cost[res]} />
-                            <small>{rul.str(res)}</small>
-                          </nobr>
-                        {/if}
-                      {/each}
+                      <UseCost cost={attack.cost} flatTime={attack.flatTime}/>
+                      {#if entry.costPrime}
+                        <div>
+                          <Tr s="Prime:"/> <UseCost cost={entry.costPrime}/>
+                        </div>
+                      {/if}
+
                     </td>
                   {/if}
                   <td>
@@ -219,19 +223,22 @@
           </td>
         </tr>
       {/if}
+    {:else if key == "manufacture"}
+    <SecondaryTable text={key}>
+      <div class="grid3 width100">
+        {#each Object.keys(prop) as man, i}          
+          <div class="subgrid-header"><Value val={man} /></div>
+          <div><Value val={rul.manufacture[man]?.requiredItems || ""} /></div>
+          <div>➔</div>
+          <div><Value val={rul.manufacture[man]?.producedItems || ""} /></div>
+        {/each}
+      </div>
+    </SecondaryTable>
     {:else}
       <tr>
-        <td><Value val={key} /></td>
+        <td><Value val={key} capital={true}/></td>
         <td class="item-right-column">
-          {#if ["manufacture"].includes(key)}
-            {#each Object.keys(prop) as man, i}
-              <div class={i > 0 && "top-border"}>
-                <Value val={man} />:
-                <Value val={rul.manufacture[man]?.requiredItems || ""} /> →
-                <Value val={rul.manufacture[man]?.producedItems || ""} />
-              </div>
-            {/each}
-          {:else if ["damageBonus", "meleeBonus", "accuracyMultiplier", "meleeMultiplier", "closeQuartersMultiplier"].includes(key)}
+          {#if ["damageBonus", "meleeBonus", "accuracyMultiplier", "meleeMultiplier", "closeQuartersMultiplier"].includes(key)}
             <SpecialBonus bonus={prop} />
           {:else if ["damageType", "meleeType"].includes(key)}
             {rul.damageTypeName(prop)}

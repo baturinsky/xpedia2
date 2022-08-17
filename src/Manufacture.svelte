@@ -1,5 +1,5 @@
 <script>
-  import { rul } from "./Ruleset";
+  import { rul, sortFirstLast } from "./Ruleset";
   import { Link, LinksList, LinksPage, Value } from "./Components";
 
   export let entry;
@@ -45,18 +45,16 @@
   >
 {/if}
 
-{#each Object.entries(entry).sort( (a, b) => (a[0] > b[0] ? 1 : -1) ) as prop}
-  {#if !["name", "randomProducedItems"].includes(prop[0])}
-    <tr>
-      <td class="padding-right">
-        <Value val={prop[0]}/>
-      </td>
-      <td>
-        {#if ["requiresBaseFunc", "producedItems", "requiredItems"].includes(prop[0])}
-          <LinksList items={prop[1]} />        
-        {:else}<Value val={prop[1]} />{/if}
-      </td>
-    </tr>
-  {/if}
+{#each sortFirstLast(entry, {exclude:["randomProducedItems"]}).all as prop}
+  <tr>
+    <td class="padding-right">
+      <Value val={prop[0]}/>
+    </td>
+    <td>
+      {#if ["requiresBaseFunc", "producedItems", "requiredItems"].includes(prop[0])}
+        <LinksList items={prop[1]} />        
+      {:else}<Value val={prop[1]} />{/if}
+    </td>
+  </tr>
 {/each}
 </table>

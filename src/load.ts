@@ -119,13 +119,17 @@ export async function loadByHttp() {
       dirByHttp(`${OXCPath}user/mods/`, true),
       dirByHttp(`${PediaPath}mods/`, true)
     ])
+  
 
   modDirs = [`${OXCPath}standard/xcom1/`, ...modDirs]
   let allModDirs = [...modDirs, ...xpediaDirs]
   let modMetadataById = {};
   let modMetadata = await Promise.all(allModDirs.map(dir => readYaml(`${dir}/metadata.yml`)))
+  console.log(modMetadata);
   for (let i in modMetadata) {
     let data = modMetadata[i];
+    if(data==null)
+      continue;
     let dir = allModDirs[i];
     modMetadataById[data.id] = { ...data, dir };
   }

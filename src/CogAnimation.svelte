@@ -1,10 +1,10 @@
 <script>
-  export let size = 1;
+  export let size = 100;
 </script>
 
-<svg>
+<svg style="width:{size}px;height:{size}px;">
   <g
-    transform="translate(50 50) scale({size})"
+    transform="scale({size/200}) translate(50 50)"
     id="g4"
     style="fill:#64ccbc;fill-opacity:1"
   >

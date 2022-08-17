@@ -7,6 +7,8 @@
   export let depth = 2;
   export let simple = false;
   export let nobr = 100;
+  export let icon = null;
+  export let capital = false;
 
   $:{
     if(obs){
@@ -30,14 +32,14 @@
 {:else if !isNaN(+val)}
   <em class="num">{val.toLocaleString()}</em>
 {:else if rul.article(val) && !simple}
-  <Link href={val}/>
+  <Link href={val} {icon}/>
 {:else if rul.sprite(val, true)}
   <img src={rul.sprite(val)} alt={val} style="max-width:320px"/>
 {:else}
   {#if 'tip_' + val in rul.lang}
     <span tooltip={'tip_' + val}><Tr s={val}/><sup class="tipmark">?</sup></span>
   {:else}
-    <Tr s={val} {simple} {nobr}/>
+    <Tr s={val} {simple} {nobr} {icon} {capital}/>
   {/if}
   
 {/if}

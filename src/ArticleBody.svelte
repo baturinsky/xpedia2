@@ -18,7 +18,7 @@ import MainTable from "./MainTable.svelte";
 import CanvasImage from "./CanvasImage.svelte";
 import {singular} from "./util"
 
-export let text;
+export let text = null;
 export let id;
 
 let armor;
@@ -31,33 +31,35 @@ $:{
 }
 
 const renderers = {
+  items: Item,
+  armors: Armor,
+  research: Research,
+  units: Unit,
   stats: {},
   elements: {},
-  armors: Armor,
-  units: Unit,
-  items: Item,
+  commendations: Commendation,
   baseServices: BaseService,
+  facilities: Facility,
+  manufacture: Manufacture,
   crafts: Craft,
   craftWeapons: CraftWeapon,
-  ufos: Ufo,
   weaponTypes: {},
-  facilities: Facility,
   soldierBonuses: {},
-  eventScripts: {title:"Event Script"},
   soldierTransformation: {},
   soldiers: {sort:{first:["statCaps"],last:["armors"]}},
+  ufos: Ufo,
   alienRaces: {title:"Race"},
-  events: {},
+  alienRanks: {title:"Ranks"},
+  alienDeployments: {sort:{first:["startingCondition","loot"]}},
   missionScripts: {sort:{exclude:["researchNeeded", "researchForbidden"]}},
   alienMissions: {},
   startingConditions: {},
   enviroEffects: {},
   terrains: {sort:{last:["mapBlocks"]}},
   mapScripts: {},
-  commendations: Commendation,
-  manufacture: Manufacture,
-  research: Research,
-  alienDeployments: {sort:{first:["startingCondition","loot"]}},
+  events: {},
+  eventScripts: {title:"Event Script"},
+
 }
 
 </script>
@@ -70,8 +72,9 @@ const renderers = {
         <CanvasImage item={rul.items[id]} zoom={2}/>
       </div>
     {/if}
-
-    {@html text}
+    <div>
+      {@html text}
+    </div>
   </div>
 {/if}
 

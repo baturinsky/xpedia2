@@ -12,6 +12,7 @@
     linksPageSorted,
     loadingFile,
   } from "./store";
+  import {isAncestorOf} from "./util"
   import Download from "./Download.svelte";
   import onSwipe from "./swipe";
   import { useCache, packedData } from "./load";
@@ -96,6 +97,7 @@
   function selectLang(n) {
     if (rul.selectLang(n)) lang = n;
     saveState();
+    checkHash();
   }
 
   function goTo(id) {
@@ -127,7 +129,9 @@
         searching = true;
         if (query.length >= 2) {
           searchinInProgres = true;
+          //console.log("looking for", query);
           found = await rul.search[rul.langName].findArticles(query);
+          //console.log(found);
           searchinInProgres = false;
           //debugger;
           //found = result.map((a) => a.id);
@@ -183,7 +187,7 @@
         goTo("SEARCH::" + e.target.value);
         searchDelayHandle = null;
       },
-      e.key == "Enter" ? 10 : 300
+      e.key == "Enter" ? 10 : 1000
     );
   }
 
@@ -191,7 +195,7 @@
 
   $: {
     if (article) console.info(article);
-    document.documentElement.style.fontSize = hugeFont ? "18pt" : "12pt";    
+    document.documentElement.style.fontSize = hugeFont ? "24pt" : "12pt";    
   }
 
   function dropdown(val = null) {
@@ -230,6 +234,14 @@
   })*/
 
   window.addEventListener("mousemove", async (e) => {
+    if(e.screenX<10 && e.screenY < innerHeight/3){
+      dropdown(true);
+    } else {
+      if(e.target && !isAncestorOf(navbarDropDown,e.target)){
+        dropdown(false);
+      }
+    }
+
     if (tooltip) {
       let el = e.target;
       while (el && el.attributes && !("tooltip" in el.attributes))
@@ -259,6 +271,8 @@
       classes.remove("visible");
     }
   }
+
+  let navbarDropDown;
 </script>
 
 <svelte:head>
@@ -272,9 +286,9 @@
 </svelte:head>
 
 {#if !$loaded}
-  {$loadingFile}
+  <div style="opacity:0.3">{$loadingFile}</div>
   <div class="centered">
-    <CogAnimation scale={2} />
+    <CogAnimation size={200} />
   </div>
 {:else}
   {#key lang}
@@ -282,8 +296,15 @@
       <!-- svelte-ignore a11y-mouse-events-have-key-events -->
       <div
         class="navbar-dropdown-container"
-        on:mouseover={(e) => dropdown(true)}
-        on:mouseout={(e) => dropdown(false)}
+        bind:this={navbarDropDown}
+        on:mousemove={(e) => {
+          dropdown(true)
+        }}
+        on:mouseout={(e) => {
+          if(e.target && !isAncestorOf(e.target)){
+            dropdown(false)
+          }
+        }}
       >
         <div
           class="navbar-button dropdown-button"
@@ -299,10 +320,9 @@
         </div>
 
         <div
-          class="navbar-dropdown"
-          style={showDropdown ? "visibility:visible" : "visibility:hidden"}
+          class="navbar-dropdown" style={showDropdown ? "visibility:visible" : "visibility:hidden"}     
         >
-          <div class="flex-horisontal" style="flex-wrap:nowrap">
+          <div class="flex-horisontal">
             <div class="navbar-auto navbar-list">
               <a href="##MAIN" style="text-decoration:underline;">
                 <Tr s={"HOME"} />
@@ -477,16 +497,19 @@
         <em>{query}</em>
         ":
         <br />
-        {#if found && found.length > 0}
-          <LinksPage  links={found.filter(a=>contains(rul.tr(a), query))}/><br/>
-          <LinksPage  links={found.filter(a=>!contains(rul.tr(a), query))} title=" "/>
-        {:else if query.length < 2}
-          <i>Query too short</i>
-        {:else if searchDelayHandle || searchinInProgres}
-          <CogAnimation size={0.5} />
-        {:else}
-          <i><Tr s="Nothing found" /></i>
-        {/if}
+        {#key `${lang} ${query}`}
+          {#if found && found.length > 0}
+            <LinksPage links={found.filter(a=>contains(rul.tr(a), query)).slice(0,200)}/><br/>
+            <LinksPage links={found.filter(a=>!contains(rul.tr(a), query)).slice(0,200)} title=" "/>
+          {:else if query.length < 2}
+            <i>Query too short</i>
+          {:else if searchDelayHandle || searchinInProgres}
+          <Tr s="Initializing search engine..."/><br/>
+            <CogAnimation size={30} />
+          {:else}
+            <i><Tr s="Nothing found" /></i>
+          {/if}
+        {/key}
       {:else if article}
         <Article
           {article}

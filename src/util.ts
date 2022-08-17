@@ -50,7 +50,7 @@ export async function dirByHttp(path, full = false) {
   let text = await readTextFile(path);
   let matches: string[], files: string[] = [];
   while (matches = dirFilesRegex.exec(text)) {
-    if (matches[1] != "../")
+    if (matches[1] != "../" && matches[1].substring(0,4) != "http")
       files.push(full ? path + matches[1] : matches[1]);
   }
   return files;
@@ -94,7 +94,7 @@ export function getFlagEmoji(countryCode:string){
 }
 
 export function singular(s:string){
-  return s.substring(s.length-1) == "s"?s.substring(0,s.length-1):s;
+  return s.replace(/e?s$/,"");
 }
 
 export function removeByValue<T>(arr:T[], item:T) {
@@ -110,4 +110,21 @@ export function addIfNew<T>(arr:T[], item:T) {
   const ind = arr.indexOf(item);
   if (ind == -1)
     arr.push(item);
+}
+
+export function isAncestorOf(ancestor, descendant) {
+  let n = descendant;
+  while (n) {
+    if (n === ancestor) {
+      return true;
+    } else {
+      n = n.parentNode;
+    }
+  }
+  return false;
+}
+
+export function capital(str:string){
+  console.log("C", str);
+  return str.substr(0, 1).toUpperCase() + str.substr(1).toLowerCase()  
 }

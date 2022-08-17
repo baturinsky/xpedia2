@@ -1,7 +1,8 @@
 import SearchApi from 'js-worker-search';
+import { identity } from 'svelte/internal';
 import { emptyImg } from "./Components";
 import { loadByHttp, loadPacked, useCache } from './load';
-import { camelToUnderscore, delay, getFlagEmoji, removeByValue } from './util';
+import { camelToUnderscore, capital, delay, getFlagEmoji, removeByValue } from './util';
 
 export let rul!: Ruleset;
 export type SortFirsLastOptions = { first?: string[], last?: string[], exclude?: string[], sortBy?: Function }
@@ -38,7 +39,7 @@ export class Search {
 
   constructor() {
     for (let a of Object.values(rul.articles)) {
-      let texts = ["id", "type", "title", "text"].map(key => (a[key] as string || "").toLowerCase()).join(" ");
+      let texts = ["id", "type", "title", "text"].map(key => `${a[key]}`.toLowerCase()).join(" ");
       this.articles.indexDocument(a.id, texts);
     }
   }
@@ -170,13 +171,15 @@ export class Manufacture extends Entry {
       }
     }
 
-    if (this.producedItems) {
-      for (let itemName of Object.keys(this.producedItems)) {
-        let item = rul.items[itemName];
-        if (!item) continue;
-        if (!item.manufacture) item.manufacture = {};
-        item.manufacture[this.name] = this.producedItems[itemName];
-      }
+    if (!this.producedItems) {
+      this.producedItems = {[this.id]:1};
+    }
+
+    for (let itemName of Object.keys(this.producedItems)) {
+      let item = rul.items[itemName];
+      if (!item) continue;
+      if (!item.manufacture) item.manufacture = {};
+      item.manufacture[this.name] = this.producedItems[itemName];
     }
 
     if (this.requiredItems) {
@@ -212,12 +215,20 @@ export class Commendation extends Entry {
   criteria;
   killCriteria;
   finalBonus: Entry;
+  damageTypes: string[];
 
   constructor(raw: any) {
     super(raw, "commendations")
     if (this.killCriteria)
-      this.killCriteria = this.killCriteria.flat(2);
+      this.killCriteria = this.killCriteria.flat();
     this.finalBonus = this.soldierBonusTypes && rul.soldierBonuses[this.soldierBonusTypes[this.soldierBonusTypes.length-1]];
+    if(this.killCriteria){
+      this.damageTypes = Object.values(this.killCriteria).map(e=>e && e[1] && e[1][0]).flat();
+      this.damageTypes = this.damageTypes.map(v=>{
+        let i = internalDamageTypes.indexOf(v);
+        return i>=0?damageTypes[i]:v
+      })
+    }
   }
 
 
@@ -513,7 +524,7 @@ export class Attack {
       this.accuracyMultiplier = accuracyMultiplier;
 
       if (this.damageType != null) {
-        backLink(item.id, [damageTypes[this.damageType]], "elements", "weapon");
+        backLink(item.id, [damageTypes[this.damageType]], "elements", "weapons");
       }
 
       for (let k in this.accuracyMultiplier || [])
@@ -559,6 +570,7 @@ export class Article {
   _text: string;
   _title: string;
   sections: Section[] = [];
+  requires: string[];
 
   get section() {
     return this.sections[0]?.id;
@@ -586,6 +598,8 @@ export class Article {
     this._text = raw.text;
     this._title = raw.title || raw.id;
     this.image_id = raw.image_id;
+    if(raw.requires)
+      this.requires = Array.isArray(raw.requires)?raw.requires:[raw.requires];
     rul.articles[this.id] = this;
 
     let id = raw.id;
@@ -612,7 +626,13 @@ export class Article {
   }
 
   get text() {
-    return rul.lang[this._text] || rul.lang[this.id + "_UFOPEDIA"];
+    let t = rul.lang[this._text] || rul.lang[this.id + "_UFOPEDIA"] || rul.lang[rul.research[this.id]?.lookup];
+    if(t != null && t.indexOf("{") != -1){
+      t = t.replace(/\{NEWLINE\}/g, "\n")
+      t = t.replace(/^\s+/g, "")
+      t = t.replace(/\{[^}]+\}/g, " ")
+    }
+    return t;
   }
 
   get title() {
@@ -806,6 +826,7 @@ export class Item extends Entry {
   categories: string[];
   requiresBuy: string[];
   heldBy: Set<string>;
+  dropoff: number;
 
   get sprite() {
     if (this.bigSprite) {
@@ -818,6 +839,7 @@ export class Item extends Entry {
 
     this.invWidth = this.invWidth || 1;
     this.invHeight = this.invHeight || 1;
+    if(this.dropoff==null) this.dropoff = 2;    
 
     let t = this as any;
 
@@ -854,7 +876,12 @@ export class Item extends Entry {
       backLink(this.id, [k], "stats", "meleeAccuracy");
 
     if (this.damageType != null) {
-      backLink(this.id, [damageTypes[this.damageType]], "elements", "weapon");
+      backLink(this.id, [damageTypes[this.damageType]], "elements", "weapons");
+    }
+
+    if(this.damageAlter?.ResistType){
+      let rt = this.damageAlter?.ResistType;
+      backLink(this.id, [damageTypes[rt] || rt], "elements", "weapons");
     }
 
   }
@@ -1060,7 +1087,22 @@ export default class Ruleset {
       return;
     lang.ALREADYCONVERTED = "true";
 
-    for (let k in lang) {
+    if(langName == defaultLanguage)
+    lang = {...{
+      dependencies: "STR_DEPENDS_ON",
+      seeAlso: "STR_ITEM_REQUIRED",
+      requiresBaseFunc: "STR_SERVICES_REQUIRED",
+      freeFrom: "STR_GET_FOR_FREE_FROM",
+      leadsTo: "STR_LEADS_TO",
+      unlocks: "STR_UNLOCKS",
+      disables: "STR_DISABLES",
+      getOneFree: "STR_GIVES_ONE_FOR_FREE",
+      manufacture: "STR_REQUIRED_BY",
+      randomProducedItems: "STR_RANDOM_PRODUCTION_DISCLAIMER",
+      cost: "STR_COST",
+    }, ...lang};
+    
+    /*for (let k in lang) {
       let text: string = lang[k];
       if (typeof text === "string") {
         text = text.replace(/^({NEWLINE})+/, "");
@@ -1070,7 +1112,7 @@ export default class Ruleset {
         );
         lang[k] = text;
       }
-    }
+    }*/
 
     
     this.convertedLangs[langName] = true;
@@ -1131,6 +1173,7 @@ export default class Ruleset {
     }
 
     crosslink(this.units, "race", "alienRaces", "hasThisRace");
+    crosslink(this.units, "rank", "alienRanks", "hasThisRank");
     crosslink(this.alienRaces, "members", "units", "memberOf");
     crosslink(this.soldierTransformation, "forbiddenPreviousTransformations", this.soldierTransformation, "blocksTransformations");
     crosslink(this.alienDeployments, "loot", this.items, "loot");
@@ -1146,6 +1189,14 @@ export default class Ruleset {
     crosslink(this.terrains, t=>blockItems(t.mapBlocks), this.items, "terrains");
     crosslink(this.terrains, "civilianTypes", this.units, "terrains");
     crosslink(this.items, "spawnUnit", this.units, "spawnedBy");
+    crosslink(this.commendations, "damageTypes", this.items, "commendations");
+    crosslink(this.commendations, "damageTypes", this.elements, "commendations");
+    
+    for(let e of Object.values(this.elements)){
+      for(let w of e["weapons"] || []){
+        addFields(this.items[w], "commendations", e["commendations"])
+      }          
+    }
 
     for (let facility of Object.values(this.facilities)) {
       if (facility.buildCostItems) {
@@ -1259,31 +1310,41 @@ export default class Ruleset {
     return this.lang[id] || id;
   }
 
-  tr(str, simple=false) {
+  
+
+  tr(str:string, options?:{icon:string}) {
     //debugger;
     //console.log(str);
     if (str == null)
       return "";
     //console.log("tr", str, rul.lang[str]);  
 
+    const bigSnakeCase = /^[A-Z0-9_]+$/;
+
     let icon = this.langs?.icon?this.langs.icon[str]:null;
 
     if (str in rul.lang) {
       str = rul.lang[str]
     } else if (typeof str == "string") {
-      if (this.lang[fieldNames[str]]) return this.lang[fieldNames[str]];
+      if(icon)
+        str = null;
+      else {
+        if (str.substr(0, 4) == "STR_")
+          str = str.substr(4);
 
-      if (str.substr(0, 4) == "STR_")
-        str = str.substr(4);
+        if (str.match(bigSnakeCase))
+          str = str.replace(/_/g, " ");
 
-      if (str.includes("_") && str.search(/[a-z]/) == -1)
-        str = str.replace(/_/g, " ");
-      else str = str.replace(/([^A-Z0-9])([A-Z0-9])/g, "$1 $2");
-        str = str.substr(0, 1).toUpperCase() + str.substr(1).toLowerCase();
+        str = str.replace(/([a-z])([A-Z])/g, "$1 $2");
+      }
     }    
 
-    if(icon && !simple)
-      str = str==null?null:icon + str;
+    if(icon && options?.icon){      
+      if(options.icon == "monospace")
+        str = `<div class='inem'>${icon}</div>${str||""}`
+      else if(options.icon == "compact")
+        str = `<div class='comem'>${icon}</div>${str||""}`
+    }
 
     //console.log(str);
     return str;
@@ -1384,20 +1445,6 @@ export default class Ruleset {
   }
 }
 
-const fieldNames = {
-  dependencies: "STR_DEPENDS_ON",
-  seeAlso: "STR_ITEM_REQUIRED",
-  requiresBaseFunc: "STR_SERVICES_REQUIRED",
-  freeFrom: "STR_GET_FOR_FREE_FROM",
-  leadsTo: "STR_LEADS_TO",
-  unlocks: "STR_UNLOCKS",
-  disables: "STR_DISABLES",
-  getOneFree: "STR_GIVES_ONE_FOR_FREE",
-  manufacture: "STR_REQUIRED_BY",
-  randomProducedItems: "STR_RANDOM_PRODUCTION_DISCLAIMER",
-  cost: "STR_COST",
-};
-
 export const entryConstructors = {
   items: Item,
   soldiers: Soldiers,
@@ -1453,10 +1500,18 @@ export const damageTypes = [
   "STR_MANA",
 ];
 
+export const internalDamageTypes = [
+  "DT_NONE","DT_AP","DT_IN","DT_HE","DT_LASER", "DT_PLASMA", "DT_STUN", "DT_MELEE", "DT_ACID", "DT_SMOKE",
+  "DT_10", "DT_11", "DT_12", "DT_13", "DT_14", "DT_15", "DT_16", "DT_17", "DT_18", "DT_19"
+];
+
+
 function backLink(id: string, list: string[], to: any, field: string, collection?: string) {
   if (typeof to === "string") {
     collection = to;
     to = rul[to];
+    if(!to)
+      to = rul[to] = {};
   }
   if (list == null) return;
   if (!Array.isArray(list))
@@ -1468,9 +1523,17 @@ function backLink(id: string, list: string[], to: any, field: string, collection
       back = to[key] = new Entry({ id: key }, collection)
     if (back == null)
       continue;
-    back[field] = back[field] || [];
-    if (back[field].indexOf(id) == -1)
-      back[field].push(id);
+    addFields(back, field, [id])
+  }
+}
+
+function addFields(entry, field, list){
+  if(entry==null || field==null || list==null)
+    return;
+  entry[field] = entry[field] || [];
+  for(let id of list){
+    if (entry[field].indexOf(id) == -1)
+      entry[field].push(id);
   }
 }
 

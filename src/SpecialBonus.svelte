@@ -15,13 +15,13 @@
           if (b != 0) {
             power = power * 1 + 1;
             flat.push([
-              `<a href="##${type}">${rul.tr(type)}</a>` + (power == 1 ? "" : "<sup>" + power + "</sup>"),
+              `<a href="##${type}">${rul.tr(type, {icon:"compact"})}</a>` + (power == 1 ? "" : "<sup>" + power + "</sup>"),
               b, type
             ]);
           }
         }
       } else {
-        if (bonus[type] != 0) flat.push([`<a href="##${type}">${rul.tr(type)}</a>`, bonus[type], type]);
+        if (bonus[type] != 0) flat.push([`<a href="##${type}">${rul.tr(type, {icon:"compact"})}</a>`, bonus[type], type]);
       }
     }
     flat = flat.sort((a, b) => (a[0] == "flatHundred" || a[0] == "flatOne" || a[0] < b[0] ? -1 : 1));
@@ -42,7 +42,7 @@
     {b[1] * 100}
   {:else if b[2] == "flatOne"}
     {b[1]}
-  {:else}
+  {:else}  
     <nobr>{@html b[0]}{@html (b[1] != 1 ? `×<em>${b[1]}</em>` : "")}</nobr>
   {/if}
 {/each}

@@ -1786,6 +1786,7 @@ en-US:
   weaponType10: Cloaking
   weaponType11: Fixed  
   About XPedia: About
+  TU: TU
   A-Z: A-Z
   en-US:
   aboutexport: If you run xpedia in node.js mode, click this to export as a single file. Will take some seconds to complete.

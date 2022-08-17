@@ -9,6 +9,7 @@ let options = {
   sourcemap: true,
   outfile: "./xpedia.js",
   minify: false,
+  watch: true,
   plugins: [
     esbuildSvelte({
       preprocess: sveltePreprocess()
@@ -26,7 +27,7 @@ if (keys.has("serve")) {
       onRequest: (r) => {
         console.log(r);
       }
-    }, options)
+    }, {...options, watch:false})
 } else if(keys.has("minify")){
   builder = esbuild.build({...options, minify: true});
 } else {
