@@ -6,7 +6,7 @@
   export let obs = null;
   export let depth = 2;
   export let simple = false;
-  export let nobr = 100;
+  export let nobr = 30;
   export let icon = null;
   export let capital = false;
 
@@ -36,10 +36,5 @@
 {:else if rul.sprite(val, true)}
   <img src={rul.sprite(val)} alt={val} style="max-width:320px"/>
 {:else}
-  {#if 'tip_' + val in rul.lang}
-    <span tooltip={'tip_' + val}><Tr s={val}/><sup class="tipmark">?</sup></span>
-  {:else}
-    <Tr s={val} {simple} {nobr} {icon} {capital}/>
-  {/if}
-  
+  <Tr s={val} {simple} {nobr} {icon} {capital}/>  
 {/if}

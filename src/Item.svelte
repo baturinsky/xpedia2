@@ -1,5 +1,5 @@
 <script>
-  import { rul, sortFirstLast, damageTypes } from "./Ruleset";
+  import { rul, sortFirstLast, damageTypes, internalBattleTypes } from "./Ruleset";
   import {Tr, Link, Value} from "./Components"
   import SpecialBonus from "./SpecialBonus.svelte";
   import CanvasImage from "./CanvasImage.svelte";
@@ -27,7 +27,7 @@
 
     attacks = entry.attacks().slice();
     title =
-      (entry.battleType ? rul.tr("battleType" + entry.battleType) + " " : "") +
+      (entry.battleType ? rul.tr(internalBattleTypes[entry.battleType]) + " " : "") +
       rul.tr("Item");
 
     title = `${entry.weight?entry.weight + rul.tr("kg"):""}  
@@ -38,7 +38,7 @@ ${title}`
     let ohpen = (entry.oneHandedPenalty || entry.battleType == 3?67:50);
 
     hand1bonus = entry.twoHanded?(entry.blockBothHands?
-      rul.tr("2hand only", {icon:"compact"}):`${rul.tr("1hand", {icon:"compact"})} ${ohpen}%`)
+      rul.tr("2handOnly"):`${rul.tr("1handPenalty")} ${ohpen}%`)
       :"";
 
     if (entry.compatibleAmmo)
@@ -71,13 +71,13 @@ ${title}`
         "liveAlien",
         "recover",
         "prisonType",
+        "powerRangeReduction",
+        "powerRangeThreshold",
+        "commendations",
         "loot",
         "ufos",
         "terrains",
         "spawnUnit",     
-        "powerRangeReduction",
-        "powerRangeThreshold",
-        "commendations",
         "manufacture",
         "componentOf",
       ],
@@ -104,9 +104,9 @@ ${title}`
 </script>
 
 <table class="main-table">
-  <tr class="table-header">
+  <thead>
     <td colspan="2">{title}</td>
-  </tr>
+  </thead>
   {#if (entry.sprite && entry.sprite != "Resources/Blanks/Blank.png") || attacks.length > 0}
     <tr>
       <td colspan="2" class="td-attacks-table">
@@ -119,8 +119,9 @@ ${title}`
                 {:else}
                   <td><Tr s="mode"/></td>
                   <td>
-                    <Tr s="accuracy"/> <Tr s="kneeling"/> {entry.kneelBonus||120}% {@html hand1bonus}
-                    -{entry.dropoff}/<Tr s="tile"/>
+                    <Tr s="accuracy"/> <Tr s="kneeling"/> {entry.kneelBonus||120}%
+                    -{entry.dropoff}/<Tr s="accPerTile"/>
+                    {@html hand1bonus}
                   </td>
                   <td><Tr s="cost"/></td>
                 {/if}
@@ -225,15 +226,22 @@ ${title}`
       {/if}
     {:else if key == "manufacture"}
     <SecondaryTable text={key}>
-      <div class="grid3 width100">
-        {#each Object.keys(prop) as man, i}          
-          <div class="subgrid-header"><Value val={man} /></div>
-          <div><Value val={rul.manufacture[man]?.requiredItems || ""} /></div>
-          <div>➔</div>
-          <div><Value val={rul.manufacture[man]?.producedItems || ""} /></div>
+      <table class="item-manufacture">
+        {#each prop as man, i}          
+        {@const m=rul.manufacture[man]}
+        <tr><td colspan="3" style="text-align: left;"><em><Value val={man} /></em></td></tr>
+          <tr>
+            <td style="text-align: right;"><Value val={m?.requiredItems || ""} /></td>
+            <td>➔</td>
+            <td style="text-align: left;">
+              <Value val={m?.totalProducedItems[entry.id]} />&nbsp;<Value val={entry.id}/>
+            </td>
+          </tr>
         {/each}
-      </div>
+      </table>
     </SecondaryTable>
+    {:else if key == "componentOf"}
+      <SecondaryTable text={key}><Value val={prop}/></SecondaryTable>
     {:else}
       <tr>
         <td><Value val={key} capital={true}/></td>
@@ -243,7 +251,7 @@ ${title}`
           {:else if ["damageType", "meleeType"].includes(key)}
             {rul.damageTypeName(prop)}
           {:else if key == "battleType"}
-            {prop}: {rul.tr("battleType" + prop)}
+            {prop}: {rul.tr(internalBattleTypes[prop])}
           {:else if key.includes("Sound")}
             {#each soundsFrom(prop) as sound, i}
               {@html i > 0 ? "<br/>" : ""}

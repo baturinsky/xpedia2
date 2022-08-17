@@ -9,7 +9,7 @@
   </td></tr
 >
 <tr>
-  <td colspan="2" class="centered-text">
+  <td colspan="2" class="secondary-table-td">
     <slot></slot>
   </td>
 </tr>

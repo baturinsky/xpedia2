@@ -1,6 +1,7 @@
 <script>
   import { rul, sortFirstLast } from "./Ruleset";
-  import { Link, LinksList, LinksPage, Value } from "./Components";
+  import { Link, LinksList, LinksPage, Value, Tr } from "./Components";
+  import MainTable from "./MainTable.svelte";
 
   export let entry;
 
@@ -9,6 +10,32 @@
   }
 </script>
 
+<MainTable {entry} sort={{exclude:["chanceSum", "totalProducedItems"]}} title="Manufacture" wide={["randomProducedItems"]}>
+  <svelte:fragment slot="wide">
+    <tr
+      ><td colspan="2" class="table-subheader"
+        ><Value val={"randomProducedItems"} /></td
+      ></tr
+    >
+    <tr><td colspan="2">
+      <table class="number-table" width="100%" style="margin:0px">
+        {#each entry.randomProducedItems as chance}
+          <tr><td>{((chance[0] / entry.chanceSum) * 100).toFixed(2)}%</td>
+            <td>
+              {#if Object.keys(chance[1]).length == 0}
+                <Tr s="NOTHING" />
+              {:else}
+                <Value val={chance[1]} />
+              {/if}
+            </td>
+          </tr>
+        {/each}
+      </table>
+    </td></tr>
+  </svelte:fragment>
+</MainTable>
+
+<!--
 <table class="main-table">
 
 <tr class="table-header">
@@ -51,10 +78,9 @@
       <Value val={prop[0]}/>
     </td>
     <td>
-      {#if ["requiresBaseFunc", "producedItems", "requiredItems"].includes(prop[0])}
-        <LinksList items={prop[1]} />        
-      {:else}<Value val={prop[1]} />{/if}
+      <Value val={prop[1]} />
     </td>
   </tr>
 {/each}
 </table>
+-->

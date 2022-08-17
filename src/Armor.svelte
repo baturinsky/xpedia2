@@ -10,6 +10,7 @@
     Tr,
   } from "./Components";
   import Subheader from "./Subheader.svelte";
+  import RecoveryTable from "./RecoveryTable.svelte";
 
   export let entry;
   export let text;
@@ -50,7 +51,7 @@
 </script>
 
 <table class="main-table">
-  <tr class="table-header">
+  <thead>
     <td colspan="2">
       <Tr s="Armor" />
       {#if seeAlso.length > 0}
@@ -58,7 +59,7 @@
         <LinksList items={seeAlso} />
       {/if}
     </td>
-  </tr>
+  </thead>
   <tr>
     <td colspan="2">
       <div class="armors">
@@ -196,14 +197,5 @@
     </tr>
   {/each}
   <Subheader text="recovery" />
-  {#each sortFirstLast(entry.recovery).all as [key2, bonus], i}
-    <tr>
-      <td>
-        <Value val={key2} />
-      </td>
-      <td>
-        <SpecialBonus {bonus} />
-      </td>
-    </tr>
-  {/each}
+  <RecoveryTable recovery={entry.recovery}/>
 </table>

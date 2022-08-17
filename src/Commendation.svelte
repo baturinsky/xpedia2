@@ -1,6 +1,8 @@
 <script>
-  import { Value, MainTable, rul } from "./Components";
-  import { Commendation } from "./Ruleset";
+import { Value, MainTable, rul, tr, Tr, SpecialBonus, } from "./Components";
+import RecoveryTable from "./RecoveryTable.svelte";
+import { deedDescription, sortFirstLast } from "./Ruleset";
+import SoldierBonuses from "./SoldierBonuses.svelte";
 
   export let entry;
   let bonuses;
@@ -20,14 +22,31 @@
   }
 </script>
 
-<MainTable
+<MainTable let:key={key} let:prop={prop}
   entry={entry}
   title="Commendation"
-  sort={{ exclude: ["type", "criteria", "soldierBonusTypes"] }}
-/>
+  special={["killCriteria2", "finalBonus"]}
+  sort={{ exclude: ["type", "criteria", "soldierBonusTypes", "battleTypes", "damageTypes", "kcd", "killCriteria"] }}
+>
+  {#if key=="killCriteria2"}
+    {#if prop.length == 0}
+      <Tr s="See stage descriptions"/>
+    {:else}
+      {@html prop.map(deeds=>deeds.map(deed=>deedDescription(deed)).join(` ${rul.tr("and")} `)).join(` ${rul.tr("or")}<br/>`) }
+    {/if}
+  {:else if key=="finalBonus"}    
+    Stats: <Value val={prop?.stats}/> 
+    {#if prop?.recovery}
+      <br/>Recover per turn: 
+      <table>
+        <RecoveryTable recovery={prop.recovery}/>
+      </table>
+    {/if}
+  {/if}
+</MainTable>
 
 <div class="no-break-column">
   {#each bonuses as bonus, i (i)}
-    <MainTable entry={bonus} title="Stage" subtitle={`${i + 1}`} />
+    <SoldierBonuses entry={bonus} title="Stage" subtitle={`${i + 1}`} />
   {/each}
 </div>

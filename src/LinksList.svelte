@@ -55,7 +55,7 @@
 {:else if items.length == null}
   <span class="links-list">
     {#each sorter(Object.keys(items)) as field, i}
-    {@html divider(i, { vertical, cols })}‏‏‎‎<Link href={field} />: <Value val={items[field]}  depth={depth-1}/>
+    {@html divider(i, { vertical, cols })}‏‏‎<Value val={items[field]}  depth={depth-1}/>&nbsp;‎<Link href={field} />
     {/each}
   </span>
 {:else if items.map}

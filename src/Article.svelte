@@ -30,7 +30,7 @@ import Research from "./Research.svelte";
 </script>
 
 <svelte:head>
-  <title>{rul.tr(article.title || "XPedia")}</title>
+  <title>{rul.tr(article.id || "XPedia", {icon:"simple"})}</title>
   <!--
   <meta property="og:title" content={rul.tr(article.title || "XPedia")} />
   {#if article.text}<meta
@@ -66,8 +66,8 @@ import Research from "./Research.svelte";
 {:else if article.id == "COMMENDATIONS"}
   <SectionTable {aId} 
     entries={Object.values(rul.commendations)} 
-    fields={["description", ...statsList, "visibilityAtDark"]}
-    extraFields={["visibilityAtDay", "camouflageAtDark", "camouflageAtDay"]}
+    fields={[...statsList, "visibilityAtDark"]}
+    extraFields={["description", "visibilityAtDay", "camouflageAtDark", "camouflageAtDay"]}
   />
 {:else if article.id == "CRAFTS"}
   <SectionTable {aId} entries={Object.values(rul.crafts)} fields={["speedMax","soldiers", "vehicles", "weapons", "damageMax"]}/>
@@ -75,7 +75,7 @@ import Research from "./Research.svelte";
   <SectionTable {aId}
     entries={Object.values(rul.armors)} 
     fields={["size", "frontArmor", "sideArmor", "rearArmor", "underArmor"]}
-    extraFields={[...damageTypes, ...statsList, "visibilityAtDark", "visibilityAtDay", "camouflageAtDark", "camouflageAtDay"]}
+    extraFields={[...damageTypes, ...statsList, "psiVision", "visibilityAtDark", "visibilityAtDay", "camouflageAtDark", "camouflageAtDay"]}
     filters={Object.keys(rul.soldiers)}
   />
 {:else if article.id == "CONDITIONS"}

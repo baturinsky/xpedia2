@@ -1,35 +1,21 @@
 <script>
   import { rul } from "./Ruleset";
   import { revealed } from "./store.ts";
-  import { capital as toCap } from "./util";
 
   export let s;
-  export let nobr = 100;
+  export let nobr = 30;
   export let capital = false;
   export let icon = "compact";
 
-  let r = false;
+  let rev = true;
+  
   /**@type {string}*/
   let tr;
   $: {
-    if (r) {
-      tr = s;
-    } else {
-      tr = rul.tr(s, {icon});
-    }
-
-    if(capital && tr !=null){
-      tr = toCap(tr);
-    }
-
-    if(tr?.length < nobr){
-      tr = `<nobr>${tr}</nobr>`
-    }  
-
+    tr = rev?s:rul.tr(s, {icon, capital, nobr});
   }
 
-
-  revealed.subscribe((v) => (r = v));
+  revealed.subscribe((v) => (rev = v));
 </script>
 
 {@html tr}

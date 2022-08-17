@@ -1788,5 +1788,19 @@ en-US:
   About XPedia: About
   TU: TU
   A-Z: A-Z
+  tip_randomItems: Random manufacture result
+  tip_kneeling: Accuracy when kneeled
+  tip_2handOnly: Requires both hands to use
+  tip_1handPenalty: Accuracy multiplier when used onehanded
+  tip_accPerTile: accuracy dropoff per tile
   en-US:
   aboutexport: If you run xpedia in node.js mode, click this to export as a single file. Will take some seconds to complete.
+  FACTION_HOSTILE: enemi(es)
+  FACTION_NEUTRAL: civilian(s)
+  FACTION_PLAYER: alli(es)
+  STATUS_DEAD: kill
+  STATUS_UNCONSCIOUS: knock out
+  STATUS_PANICKED: psi-panick
+  STATUS_TURNING: mind control
+  commendationWith: with
+  killCriteria2: Criteria

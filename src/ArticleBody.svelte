@@ -13,6 +13,7 @@ import Ufo from "./Ufo.svelte";
 import Facility from "./Facility.svelte";
 import BaseService from "./BaseService.svelte";
 import BaseServices from "./BaseServices.svelte";
+import SoldierBonuses from "./SoldierBonuses.svelte"
 import Commendation from "./Commendation.svelte";
 import MainTable from "./MainTable.svelte";
 import CanvasImage from "./CanvasImage.svelte";
@@ -32,6 +33,7 @@ $:{
 
 const renderers = {
   items: Item,
+  battleTypes: {},
   armors: Armor,
   research: Research,
   units: Unit,
@@ -44,7 +46,7 @@ const renderers = {
   crafts: Craft,
   craftWeapons: CraftWeapon,
   weaponTypes: {},
-  soldierBonuses: {},
+  soldierBonuses: SoldierBonuses,
   soldierTransformation: {},
   soldiers: {sort:{first:["statCaps"],last:["armors"]}},
   ufos: Ufo,

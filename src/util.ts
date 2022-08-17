@@ -1,4 +1,5 @@
 import JSYaml from "js-yaml";
+import { identity } from "svelte/internal";
 import { loadingFile } from "./store";
 
 export async function fetchAll(files) {
@@ -125,6 +126,10 @@ export function isAncestorOf(ancestor, descendant) {
 }
 
 export function capital(str:string){
-  console.log("C", str);
+  if(str == null)
+    return;
   return str.substr(0, 1).toUpperCase() + str.substr(1).toLowerCase()  
+}
+export function cullDoubles<T>(list:T[]){
+  return [...new Set(list)] as T[];
 }

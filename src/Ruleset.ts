@@ -1,8 +1,7 @@
 import SearchApi from 'js-worker-search';
-import { identity } from 'svelte/internal';
 import { emptyImg } from "./Components";
 import { loadByHttp, loadPacked, useCache } from './load';
-import { camelToUnderscore, capital, delay, getFlagEmoji, removeByValue } from './util';
+import { addIfNew, camelToUnderscore, capital, cullDoubles, delay, getFlagEmoji, removeByValue } from './util';
 
 export let rul!: Ruleset;
 export type SortFirsLastOptions = { first?: string[], last?: string[], exclude?: string[], sortBy?: Function }
@@ -155,6 +154,7 @@ export class Manufacture extends Entry {
   requires: string;
   producedItems: { [key: string]: number };
   requiredItems: { [key: string]: number };
+  totalProducedItems: { [key: string]: number };
   requiresBaseFunc: string[];
   randomProducedItems: [number, { [key: string]: number }][];
   chanceSum: number;
@@ -175,13 +175,6 @@ export class Manufacture extends Entry {
       this.producedItems = {[this.id]:1};
     }
 
-    for (let itemName of Object.keys(this.producedItems)) {
-      let item = rul.items[itemName];
-      if (!item) continue;
-      if (!item.manufacture) item.manufacture = {};
-      item.manufacture[this.name] = this.producedItems[itemName];
-    }
-
     if (this.requiredItems) {
       for (let itemName of Object.keys(this.requiredItems)) {
         let item = rul.items[itemName];
@@ -194,7 +187,18 @@ export class Manufacture extends Entry {
     if (this.randomProducedItems) {
       this.chanceSum = 0;
       for (let chance of this.randomProducedItems) this.chanceSum += chance[0];
+
+      this.totalProducedItems = {...this.producedItems};
+      for (let chance of this.randomProducedItems){        
+        for(let k in chance[1]){
+          this.totalProducedItems[k] = (this.totalProducedItems[k] || 0) + chance[1][k] * chance[0] / this.chanceSum;
+        }
+      }
+    } else {
+      this.totalProducedItems = this.producedItems;
     }
+
+    backLink(this.id, Object.keys(this.totalProducedItems), rul.items, "manufacture")
 
     Service.add("allowsManufacture", this.name, this.requiresBaseFunc);
   }
@@ -209,28 +213,85 @@ export class SoldierTransformation extends Entry {
   }
 }
 
+export class DamageElement extends Entry {
+  weapons: string[];
+  commendations: string[];
+}
 
 export class Commendation extends Entry {
   soldierBonusTypes: any[];
   criteria;
   killCriteria;
   finalBonus: Entry;
-  damageTypes: string[];
+  damageTypes: string[] = [];
+  battleTypes: string[] = [];
+  kcd = [];
+  killCriteria2 = []
 
   constructor(raw: any) {
     super(raw, "commendations")
-    if (this.killCriteria)
-      this.killCriteria = this.killCriteria.flat();
     this.finalBonus = this.soldierBonusTypes && rul.soldierBonuses[this.soldierBonusTypes[this.soldierBonusTypes.length-1]];
-    if(this.killCriteria){
-      this.damageTypes = Object.values(this.killCriteria).map(e=>e && e[1] && e[1][0]).flat();
-      this.damageTypes = this.damageTypes.map(v=>{
-        let i = internalDamageTypes.indexOf(v);
-        return i>=0?damageTypes[i]:v
-      })
-    }
   }
 
+  parseKillCriteria(){
+    if(this.killCriteria){
+      for(let deeds of this.killCriteria){
+        let group = [];
+        for(let deedList of deeds){
+          let deed = {times:deedList[0]} as any;          
+          
+          for(let [i,k] of Object.entries(deedList[1]) as [string,string][]){
+            
+            let idt = internalDamageTypes.indexOf(k);
+            if(idt!=-1){
+              deed.element = damageTypes[idt];
+              deedList[1][i] = damageTypes[idt];
+              this.damageTypes.push(damageTypes[idt]);
+              continue;
+            }
+
+            let ibt = internalBattleTypes.indexOf(k);
+            if(ibt != -1){
+              deed.type = k;
+              this.battleTypes.push(k);
+            }
+
+            else if(killStatuses.includes(k)){
+              deed.status = k;
+            } else if(killFactions.includes(k)){
+              deed.faction = k;
+            } else if(rul.alienRaces[k]){
+              deed.race = k
+            } else if(rul.units[k]){
+              deed.unit = k
+            } else if(rul.items[k]){
+              deed.item = k
+            } else {
+              deed[k] = true;
+            }            
+          }
+          this.kcd.push(deed);
+          group.push(deed);
+        }
+        this.killCriteria2.push(group);
+      }
+    }    
+  }
+
+  matchesItem(item:Item){
+    for(let kc of this.kcd){
+      if(kc[item.id])
+        return true;
+      if(kc.element == null && kc.type == null)
+        continue;
+      if(kc.element != null && !item.damageTypes?.includes(kc.element))
+        continue;
+      if(kc.type != null && item.battleType != kc.type)
+        continue;
+      return true;
+    }    
+    return false;
+  }
 
   sortField(n) {
     let fb = this.finalBonus;
@@ -524,7 +585,7 @@ export class Attack {
       this.accuracyMultiplier = accuracyMultiplier;
 
       if (this.damageType != null) {
-        backLink(item.id, [damageTypes[this.damageType]], "elements", "weapons");
+        item.addDamageType(this.damageType);
       }
 
       for (let k in this.accuracyMultiplier || [])
@@ -636,7 +697,7 @@ export class Article {
   }
 
   get title() {
-    return rul.tr(this._title);
+    return rul.tr(this._title, {icon:"none"});
   }
 
 }
@@ -652,6 +713,7 @@ export class Section {
     rul.sections[id] = this;
 
     if (generated) {
+      console.log("SEC", id);
       rul.typeSectionsOrder.push(this);
     } else {
       rul.sectionsOrder.push(this);
@@ -825,13 +887,26 @@ export class Item extends Entry {
   maxRange: number;
   categories: string[];
   requiresBuy: string[];
+  commendations: string[];
   heldBy: Set<string>;
   dropoff: number;
+  damageTypes: number[]
+  psiVision: number;
 
   get sprite() {
     if (this.bigSprite) {
       return rul.obsSprite("big", +this.bigSprite);
     }
+  }
+  get internalBattleType(){
+    let t = internalBattleTypes[this.battleType || 0] 
+    return t;
+  }
+
+  addDamageType(type:number){
+    this.damageTypes = this.damageTypes || [];
+    addIfNew(this.damageTypes, type);
+    backLink(this.id, [damageTypes[type]], "elements", "weapons");
   }
 
   constructor(raw: any) {
@@ -889,18 +964,7 @@ export class Item extends Entry {
   attacks() {
     if (!this._attacks) {
       this._attacks = [];
-      for (let mode of [
-        "ammo",
-        "melee",
-        "snap",
-        "aimed",
-        "auto",
-        "throw",
-        "psi",
-        "panic",
-        "mindControl",
-        "use",
-      ]) {
+      for (let mode of battleTypes) {
         let attack = new Attack(this, mode);
         if (attack.possible) {
           this._attacks.push(attack);
@@ -939,7 +1003,8 @@ export default class Ruleset {
   craftWeapons: { [key: string]: CraftWeapon } = {};
   weaponTypes: { [key: string]: Entry } = {};
   stats: { [key: string]: Entry } = {};
-  elements: { [key: string]: Entry } = {};
+  battleTypes: { [key: string]: Entry } = {};
+  elements: { [key: string]: DamageElement } = {};
   research: { [key: string]: Research } = {};
   soldierBonuses: { [key: string]: Entry } = {};
   commendations: { [key: string]: Commendation } = {};
@@ -1156,7 +1221,7 @@ export default class Ruleset {
 
     this.parseArticles(this.raw.ufopaedia);
 
-    for (let [typeName, typeConstructor] of Object.entries(entryConstructors)) {
+    for (let [typeName, typeConstructor] of Object.entries(entryConstructors) || []) {
       this.parseType(typeName, typeConstructor);
     }
 
@@ -1189,9 +1254,14 @@ export default class Ruleset {
     crosslink(this.terrains, t=>blockItems(t.mapBlocks), this.items, "terrains");
     crosslink(this.terrains, "civilianTypes", this.units, "terrains");
     crosslink(this.items, "spawnUnit", this.units, "spawnedBy");
+    crosslink(this.items, "internalBattleType", "battleTypes", "items");
     crosslink(this.commendations, "damageTypes", this.items, "commendations");
     crosslink(this.commendations, "damageTypes", this.elements, "commendations");
     
+    for(let c of Object.values(this.commendations)){
+      c.parseKillCriteria();
+    }
+
     for(let e of Object.values(this.elements)){
       for(let w of e["weapons"] || []){
         addFields(this.items[w], "commendations", e["commendations"])
@@ -1228,6 +1298,12 @@ export default class Ruleset {
         if (r) {
           r.allowsBuying = [...(r.allowsBuying || []), item.type];
         }
+      }
+
+      if(item.commendations){
+        item.commendations = item.commendations.filter(k => rul.commendations[k].matchesItem(item));
+        if(item.commendations.length == 0)
+          delete item.commendations;
       }
     }
 
@@ -1310,22 +1386,23 @@ export default class Ruleset {
     return this.lang[id] || id;
   }
 
+  icon(name:string){
+    return this.langs?.icon?this.langs.icon[name]:null;
+  }
   
-
-  tr(str:string, options?:{icon:string}) {
-    //debugger;
-    //console.log(str);
-    if (str == null)
+  tr(id:string, options?:{icon?:string, capital?:boolean, nobr?:number, notip?:boolean}) {
+    if (id == null)
       return "";
-    //console.log("tr", str, rul.lang[str]);  
-
+      
     const bigSnakeCase = /^[A-Z0-9_]+$/;
 
-    let icon = this.langs?.icon?this.langs.icon[str]:null;
+    let icon = this.icon(id);
 
-    if (str in rul.lang) {
-      str = rul.lang[str]
-    } else if (typeof str == "string") {
+    let str = id;
+
+    if (id in rul.lang) {
+      str = rul.lang[id]
+    } else if (typeof id == "string") {
       if(icon)
         str = null;
       else {
@@ -1339,11 +1416,23 @@ export default class Ruleset {
       }
     }    
 
-    if(icon && options?.icon){      
-      if(options.icon == "monospace")
+    if(options?.capital)
+      str = capital(str);
+
+    if(str?.length < options?.nobr)
+      str = `<nobr>${str}</nobr>`
+
+    if(icon){ 
+      if(options?.icon == "monospace")
         str = `<div class='inem'>${icon}</div>${str||""}`
-      else if(options.icon == "compact")
+      else if(options?.icon == "simple")
+        str = `${icon}${str||""}`
+      else if(options?.icon != "none")
         str = `<div class='comem'>${icon}</div>${str||""}`
+    }
+
+    if(!options?.notip && ('tip_' + id) in rul.lang){
+      str = `<span tooltip=${'tip_' + id}>${str}<sup class="tipmark">?</sup></span>`;
     }
 
     //console.log(str);
@@ -1447,12 +1536,14 @@ export default class Ruleset {
 
 export const entryConstructors = {
   items: Item,
+  battleTypes: Entry,
   soldiers: Soldiers,
   alienRaces: Entry,
   armors: Armor,
   units: Unit,
   crafts: Craft,
   craftWeapons: CraftWeapon,
+  weaponRtpes: Entry,
   ufos: Entry,
   facilities: Facility,
   events: Event,
@@ -1464,13 +1555,14 @@ export const entryConstructors = {
   alienDeployments: AlienDeployment,
   research: Research,
   soldierBonuses: Entry,
-  commendations: Commendation,
   manufacture: Manufacture,
   enviroEffects: Entry,
   terrains: Entry,
   mapScripts: Entry,
   weaponTypes: Entry,
   stats: Entry,
+  elements: DamageElement,
+  commendations: Commendation,
 }
 
 export const damageTypes = [
@@ -1505,8 +1597,39 @@ export const internalDamageTypes = [
   "DT_10", "DT_11", "DT_12", "DT_13", "DT_14", "DT_15", "DT_16", "DT_17", "DT_18", "DT_19"
 ];
 
+export const killStatuses = ["STATUS_DEAD", "STATUS_UNCONSCIOUS", "STATUS_PANICKED", "STATUS_TURNING"];
+export const killFactions = ["FACTION_HOSTILE", "FACTION_NEUTRAL", "FACTION_PLAYER"]
 
-function backLink(id: string, list: string[], to: any, field: string, collection?: string) {
+export const battleTypes = [
+  "ammo",
+  "melee",
+  "snap",
+  "aimed",
+  "auto",
+  "throw",
+  "psi",
+  "panic",
+  "mindControl",
+  "use",
+]
+
+export const internalBattleTypes = [
+  "BT_NONE",
+  "BT_FIREARM",
+  "BT_AMMO", 
+  "BT_MELEE",
+  "BT_GRENADE",
+  "BT_PROXIMITYGRENADE", 
+  "BT_MEDIKIT",
+  "BT_SCANNER",
+  "BT_MINDPROBE", 
+  "BT_PSIAMP", 
+  "BT_FLARE", 
+  "BT_CORPSE",
+]
+
+
+function backLink(id: string, list: string[]|{[key:string]:any}, to: any, field: string, collection?: string) {
   if (typeof to === "string") {
     collection = to;
     to = rul[to];
@@ -1514,26 +1637,43 @@ function backLink(id: string, list: string[], to: any, field: string, collection
       to = rul[to] = {};
   }
   if (list == null) return;
-  if (!Array.isArray(list))
-    list = [list]
+  if(typeof list == "object" && !Array.isArray(list)){
+    for (let key of Object.keys(list)) {
+      let back = to[key];
+      if (back == null && collection != null){
+        back = to[key] = new (entryConstructors[collection] || Entry)({ id: key }, collection)
+      }
+      if (back == null)
+        continue;
+      addFields(back, field, {[key]:list[key]})
+    }
 
-  for (let key of list) {
-    let back = to[key];
-    if (back == null && collection != null)
-      back = to[key] = new Entry({ id: key }, collection)
-    if (back == null)
-      continue;
-    addFields(back, field, [id])
+  } else {
+    if (!Array.isArray(list))
+      list = [list]
+
+    for (let key of list) {
+      let back = to[key];
+      if (back == null && collection != null)
+        back = to[key] = new Entry({ id: key }, collection)
+      if (back == null)
+        continue;
+      addFields(back, field, [id])
+    }
   }
 }
 
-function addFields(entry, field, list){
+function addFields(entry:Entry, field:string, list){
   if(entry==null || field==null || list==null)
     return;
-  entry[field] = entry[field] || [];
-  for(let id of list){
-    if (entry[field].indexOf(id) == -1)
-      entry[field].push(id);
+  if(Array.isArray(list)){
+    entry[field] = entry[field] || [];
+    for(let id of list){
+      if (entry[field].indexOf(id) == -1)
+        entry[field].push(id);
+    }
+  } else {
+    entry[field] = {...entry[field] || {}, ...list};
   }
 }
 
@@ -1542,6 +1682,20 @@ function crosslink(collection1, prop1, collection2, prop2, prefix?) {
   for (let t of [...Object.values(collection1)] as { id: string }[]) {
     backLink(t.id, f(t), collection2, prop2, prefix);
   }
+}
+
+export function deedDescription(deed){
+  let s = `${rul.tr(deed.status)} ${rul.tr(deed.times)} ${link(deed.race)} ${link(deed.unit)} ${link(deed.faction)}`;
+  if(deed.element || deed.type || deed.item){
+    s += ` ${rul.tr("commendationWith")} ${link(deed.item)} ${link(deed.type)} ${link(deed.element)}`
+  }
+  return s;
+}
+
+export function link(id){
+  if(id==null)
+    return "";
+  return `<a href="${'##' + id}" class="${rul.article(id)?"":"dead"}">${rul.tr(id)}</a>`;
 }
 
 /*function nullIfEmpty(a){

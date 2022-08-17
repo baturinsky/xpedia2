@@ -15,6 +15,8 @@
   --lighter: #382c44;
   --scrollbar: #1e102c;
   --background: #180c24;
+  --table-subheader: #2E1944;
+  --table-header: #2E1944;
   --table-secondary: #1e102c;
   --table-main: #180c24;
   --dead-link: #ffffff;
@@ -74,6 +76,23 @@ a:hover {
 
 .main-table > tr:nth-child(odd) {
   background: var(--table-secondary);
+}
+
+.item-manufacture {
+  background: var(--table-main);
+  border-collapse: collapse;
+  text-align: center;
+  width: 100%;
+}
+
+.item-manufacture > tr:nth-child(4n+1),
+.item-manufacture > tr:nth-child(4n+2){
+  background: var(--table-secondary);
+}
+
+.secondary-table-td {
+  padding: 0;
+  text-align: center;
 }
 
 .main-table {
@@ -161,7 +180,7 @@ a:hover {
   text-align: center;
 }
 
-em {
+em, em > a {
   color: var(--em);
   font-style: normal;
 }
@@ -188,12 +207,21 @@ h2 {
   margin: 0.4rem;
 }
 
+.main-table > thead,
+.table-header,
 .table-subheader {
-  color: var(--text);
+  background: var(--table-subheader);
   text-align: center;
   margin: 0.3rem 0rem;
   font-variant: small-caps;
 }
+
+.main-table > thead,
+.table-header {
+  font-size: larger;
+  padding-bottom: 0.2rem;
+}
+
 
 .article-text {
   max-width: 53rem;
@@ -915,13 +943,6 @@ img.craft {
   padding: 0.5rem;
 }
 
-.table-header {
-  color: var(--em);
-  text-align: center;
-  font-size: larger;
-  padding-bottom: 0.2rem;
-  font-variant: small-caps;
-}
 
 .table-header td {
   /*background-color: var(--border);*/
@@ -1023,7 +1044,6 @@ a.dead {
   display: inline-block;
   margin-right: -0.15rem;
   padding-bottom: 0.1rem;
-  font-size: 80%;
 }
 
 .article-text-image {

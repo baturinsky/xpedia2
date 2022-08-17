@@ -333,7 +333,7 @@
               {/each}
             </div>
             <div class="navbar-custom navbar-list">
-              {#each rul.sortedTypeSections() as section, i}
+              {#each rul.typeSectionsOrder as section, i}
                 <a
                   href={"##" + section.id}
                   class={[

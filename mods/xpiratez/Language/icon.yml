@@ -40,7 +40,8 @@ icon:
   STR_DAMAGE_16: 🍴
   STR_DAMAGE_17: 🌴
   STR_DAMAGE_18: ⛄
-  2hand only: 👐
-  1hand: ✋
+  2handOnly: 👐
+  1handPenalty: ✋
   kneeling: 🧎
-  tile: ⬜︎
+  accPerTile: ⬜︎
+  randomItems: 🎲
