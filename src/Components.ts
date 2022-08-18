@@ -33,8 +33,9 @@ export async function exportPedia(onlyCurrentLanguage = false) {
   let src = rul.src;
   
   if(onlyCurrentLanguage){
-    let langs = {};
+    let langs = {} as any;
     langs[defaultLanguage] = src.langs[defaultLanguage];
+    langs.icon = src.langs.icon;
     let langName = rul.langName;
     if(langName != defaultLanguage){
       langs[langName] = src.langs[langName];

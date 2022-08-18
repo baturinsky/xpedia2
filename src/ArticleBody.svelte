@@ -84,6 +84,6 @@ const renderers = {
   {#if typeof ren == "function"}
     <svelte:component this={ren} entry={rul[key][id]} {text}/>
   {:else}
-    <MainTable entry={rul[key][id]} sort={ren.sort} title={ren.title!=null?ren.title:singular(key)}/>
+    <MainTable entry={rul[key][id]} sort={ren.sort} title={ren.title!=null?ren.title:key}/>
   {/if}
 {/each}

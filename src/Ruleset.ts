@@ -1,7 +1,7 @@
 import SearchApi from 'js-worker-search';
 import { emptyImg } from "./Components";
 import { loadByHttp, loadPacked, useCache } from './load';
-import { addIfNew, camelToUnderscore, capital, cullDoubles, delay, getFlagEmoji, removeByValue } from './util';
+import { addAllIfNew, addIfNew, camelToUnderscore, capital, cullDoubles, delay, getFlagEmoji, removeByValue } from './util';
 
 export let rul!: Ruleset;
 export type SortFirsLastOptions = { first?: string[], last?: string[], exclude?: string[], sortBy?: Function }
@@ -214,7 +214,7 @@ export class SoldierTransformation extends Entry {
 }
 
 export class DamageElement extends Entry {
-  weapons: string[];
+  items: string[];
   commendations: string[];
 }
 
@@ -225,6 +225,7 @@ export class Commendation extends Entry {
   finalBonus: Entry;
   damageTypes: string[] = [];
   battleTypes: string[] = [];
+  items: string[] = [];
   kcd = [];
   killCriteria2 = []
 
@@ -234,6 +235,8 @@ export class Commendation extends Entry {
   }
 
   parseKillCriteria(){
+    //if(this.id == "STR_MEDAL_SLASHER_NAME") debugger;
+
     if(this.killCriteria){
       for(let deeds of this.killCriteria){
         let group = [];
@@ -247,6 +250,7 @@ export class Commendation extends Entry {
               deed.element = damageTypes[idt];
               deedList[1][i] = damageTypes[idt];
               this.damageTypes.push(damageTypes[idt]);
+              backLink(this.id, [deed.element], rul.elements, "commendations");
               continue;
             }
 
@@ -254,6 +258,7 @@ export class Commendation extends Entry {
             if(ibt != -1){
               deed.type = k;
               this.battleTypes.push(k);
+              backLink(this.id, [k], rul.battleTypes, "commendations");
             }
 
             else if(killStatuses.includes(k)){
@@ -262,14 +267,29 @@ export class Commendation extends Entry {
               deed.faction = k;
             } else if(rul.alienRaces[k]){
               deed.race = k
+              backLink(this.id, [k], rul.alienRaces, "commendations");
             } else if(rul.units[k]){
               deed.unit = k
+              backLink(this.id, [k], rul.units, "commendations");
             } else if(rul.items[k]){
               deed.item = k
+              backLink(this.id, [k], rul.items, "commendations");              
             } else {
               deed[k] = true;
             }            
           }
+          
+          if(deed.type || deed.element){
+            if(!deed.type) {
+              backLink2(this, rul.elements[deed.element].items, rul.items, "commendations", "items");
+            } else if(!deed.element) {
+              backLink2(this, rul.battleTypes[deed.type].items, rul.items, "commendations", "items");
+            } else {
+              let items = rul.elements[deed.element].items.filter(id=>rul.items[id]?.internalBattleType == deed.type)
+              backLink2(this, items, rul.items, "commendations", "items");
+            }
+          }
+
           this.kcd.push(deed);
           group.push(deed);
         }
@@ -279,14 +299,15 @@ export class Commendation extends Entry {
   }
 
   matchesItem(item:Item){
-    for(let kc of this.kcd){
-      if(kc[item.id])
+    let id = item.id;
+    for(let deed of this.kcd){
+      if(deed.item == id)
         return true;
-      if(kc.element == null && kc.type == null)
+      if(deed.element == null && deed.type == null)
         continue;
-      if(kc.element != null && !item.damageTypes?.includes(kc.element))
+      if(deed.element != null && !item.damageTypes?.includes(deed.element))
         continue;
-      if(kc.type != null && item.battleType != kc.type)
+      if(deed.type != null && item.battleType != deed.type)
         continue;
       return true;
     }    
@@ -906,7 +927,7 @@ export class Item extends Entry {
   addDamageType(type:number){
     this.damageTypes = this.damageTypes || [];
     addIfNew(this.damageTypes, type);
-    backLink(this.id, [damageTypes[type]], "elements", "weapons");
+    backLink(this.id, [damageTypes[type]], "elements", "items");
   }
 
   constructor(raw: any) {
@@ -951,12 +972,12 @@ export class Item extends Entry {
       backLink(this.id, [k], "stats", "meleeAccuracy");
 
     if (this.damageType != null) {
-      backLink(this.id, [damageTypes[this.damageType]], "elements", "weapons");
+      backLink(this.id, [damageTypes[this.damageType]], "elements", "items");
     }
 
     if(this.damageAlter?.ResistType){
       let rt = this.damageAlter?.ResistType;
-      backLink(this.id, [damageTypes[rt] || rt], "elements", "weapons");
+      backLink(this.id, [damageTypes[rt] || rt], "elements", "items");
     }
 
   }
@@ -1255,17 +1276,10 @@ export default class Ruleset {
     crosslink(this.terrains, "civilianTypes", this.units, "terrains");
     crosslink(this.items, "spawnUnit", this.units, "spawnedBy");
     crosslink(this.items, "internalBattleType", "battleTypes", "items");
-    crosslink(this.commendations, "damageTypes", this.items, "commendations");
     crosslink(this.commendations, "damageTypes", this.elements, "commendations");
     
     for(let c of Object.values(this.commendations)){
       c.parseKillCriteria();
-    }
-
-    for(let e of Object.values(this.elements)){
-      for(let w of e["weapons"] || []){
-        addFields(this.items[w], "commendations", e["commendations"])
-      }          
     }
 
     for (let facility of Object.values(this.facilities)) {
@@ -1300,11 +1314,6 @@ export default class Ruleset {
         }
       }
 
-      if(item.commendations){
-        item.commendations = item.commendations.filter(k => rul.commendations[k].matchesItem(item));
-        if(item.commendations.length == 0)
-          delete item.commendations;
-      }
     }
 
     for (let research of [...Object.values(this.research)]) {
@@ -1629,7 +1638,14 @@ export const internalBattleTypes = [
 ]
 
 
+function backLink2(entry: Entry, list: string[]|{[key:string]:any}, to: any, field: string, field2?: string) {
+  backLink(entry.id, list, to, field);
+  addAllIfNew(entry[field2], list);
+}
+
 function backLink(id: string, list: string[]|{[key:string]:any}, to: any, field: string, collection?: string) {
+  /*if(list && list.includes("STR_LASER_PISTOL_CLIP_HI") && field == "commendation") 
+    debugger;*/
   if (typeof to === "string") {
     collection = to;
     to = rul[to];

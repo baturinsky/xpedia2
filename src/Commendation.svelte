@@ -26,7 +26,7 @@ import SoldierBonuses from "./SoldierBonuses.svelte";
   entry={entry}
   title="Commendation"
   special={["killCriteria2", "finalBonus"]}
-  sort={{ exclude: ["type", "criteria", "soldierBonusTypes", "battleTypes", "damageTypes", "kcd", "killCriteria"] }}
+  sort={{last:["items"],  exclude: ["type", "criteria", "soldierBonusTypes", "battleTypes", "damageTypes", "kcd", "killCriteria"] }}
 >
   {#if key=="killCriteria2"}
     {#if prop.length == 0}

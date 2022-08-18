@@ -95,7 +95,7 @@ export function getFlagEmoji(countryCode:string){
 }
 
 export function singular(s:string){
-  return s.replace(/e?s$/,"");
+  return s.replace(/(e?s)$/,"");
 }
 
 export function removeByValue<T>(arr:T[], item:T) {
@@ -112,6 +112,23 @@ export function addIfNew<T>(arr:T[], item:T) {
   if (ind == -1)
     arr.push(item);
 }
+
+export function addAllIfNew<T>(arr:T[], items:T[]|T) {
+  if(!Array.isArray(items)){
+    addIfNew(arr,items)
+    return;
+  }
+  if(items.length<3){
+    for(let it of items)
+      addIfNew(arr,it)
+  } else {
+    let set = new Set(arr);
+    for(let it of items)    
+      if(!set.has(it))
+        arr.push(it);
+  }
+}
+
 
 export function isAncestorOf(ancestor, descendant) {
   let n = descendant;
