@@ -150,3 +150,16 @@ export function capital(str:string){
 export function cullDoubles<T>(list:T[]){
   return [...new Set(list)] as T[];
 }
+
+export function clamp(min:number, val:number, max:number) {
+  return val < min ? min : val > max ? max : val;
+}
+
+
+export function withoutKeys(o:Object, keys:string[]){
+  o = {...o};
+  for(let k of keys){
+    delete o[k];
+  }
+  return o;
+}

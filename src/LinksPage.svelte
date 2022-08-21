@@ -1,6 +1,7 @@
 <script>
-  import { Value, LinksList, tr, Tr } from "./Components";
+  import { Value, Link, LinksList, tr, Tr } from "./Components";
   import {linksPageSorted} from "./store"
+  import PaginatedList from "./PaginatedList.svelte"
 
   export let links;
   export let cols = false;
@@ -42,6 +43,6 @@
       </div>
     </div>
   {:else}
-    <LinksList items={sortedList} sorted={false} />
+    <PaginatedList items={sortedList} sorted={false}/>
   {/if}
 {/if}

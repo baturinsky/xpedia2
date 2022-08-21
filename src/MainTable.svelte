@@ -22,7 +22,7 @@
   <table class="main-table">
     <thead>
       <td colspan="2"
-        >{rul.tr(title)} {rul.tr(subtitle)}</td
+        >{@html rul.tr(title)} {@html rul.tr(subtitle)}</td
       >
     </thead>
     {#each sorted.all as [key, prop]}

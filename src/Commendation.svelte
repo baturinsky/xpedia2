@@ -1,8 +1,10 @@
 <script>
 import { Value, MainTable, rul, tr, Tr, SpecialBonus, } from "./Components";
+import LinksList from "./LinksList.svelte";
 import RecoveryTable from "./RecoveryTable.svelte";
 import { deedDescription, sortFirstLast } from "./Ruleset";
 import SoldierBonuses from "./SoldierBonuses.svelte";
+import {withoutKeys} from "./util"
 
   export let entry;
   let bonuses;
@@ -34,7 +36,8 @@ import SoldierBonuses from "./SoldierBonuses.svelte";
     {:else}
       {@html prop.map(deeds=>deeds.map(deed=>deedDescription(deed)).join(` ${rul.tr("and")} `)).join(` ${rul.tr("or")}<br/>`) }
     {/if}
-  {:else if key=="finalBonus"}    
+  {:else if key=="finalBonus"}
+    <LinksList items={withoutKeys(prop, ["stats", "recovery", "id"])}/><br/>
     Stats: <Value val={prop?.stats}/> 
     {#if prop?.recovery}
       <br/>Recover per turn: 

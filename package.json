@@ -27,6 +27,7 @@
     "lz-string": "^1.4.4",
     "svelte": "^3.46.4",
     "svelte-drag": "^3.1.0",
+    "svelte-paginate": "^0.0.1",
     "svelte-table": "^0.5.0",
     "svelte-tablesort": "^2.0.2"
   }

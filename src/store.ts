@@ -5,6 +5,7 @@ let revealedLock = false;
 
 export const linksPageSorted = writable(false);
 export const loadingFile = writable("");
+export const leftRightClickSwipe = writable(null);
 
 export function reveal(on?) {
   if(!revealedLock)

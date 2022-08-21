@@ -185,7 +185,7 @@ ${title}`
                         </small>
                         {attack.pellets > 1 ? " ×" + attack.pellets : ""}
                       <br />
-                      {#if attack.damageType}
+                      {#if attack.damageType != null}
                         <Link href={damageTypes[attack.damageType]} />
                       {/if}
                     {/if}

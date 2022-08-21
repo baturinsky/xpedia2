@@ -12,6 +12,7 @@ let options = {
   watch: true,
   plugins: [
     esbuildSvelte({
+      compilerOptions:{ css: true },
       preprocess: sveltePreprocess()
     }),
   ],

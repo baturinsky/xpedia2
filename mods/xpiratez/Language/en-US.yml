@@ -1494,7 +1494,7 @@ en-US:
   specialWeapon: Special weapon
   spriteSheet: Sprite sheet
   storeItem: Stored as
-  tags: Yankes scripts
+  tags: Tags
   turnBeforeFirstStep: Turn before first step
   turnCost: Turn cost
   units: Units
@@ -1802,5 +1802,9 @@ en-US:
   STATUS_UNCONSCIOUS: knock out
   STATUS_PANICKED: psi-panick
   STATUS_TURNING: mind control
+  ARMOR_ENERGY_SHIELD_CAPACITY: Shield strength
+  ARMOR_ENERGY_SHIELD_PER_TURN: Shield regen
+  ARMOR_ENERGY_SHIELD_FLASH_COLOR: Shield flash color
+  ARMOR_ENERGY_SHIELD_TYPE: Shield type
   commendationWith: with
   killCriteria2: Criteria

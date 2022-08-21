@@ -1065,6 +1065,9 @@ select {
   color: var(--text);
   border: 0px;
   cursor: pointer;
+  font-size: 1rem;
+  padding: 5px;
+  margin: 5px;
 }
 
 .select-language .navbar-dropdown {
@@ -1177,6 +1180,52 @@ button.download {
   text-align: center;
   color: var(--em);
   border-top: solid 1 var(--border)
+}
+
+
+.dark-pagination-nav{
+  margin: 3px;
+}
+
+.dark-pagination-nav .pagination-nav {
+  display: flex;
+  justify-content: center;
+}
+
+.dark-pagination-nav .option {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s all ease-out;
+  user-select: none;
+  color: var(--text);
+}
+
+.dark-pagination-nav .option svg path {
+  fill: hsl(200, 90%, 90%);
+}
+.dark-pagination-nav .option:first-child {
+  border-radius: 3px 0 0 3px;
+}
+.dark-pagination-nav .option:last-child {
+  border-radius: 0 3px 3px 0;
+}
+.dark-pagination-nav .option.number,
+.dark-pagination-nav .option.ellipsis {
+  padding: 10px 15px;
+}
+.dark-pagination-nav .option:hover {
+  background: #000;
+  cursor: pointer;
+}
+.dark-pagination-nav .option.active {
+  background: var(--table-header);
+}
+
+.sort-order-arrow{
+  display: inline-block;
+  margin: 0px -5px 0px -5px;
 }
 
 @media screen and (max-width: 1300px) {

@@ -9,7 +9,7 @@
 
   import { createEventDispatcher } from "svelte";
   import ArticleBody from "./ArticleBody.svelte";
-import Research from "./Research.svelte";
+  import Research from "./Research.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -44,7 +44,6 @@ import Research from "./Research.svelte";
   -->
 </svelte:head>
 
-{#key  article?.id}  
 
 <h1>
   <nobr><Tr s={article.id} /></nobr>
@@ -67,16 +66,27 @@ import Research from "./Research.svelte";
   <SectionTable {aId} 
     entries={Object.values(rul.commendations)} 
     fields={[...statsList, "visibilityAtDark"]}
-    extraFields={["description", "visibilityAtDay", "camouflageAtDark", "camouflageAtDay"]}
+    extraFields={["description", "visibilityAtDay", "camouflageAtDark", "camouflageAtDay", "frontArmor", "sideArmor", "rearArmor", "underArmor"]}
   />
 {:else if article.id == "CRAFTS"}
-  <SectionTable {aId} entries={Object.values(rul.crafts)} fields={["speedMax","soldiers", "vehicles", "weapons", "damageMax"]}/>
+  <SectionTable {aId} 
+    entries={Object.values(rul.crafts)} 
+    fields={["speedMax","soldiers", "vehicles", "weapons", "damageMax"]}
+  />
 {:else if article.id == "ARMORS"}
   <SectionTable {aId}
     entries={Object.values(rul.armors)} 
     fields={["size", "frontArmor", "sideArmor", "rearArmor", "underArmor"]}
-    extraFields={[...damageTypes, ...statsList, "psiVision", "visibilityAtDark", "visibilityAtDay", "camouflageAtDark", "camouflageAtDay"]}
-    filters={Object.keys(rul.soldiers)}
+    extraFields={[
+      ...damageTypes, ...statsList, 
+      "psiVision", "visibilityAtDark", "visibilityAtDay", "camouflageAtDark", "camouflageAtDay",
+      "ARMOR_ENERGY_SHIELD_CAPACITY", "ARMOR_ENERGY_SHIELD_PER_TURN", "ARMOR_ENERGY_SHIELD_FLASH_COLOR", "ARMOR_ENERGY_SHIELD_TYPE"
+    ]}
+    filters={{
+      armorUsers:["any", "allies", "enemies", ...Object.keys(rul.soldiers)],
+      size: ["any", "1", "2"],
+      /*startingConditions: ["any", ...Object.keys(rul.startingConditions)]*/
+    }}
   />
 {:else if article.id == "CONDITIONS"}
   <Conditions conditions={rul.startingConditions[article.id]} />
@@ -108,4 +118,3 @@ import Research from "./Research.svelte";
     <div style="height:200px">&nbsp;</div>
   </div>
 </div>
-{/key}

@@ -314,7 +314,7 @@ export class Commendation extends Entry {
     return false;
   }
 
-  sortField(n) {
+  sortField(n, v) {
     let fb = this.finalBonus;
     if(fb && n!="id"){
       if(fb[n])
@@ -322,7 +322,7 @@ export class Commendation extends Entry {
       if (statsList.includes(n))
         return fb["stats"] ? fb["stats"][n] || 0 : 0;
     }
-      
+
     return this[n];
   }  
 }
@@ -456,6 +456,7 @@ export class StartingConditions extends Entry {
   allowedCraft: string[];
   allowedItemCategories: string[];
   allowedArmors: string[];
+  forbiddenArmors: string[];
   allowedVehicles: string[];
   deployments: string[];
 
@@ -709,11 +710,7 @@ export class Article {
 
   get text() {
     let t = rul.lang[this._text] || rul.lang[this.id + "_UFOPEDIA"] || rul.lang[rul.research[this.id]?.lookup];
-    if(t != null && t.indexOf("{") != -1){
-      t = t.replace(/\{NEWLINE\}/g, "\n")
-      t = t.replace(/^\s+/g, "")
-      t = t.replace(/\{[^}]+\}/g, " ")
-    }
+    t = stripPediaMarkup(t);
     return t;
   }
 
@@ -734,7 +731,6 @@ export class Section {
     rul.sections[id] = this;
 
     if (generated) {
-      console.log("SEC", id);
       rul.typeSectionsOrder.push(this);
     } else {
       rul.sectionsOrder.push(this);
@@ -799,7 +795,19 @@ export class Armor extends Entry {
   damageModifier: number[];
   armor: { [key: string]: number } = {};
   users: string[];
-  [key: string]: any;
+  startingConditions: string[] = [];
+  size: number;
+  layersDefinition;
+  layersDefaultPrefix:string;
+  spriteInv:string;
+  storeItem:string;
+  frontArmor:number;
+  sideArmor:number;
+  rearArmor:number;
+  underArmor:number;
+  units:string[];
+  stats:string[];
+  tags:string[];
 
   constructor(raw: any) {
     super(raw, "armors")
@@ -860,14 +868,24 @@ export class Armor extends Entry {
     }
   }
 
-  sortField(n) {
+  sortField(n, v) {
     if (statsList.includes(n))
       return this.stats ? this.stats[n] || 0 : 0;
     if (damageTypes.includes(n))
       return (this.damageModifier[damageTypes.indexOf(n)] || 0) * 100;
-    if(rul.soldiers[n]){
-      return this.units?.includes(n);
+    if (this.tags && n in this.tags)
+      return this.tags[n];
+
+    if(n == "armorUsers"){
+      if(v == "enemies")
+        return Object.values(this.units || {}).length == 0
+      if(v == "allies")
+        return Object.values(this.units || {}).length > 0
+      if(rul.soldiers[v]){
+        return this.units?.includes(v);
+      }  
     }
+
     return this[n];
   }
 
@@ -964,7 +982,7 @@ export class Item extends Entry {
       if (Array.isArray(b)) {
         for (let p in b)
           if (b[p] > 0)
-            backLink(this.id, [k], "stats", "weaponDamage**" + (+p + 1));
+            backLink(this.id, [k], "stats", `weaponDamage${p!='0'?`<sup>${+p + 1}</sup>`:""}`);
       }
     }
 
@@ -1267,6 +1285,7 @@ export default class Ruleset {
     crosslink(this.craftWeapons, "weaponType", this.weaponTypes, "weapons", "weaponTypes");
     crosslink(this.crafts, "allWeaponTypes", this.weaponTypes, "crafts", "weaponTypes");
     crosslink(this.startingConditions, "allowedCraft", this.crafts, "startingConditions");
+    crosslink(this.startingConditions, "allowedArmors", this.armors, "startingConditions");
     crosslink(this.alienDeployments, "startingCondition", this.startingConditions, "deployments");
     crosslink(this.missionScripts, "researchNeeded", this.research, "unlocksMissions");
     crosslink(this.missionScripts, "researchForbidden", this.research, "stopsMissions");
@@ -1277,6 +1296,19 @@ export default class Ruleset {
     crosslink(this.items, "spawnUnit", this.units, "spawnedBy");
     crosslink(this.items, "internalBattleType", "battleTypes", "items");
     crosslink(this.commendations, "damageTypes", this.elements, "commendations");
+    crosslink(this.events, "researchList", this.research, "events");
+    
+    let ourArmors = Object.values(this.armors).filter(a=>a.units);
+
+    for(let sc of Object.values(this.startingConditions)){
+      if(sc.forbiddenArmors){
+        let set = new Set(sc.forbiddenArmors);
+        for(let a of ourArmors){
+          if(!set.has(a.id))
+            a.startingConditions.push(sc.id);
+        }
+      }
+    }
     
     for(let c of Object.values(this.commendations)){
       c.parseKillCriteria();
@@ -1353,6 +1385,9 @@ export default class Ruleset {
         });
     }
 
+
+    //this.typeSectionsOrder = this.sortStrings(this.typeSectionsOrder.map(v=));
+
     console.log("parse done");
 
   }
@@ -1411,6 +1446,7 @@ export default class Ruleset {
 
     if (id in rul.lang) {
       str = rul.lang[id]
+      str = stripPediaMarkup(str);
     } else if (typeof id == "string") {
       if(icon)
         str = null;
@@ -1541,6 +1577,11 @@ export default class Ruleset {
     tl = tl.sort((a, b) => a[1] > b[1] ? 1 : -1)
     return tl.map(a => a[0]);
   }
+
+  /*sortIds(s: {id:string}[]) {
+    return this.sortStrings(s.map(v=>v.id)).map(v=?);
+  }*/
+
 }
 
 export const entryConstructors = {
@@ -1717,3 +1758,12 @@ export function link(id){
 /*function nullIfEmpty(a){
   return a?.length == 0?undefined:a;
 }*/
+
+function stripPediaMarkup(t:string){
+  if(t != null && t.indexOf("{") != -1){
+    t = t.replace(/\{NEWLINE\}/g, "\n")
+    t = t.replace(/^\s+/g, "")
+    t = t.replace(/\{[^}]+\}/g, " ")
+  }  
+  return t;
+}

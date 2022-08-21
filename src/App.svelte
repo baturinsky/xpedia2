@@ -11,6 +11,7 @@
     loaded,
     linksPageSorted,
     loadingFile,
+    leftRightClickSwipe
   } from "./store";
   import {isAncestorOf} from "./util"
   import Download from "./Download.svelte";
@@ -54,6 +55,8 @@
     saveState()
   });
 
+  let lrcs;
+  leftRightClickSwipe.subscribe((v) => {lrcs = v;});
 
   function saveState() {
     if(!saveLoaded)
@@ -162,12 +165,16 @@
   function centerOnArticle() {
     setTimeout(
       () =>
-        activeOption?.scrollIntoView({ behavior: "smooth", block: "center" }),
+        activeOption?.scrollIntoView({ block: "center" }),
       50
     );
   }
 
   function nextArticle(delta) {
+    if(lrcs){
+      lrcs(delta);
+      return;
+    }
     let nextArticle = rul.findNextArticle(
       article,
       delta,
@@ -281,7 +288,6 @@
   {/if}
   <meta charset="utf8" />
   <meta name="keywords" content="OpenXCom" />
-  <style src="main.css"></style>
   <link rel="icon" type="image/png" href={favicon} />
 </svelte:head>
 
@@ -291,7 +297,7 @@
     <CogAnimation size={200} />
   </div>
 {:else}
-  {#key lang}
+  {#key [lang, article]}
     <nav class="navbar flex-horisontal">
       <!-- svelte-ignore a11y-mouse-events-have-key-events -->
       <div
@@ -333,7 +339,7 @@
               {/each}
             </div>
             <div class="navbar-custom navbar-list">
-              {#each rul.typeSectionsOrder as section, i}
+              {#each rul.sortedTypeSections() as section, i}
                 <a
                   href={"##" + section.id}
                   class={[
@@ -497,7 +503,7 @@
         <em>{query}</em>
         ":
         <br />
-        {#key `${lang} ${query}`}
+        {#key found}
           {#if found && found.length > 0}
             <LinksPage links={found.filter(a=>contains(rul.tr(a), query)).slice(0,200)}/><br/>
             <LinksPage links={found.filter(a=>!contains(rul.tr(a), query)).slice(0,200)} title=" "/>
