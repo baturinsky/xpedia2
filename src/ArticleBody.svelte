@@ -61,6 +61,7 @@ const renderers = {
   mapScripts: {},
   events: {},
   eventScripts: {title:"Event Script"},
+  inventorySections: {}
 
 }
 

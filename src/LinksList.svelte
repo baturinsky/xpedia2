@@ -7,7 +7,7 @@
   export let vertical = false;
   export let numberTable = false;
   export let depth = 2;
-  export let sorted = false;
+  export let sorted = true;
   let sorter;
 
   $: {

@@ -51,6 +51,7 @@ ${title}`
     sorted = sortFirstLast(entry, {
       first: [
         "fixedWeapon",
+        "builtIn",
         "costBuy",
         "costSell",
         "tuUse",

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { rul, sortFirstLast, damageTypes, Stats, statsList } from "./Ruleset";
+  import { rul, sortFirstLast, damageTypes, Stats, statsList, battleStats } from "./Ruleset";
   import Illustration from "./Illustration.svelte";
   import Conditions from "./Conditions.svelte";
   import BaseServices from "./BaseServices.svelte";
@@ -66,7 +66,10 @@
   <SectionTable {aId} 
     entries={Object.values(rul.commendations)} 
     fields={[...statsList, "visibilityAtDark"]}
-    extraFields={["description", "visibilityAtDay", "camouflageAtDark", "camouflageAtDay", "frontArmor", "sideArmor", "rearArmor", "underArmor"]}
+    extraFields={[
+      ...battleStats.map(s=> "recovery."+s),
+      "description", "visibilityAtDay", "camouflageAtDark", "camouflageAtDay", "frontArmor", "sideArmor", "rearArmor", "underArmor"
+      ]}
   />
 {:else if article.id == "CRAFTS"}
   <SectionTable {aId} 

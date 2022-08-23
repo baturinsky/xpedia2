@@ -43,6 +43,6 @@
       </div>
     </div>
   {:else}
-    <PaginatedList items={sortedList} sorted={false}/>
+    <PaginatedList items={sortedList} sorted={false} pageSize={600}/>
   {/if}
 {/if}
