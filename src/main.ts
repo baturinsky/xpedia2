@@ -1,6 +1,6 @@
 import Ruleset, {rul} from "./Ruleset";
 import App from "./App.svelte";
-import { loadByHttp, loadRules } from "./load";
+import { loadFromFiles, loadRules } from "./load";
 import { reveal, loaded } from "./store";
 
 function unescape(s) {
@@ -35,7 +35,7 @@ function showPedia() {
 
 async function test() {
   let rul = new Ruleset()
-  rul.load(await loadByHttp());
+  rul.load(await loadFromFiles());
 }
 
 

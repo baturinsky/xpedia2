@@ -1794,7 +1794,7 @@ en-US:
   tip_1handPenalty: Accuracy multiplier when used onehanded
   tip_accPerTile: accuracy dropoff per tile
   en-US:
-  aboutexport: If you run xpedia in node.js mode, click this to export as a single file. Will take some seconds to complete.
+  aboutexport: Export as a single file. Will take some seconds to complete. Open it from the OXCE root directory to see images.
   FACTION_HOSTILE: enemi(es)
   FACTION_NEUTRAL: civilian(s)
   FACTION_PLAYER: alli(es)

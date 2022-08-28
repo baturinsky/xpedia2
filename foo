@@ -13377,8 +13377,6 @@
       return this.sprites[id];
     }
     async sprite(id, onlyIfExists = false) {
-      if (id instanceof Promise)
-        return id;
       if (id in this.sprites)
         return this.sprites[id].data();
       return onlyIfExists ? null : id;

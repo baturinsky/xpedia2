@@ -63,56 +63,55 @@
   <tr>
     <td colspan="2">
       <div class="armors">
-        {#if Object.keys(entry.dollSprites).length > 1}
-          <p>
-            <button
-              class="btn-hover-effect btn-hover-effect--effect-1"
-              on:click={(e) => (seeAllVariants = !seeAllVariants)}
-            >
-              {seeAllVariants ? "Hide" : "See"} all variants
-            </button>
-          </p>
-        {/if}
-
-        {#if entry.dollSprites}
-          {#each Object.keys(entry.dollSprites).sort( (a, b) => rul.bodiesCompare( [a, b] ) ) as body, i}
-            {#if seeAllVariants || i == 0}
-              <div
-                class="armor"
-                style="left:{(i % dollColumns) * 80}px; top:{Math.floor(
-                  i / dollColumns
-                ) * 120}px;"
-              >
-                {#if seeAllVariants}
-                  <div class="armor-variant">{body}</div>
-                {/if}
-                {#each entry.dollSprites[body] as url, j}
-                  <img
-                    src={url}
-                    alt={body}
-                    onerror={imageNotFound}
-                    class="armor-layer"
-                  />
-                {/each}
-              </div>
+        {#await entry.dollSprites() then sprites}
+          {#if sprites}
+            {#if Object.keys(sprites).length > 1}
+              <p>
+                <button
+                  class="btn-hover-effect btn-hover-effect--effect-1"
+                  on:click={(e) => (seeAllVariants = !seeAllVariants)}
+                >
+                  {seeAllVariants ? "Hide" : "See"} all variants
+                </button>
+              </p>
             {/if}
-          {/each}
-          <div
-            style={`min-height:${
-              (seeAllVariants
-                ? (Math.floor(
-                    Object.keys(entry.dollSprites).length / dollColumns
-                  ) +
-                    1) *
-                  120
-                : 120)
+
+            {#each Object.keys(sprites).sort( (a, b) => rul.bodiesCompare( [a, b] ) ) as body, i}
+              {#if seeAllVariants || i == 0}
+                <div
+                  class="armor"
+                  style="left:{(i % dollColumns) * 80}px; top:{Math.floor(
+                    i / dollColumns
+                  ) * 120}px;"
+                >
+                  {#if seeAllVariants}
+                    <div class="armor-variant">{body}</div>
+                  {/if}
+                  {#each sprites[body] as url, j}
+                    <img
+                      src={url}
+                      alt={body}
+                      onerror={imageNotFound}
+                      class="armor-layer"
+                    />
+                  {/each}
+                </div>
+              {/if}
+            {/each}
+            <div
+              style={`min-height:${
+                seeAllVariants
+                  ? (Math.floor(Object.keys(sprites).length / dollColumns) +
+                      1) *
+                    120
+                  : 120
               }px;margin-left:175px;`}
-          >
-          {#if !seeAllVariants}<p>{@html text}</p>{/if}</div>
-        {/if}        
+            >
+              {#if !seeAllVariants}<p>{@html text}</p>{/if}
+            </div>
+          {/if}
+        {/await}
       </div>
-
-
     </td>
   </tr>
   <tr>
@@ -120,50 +119,53 @@
       <div class="flex-horisontal" style="max-width: 95vw;">
         {#each ["stats", "armor", "damageModifier" /*, "recovery"*/] as prop}
           {#if entry[prop]}
-            <div class="armor-column {prop == "damageModifier" && "armor-column-resists"}">
-              <header><Tr s={prop}/></header>
+            <div
+              class="armor-column {prop == 'damageModifier' &&
+                'armor-column-resists'}"
+            >
+              <header><Tr s={prop} /></header>
               {#each sortFirstLast(entry[prop]).all as [key, val], i}
                 <div>
-                  <Value val={prop=="damageModifier"?damageTypes[key]:key} icon="monospace" />
+                  <Value
+                    val={prop == "damageModifier" ? damageTypes[key] : key}
+                    icon="monospace"
+                  />
                 </div>
-                  <div>
-                    {#if "recovery" == prop}
-                      {#each Object.keys(val) as subfield, j}
-                        {#if j != 0}
-                          <br />
-                        {/if}
-                        <Value val={subfield}/>
-                        :
-                        <em>
-                          <Value val={val[subfield]} />
-                        </em>
-                      {/each}
-                    {:else}
+                <div>
+                  {#if "recovery" == prop}
+                    {#each Object.keys(val) as subfield, j}
+                      {#if j != 0}
+                        <br />
+                      {/if}
+                      <Value val={subfield} />
+                      :
                       <em>
-                        {#if prop == "damageModifier"}
-                          <span
-                            style={`text-weight:bold; color:hsl(${~~(
-                              val * 70
-                            )}, 100%, 50%);`}>{~~(val * 100)}</span
-                          >
-                        {:else}
-                          <Value {val} />
-                        {/if}
+                        <Value val={val[subfield]} />
                       </em>
-                    {/if}
-                  </div>
+                    {/each}
+                  {:else}
+                    <em>
+                      {#if prop == "damageModifier"}
+                        <span
+                          style={`text-weight:bold; color:hsl(${~~(
+                            val * 70
+                          )}, 100%, 50%);`}>{~~(val * 100)}</span
+                        >
+                      {:else}
+                        <Value {val} />
+                      {/if}
+                    </em>
+                  {/if}
+                </div>
               {/each}
             </div>
-           {/if}
+          {/if}
         {/each}
       </div>
     </td>
   </tr>
 
-  {#each sortFirstLast( entry, { 
-      exclude: ["recovery", "type", "layersDefinition", "spriteFaceColor", "spriteHairColor", "spriteUtileColor", "spriteFaceGroup", "spriteHairGroup", "spriteUtileGroup", "customArmorPreviewIndex", "dollSprites", "layersDefaultPrefix", "frontArmor", "sideArmor", "rearArmor", "underArmor", "spriteInv", "armor", "damageModifier", "stats"],
-      first: ["builtInWeapons", "size"]
-    } ).all as [key, prop]}
+  {#each sortFirstLast( entry, { exclude: ["recovery", "type", "layersDefinition", "spriteFaceColor", "spriteHairColor", "spriteUtileColor", "spriteFaceGroup", "spriteHairGroup", "spriteUtileGroup", "customArmorPreviewIndex", "dollSprites", "layersDefaultPrefix", "frontArmor", "sideArmor", "rearArmor", "underArmor", "spriteInv", "armor", "damageModifier", "stats"], first: ["builtInWeapons", "size"] } ).all as [key, prop]}
     <tr>
       <td>
         <Value val={key} />
@@ -197,5 +199,5 @@
     </tr>
   {/each}
   <Subheader text="recovery" />
-  <RecoveryTable recovery={entry.recovery}/>
+  <RecoveryTable recovery={entry.recovery} />
 </table>

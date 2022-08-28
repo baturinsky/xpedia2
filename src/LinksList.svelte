@@ -7,8 +7,12 @@
   export let vertical = false;
   export let numberTable = false;
   export let depth = 2;
-  export let sorted = true;
+  export let sorted;
   let sorter;
+
+  if(sorted == null){
+    sorted=items.length>9;
+  }
 
   $: {
     if (items instanceof Set) {

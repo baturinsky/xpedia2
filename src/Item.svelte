@@ -133,7 +133,7 @@ ${title}`
                   {#if attack.mode == "ammo"}
                     <td class="item-ammo-img">
                       <CanvasImage
-                        src={rul.sprite(attack.item.sprite)}
+                        src={attack.item.sprite}
                         maxWidth={32 * attack.item.invWidth}
                         maxHeight={32 * attack.item.invHeight}
                         zoom="2"

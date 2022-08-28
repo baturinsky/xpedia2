@@ -1,6 +1,6 @@
 import SearchApi from 'js-worker-search';
 import { emptyImg } from "./Components";
-import { loadByHttp, loadPacked, useCache } from './load';
+import { loadData } from './load';
 import { addAllIfNew, addIfNew, camelToUnderscore, capital, cullDoubles, delay, getFlagEmoji, removeByValue } from './util';
 
 export let rul!: Ruleset;
@@ -44,13 +44,15 @@ export class Search {
   }
 
   async findArticles(query: string) {
-    return this.articles.search(query);
+    return this.articles.search(query.toLowerCase());
   }
 }
 
 export class Entry {
   id: string;
   armors: string[];
+  [id: string]: any;
+
   constructor(raw: any, collection: string) {
     Object.assign(this, JSON.parse(JSON.stringify(raw)));
 
@@ -123,6 +125,10 @@ export class MissionScript extends Entry {
 
 export class Soldiers extends Entry {
   armors: string[];
+  statCaps: { [id: string]: number }
+  sortField(n, v) {
+    return this[n] || this.statCaps[n];
+  }
 }
 
 export class Event extends Entry {
@@ -283,7 +289,7 @@ export class Commendation extends Entry {
             if (!deed.type) {
               backLink2(this, rul.elements[deed.element].items, rul.items, "commendations", "items");
             } else if (!deed.element) {
-              backLink2(this, rul.battleTypes[deed.type].items, rul.items, "commendations", "items");
+              backLink2(this, rul.battleTypes[deed.type]["items"], rul.items, "commendations", "items");
             } else {
               let items = rul.elements[deed.element].items.filter(id => rul.items[id]?.internalBattleType == deed.type)
               backLink2(this, items, rul.items, "commendations", "items");
@@ -315,7 +321,7 @@ export class Commendation extends Entry {
   }
 
   sortField(n, v) {
-    if(n==null)
+    if (n == null)
       return;
     let fb = this.finalBonus;
     if (fb && n != "id") {
@@ -323,7 +329,7 @@ export class Commendation extends Entry {
         return fb[n];
       if (statsList.includes(n))
         return fb["stats"] ? fb["stats"][n] || 0 : 0;
-      if(this.finalBonus.recovery && n.substring(0,9) == "recovery."){
+      if (this.finalBonus.recovery && n.substring(0, 9) == "recovery.") {
         return this.finalBonus.recovery[n.substring(9)]?.flatOne;
       }
     }
@@ -612,7 +618,7 @@ export class Attack {
       this.accuracyMultiplier = accuracyMultiplier;
 
       if (this.damageType != null) {
-        item.addDamageType(this.damageType);
+        item.addDamageType(Number(this.damageType));
       }
 
       for (let k in this.accuracyMultiplier || [])
@@ -786,6 +792,15 @@ export class Sprite {
       path = window["xpediaDir"] + path;
     }
     return path;
+
+  }
+
+  async data() {
+    let data = loadData(this.path);
+    if (data != null)
+      return data;
+    else
+      return this.path;
   }
 
   /*get extra(){
@@ -796,7 +811,6 @@ export class Sprite {
 
 export class Armor extends Entry {
   sprite: string;
-  dollSprites: { [key: string]: string[] } = {};
   damageModifier: number[];
   armor: { [key: string]: number } = {};
   users: string[];
@@ -819,38 +833,6 @@ export class Armor extends Entry {
     if (!this.size)
       this.size = 1;
 
-    if (this.layersDefinition) {
-      let prefix = this.layersDefaultPrefix;
-      for (let body in this.layersDefinition) {
-        let layersDef = this.layersDefinition[body];
-        let layers = [];
-        for (let layer in layersDef) {
-          let name = layersDef[layer];
-          if (name && name.length) {
-            let id = prefix + "__" + layer + "__" + name;
-            layers.push(rul.sprite(id));
-          }
-        }
-        this.dollSprites[body] = layers;
-      }
-    } else if (this.spriteInv) {
-      let name: string = this.spriteInv;
-      let l = name.length;
-      if (this.spriteInv + ".SPK" in rul.sprites) {
-        this.dollSprites = {
-          0: [rul.sprites[this.spriteInv + ".SPK"].path],
-        };
-      } else {
-        for (let s in rul.sprites) {
-          if (s.substr(0, l) == name) {
-            this.dollSprites[s.substr(l, s.length - l - 4)] = [
-              rul.sprites[s].path,
-            ];
-          }
-        }
-      }
-    }
-
     this.armor = {
       Front: this.frontArmor,
       Side: this.sideArmor,
@@ -871,6 +853,42 @@ export class Armor extends Entry {
         s.armors.push(this.type);
       }
     }
+  }
+
+  async dollSprites(): Promise<{ [key: string]: string[] }> {
+    let ds = {};
+    if (this.layersDefinition) {
+      let prefix = this.layersDefaultPrefix;
+      for (let body in this.layersDefinition) {
+        let layersDef = this.layersDefinition[body];
+        let layers = [];
+        for (let layer in layersDef) {
+          let name = layersDef[layer];
+          if (name && name.length) {
+            let id = prefix + "__" + layer + "__" + name;
+            layers.push(await rul.sprite(id));
+          }
+        }
+        ds[body] = layers;
+      }
+    } else if (this.spriteInv) {
+      let name: string = this.spriteInv;
+      let l = name?.length;
+  
+      if (this.spriteInv + ".SPK" in rul.sprites) {
+        ds = {
+          0: [await rul.sprites[this.spriteInv + ".SPK"].data()],
+        };
+      } else {
+        for (let s in rul.sprites) {
+          if (s.substr(0, l) == name) {
+            ds[s.substr(l, s.length - l - 4)] = [await rul.sprite(s)];
+          }
+        }
+      }
+    }    
+    console.log({ds});
+    return ds;
   }
 
   sortField(n, v) {
@@ -942,6 +960,7 @@ export class Item extends Entry {
       return rul.obsSprite("big", +this.bigSprite);
     }
   }
+
   get internalBattleType() {
     let t = internalBattleTypes[this.battleType || 0]
     return t;
@@ -1092,7 +1111,11 @@ export default class Ruleset {
   }
 
   obsSprite(type: string, num: number) {
-    return (this.obs[type] || [])[num]?.path || emptyImg;
+    let path = (this.obs[type] || [])[num]?.path;
+    if(!path)
+      return emptyImg;
+
+    return loadData(path);
   }
 
   combineFiles(data: any[], reversed = false) {
@@ -1502,8 +1525,15 @@ export default class Ruleset {
     return str;
   }
 
-  sprite(id: string, onlyIfExists = false) {
-    if (id in this.sprites) return this.sprites[id].path;
+  hasSprite(id: string) {
+    return this.sprites[id];
+  }
+
+  async sprite(id: string, onlyIfExists = false) {
+    if(id instanceof Promise)
+      return id;
+    if (id in this.sprites) 
+      return this.sprites[id].data();
 
     return onlyIfExists ? null : id;
   }
@@ -1701,7 +1731,7 @@ export const battleStats = ["time", "energy", "morale", "health", "stun", "mana"
 
 function backLink2(entry: Entry, list: string[] | { [key: string]: any }, to: any, field: string, field2?: string) {
   backLink(entry.id, list, to, field);
-  addAllIfNew(entry[field2], list);
+  addAllIfNew(entry[field2], list as any);
 }
 
 function backLink(id: string, list: string[] | { [key: string]: any }, to: any, field: string, collection?: string) {
@@ -1729,7 +1759,7 @@ function backLink(id: string, list: string[] | { [key: string]: any }, to: any, 
     if (!Array.isArray(list))
       list = [list]
 
-    for (let key of list) {
+    for (let key of list as any[]) {
       let back = to[key];
       if (back == null && collection != null)
         back = to[key] = new Entry({ id: key }, collection)

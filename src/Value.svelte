@@ -1,6 +1,6 @@
 <script>
   import { rul } from "./Ruleset";
-  import { Link, LinksList, Tr  } from "./Components";
+  import { Link, LinksList, Tr, Img  } from "./Components";
 
   export let val;
   export let obs = null;
@@ -22,7 +22,9 @@
 {:else if val == null}
 ‒
 {:else if obs}
-  <img src={rul.obsSprite(obs,val)} alt={val} style="max-width:320px"/>
+  {#await rul.obsSprite(obs,val) then data}
+    <img src={data} alt={val} style="max-width:320px"/>
+  {/await}
 {:else if Array.isArray(val)}
   <LinksList items={val} vertical={false} />
 {:else if val instanceof Object}
@@ -33,8 +35,8 @@
   <em class="num">{val.toLocaleString()}</em>
 {:else if rul.article(val) && !simple}
   <Link href={val} {icon}/>
-{:else if rul.sprite(val, true)}
-  <img src={rul.sprite(val)} alt={val} style="max-width:320px"/>
+{:else if rul.hasSprite(val)}
+  <Img src={val} style="max-width:320px"/>
 {:else}
   <Tr s={val} {simple} {nobr} {icon} {capital}/>  
 {/if}

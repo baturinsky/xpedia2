@@ -2,6 +2,7 @@ import esbuild from "esbuild";
 import esbuildSvelte from "esbuild-svelte";
 import sveltePreprocess from "svelte-preprocess";
 import open from "open";
+import { copyFile } from 'node:fs/promises';
 
 let options = {
   entryPoints: ["src/main.ts"],
@@ -9,7 +10,6 @@ let options = {
   sourcemap: true,
   outfile: "./xpedia.js",
   minify: false,
-  watch: true,
   plugins: [
     esbuildSvelte({
       compilerOptions:{ css: true },
@@ -42,6 +42,7 @@ builder
   })
   .then(result => {
     console.log(result);
+    copyFile('xpedia.js', 'resources/js/xpedia.js');
     if (keys.has("serve"))
       open("http://localhost:3100/xpedia2/")
   });

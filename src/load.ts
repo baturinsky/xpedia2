@@ -1,24 +1,10 @@
 import JSZip from "jszip";
 //import lzs from "lz-string";
-import { readYaml, dirByHttp, parseYaml, delay, readTextFile } from "./util";
+import { readYaml, listDir, parseYaml, delay, readTextFile } from "./util";
 import { loadingFile } from "./store";
+import { download, fetchText } from "./util";
+import { defaultLanguage, rul } from "./Ruleset";
  
-/*async function loadPackedZip(text: string) {
-  text = text.trim();
-  let jszip = new JSZip();
-
-  if (text.substr(0, 6) == "base64") {
-    text = text.substr(6);
-    let strData = atob(text);
-    let data = await jszip.loadAsync(strData);
-    let file = data.file("main");
-    text = await file.async("string");
-  }
-
-  let data = parsePackedYaml(text);
-  return data;
-}*/
-
 export async function unpackZip(text) {
   let jszip = new JSZip();
   let data = await jszip.loadAsync(text, { base64: true });
@@ -112,19 +98,19 @@ export async function loadPacked() {
   }
 }
 
-export async function loadByHttp() {
+export async function loadFromFiles() {
   let [options, modDirs, xpediaDirs]: [OXCOptions, string[], string[]] =
     await Promise.all([
       readYaml(`${OXCPath}user/options.cfg`),
-      dirByHttp(`${OXCPath}user/mods/`, true),
-      dirByHttp(`${PediaPath}mods/`, true)
+      listDir(`${OXCPath}user/mods/`, true),
+      listDir(`${PediaPath}mods/`, true)
     ])
   
 
   modDirs = [`${OXCPath}standard/xcom1/`, ...modDirs]
   let allModDirs = [...modDirs, ...xpediaDirs]
   let modMetadataById = {};
-  let modMetadata = await Promise.all(allModDirs.map(dir => readYaml(`${dir}/metadata.yml`)))
+  let modMetadata = await Promise.all(allModDirs.map(dir => readYaml(`${dir}metadata.yml`)))
   console.log(modMetadata);
   for (let i in modMetadata) {
     let data = modMetadata[i];
@@ -172,7 +158,7 @@ function splitName(name){
 
 async function loadLanguagesFromDirs(dirs: string[]) {
 
-  let langFiles = await Promise.all(dirs.map(path => dirByHttp(path)));
+  let langFiles = await Promise.all(dirs.map(path => listDir(path)));
   let files: { lname: string, dir: string }[] =
     langFiles.map(
       (list, dirInd) => list.filter(file => ["yml", "html", "txt"].includes(splitName(file).ext))
@@ -215,7 +201,7 @@ async function loadLanguagesFromDirs(dirs: string[]) {
 }
 
 async function loadRulsFromMods(mods: { id: string, rulDir: string, dir: string }[]) {
-  let dirLists = await Promise.all(mods.map(mod => dirByHttp(mod.rulDir)));
+  let dirLists = await Promise.all(mods.map(mod => listDir(mod.rulDir)));
   dirLists = dirLists.map(files => files.filter(name => name.substr(-4) == ".rul"))
   let dirLists2: { mod: string, path: string }[][] = [];
   for (let i in mods) {
@@ -278,7 +264,7 @@ export async function loadRules(rul) {
     data = await useCache("load");
     if(!data){
       loadingFile.set("loading from local files")
-      data = await loadByHttp();
+      data = await loadFromFiles();
       useCache(data);
     }
   }
@@ -288,3 +274,50 @@ export async function loadRules(rul) {
   await delay(10);
 }
 
+export async function loadData(path:string){
+  if(typeof fsData != "undefined"){
+    return fsData(path);
+  } else {
+    return path;
+  }
+}
+
+export async function exportPedia(onlyCurrentLanguage = false) {
+  document.body.style.cursor = "wait";
+  let jsPath = (document.getElementById("xpedia-js") as HTMLScriptElement)?.src;
+  let js = await (await fetch(jsPath)).text();
+  let mainCSS = document.getElementById("main-css") as HTMLLinkElement;
+  let style = mainCSS.href?(await (await fetch(mainCSS.href)).text()):mainCSS.innerHTML;  
+
+  let src = rul.src;
+  
+  if(onlyCurrentLanguage){
+    let langs = {} as any;
+    langs[defaultLanguage] = src.langs[defaultLanguage];
+    langs.icon = src.langs.icon;
+    let langName = rul.langName;
+    if(langName != defaultLanguage){
+      langs[langName] = src.langs[langName];
+    }
+    src = {...src,langs};
+  }
+
+  //let packed = lzs.compressToBase64(JSON.stringify(rul.src))
+  let packed = await packZip(JSON.stringify(src));
+
+  //debugger;
+
+  let html = `
+<head>
+  <style>${style}</style>
+  <script>
+  window.gameDir = ".";
+  window.xpediaDir = "xpedia2/";
+  window.xpedia = "${packed}";
+  </script>
+  <script>${js}</script>
+</head>`;
+    
+  download("xpedia.html", html);
+  document.body.style.cursor = "default";
+}

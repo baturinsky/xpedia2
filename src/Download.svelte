@@ -1,5 +1,5 @@
 <script>
-  import {exportPedia} from "./Components"
+  import {exportPedia} from "./load"
   import { Tr } from "./Components";
   export let title = "Export";
   export let onlyCurrent = false;

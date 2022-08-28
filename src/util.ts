@@ -1,8 +1,14 @@
 import JSYaml from "js-yaml";
-import { identity } from "svelte/internal";
 import { loadingFile } from "./store";
 
-export async function fetchAll(files) {
+declare const
+  fsFile: (path:string)=>string,
+  fsData: (path:string)=>string,
+  fsSave: (name:string, data:string)=>string,  
+  fsDir:(path:string, always:boolean)=>string[]
+;
+
+async function fetchAll(files) {
   return Object.fromEntries(
     await Promise.all(
       Object.keys(files).map(async (path) => [
@@ -15,8 +21,9 @@ export async function fetchAll(files) {
 
 export async function readTextFile(path: string) {
   let text: string;
+  //console.log("fetch", path);
   try {
-    text = await (await fetch(path)).text();
+    text = await fetchText(path)
     loadingFile.update(t => t + " " + path);
   } catch (e) {
     console.error(e);
@@ -24,6 +31,32 @@ export async function readTextFile(path: string) {
   }
   return text;
 }
+
+export async function fetchText(path){
+  if(typeof fsFile != "undefined")
+    return fsFile(path);
+  else
+    return (await fetch(path)).text()
+}
+
+
+const dirFilesRegex = /<\s*a[^>]*>(.*?)<\s*\/\s*a>/gi;
+
+export async function listDir(path, full = false) {
+  if(typeof fsDir != "undefined"){
+    let files = fsDir(path, full)
+    return files;
+  }
+  let text = await readTextFile(path);
+  let matches: string[], files: string[] = [];
+  while (matches = dirFilesRegex.exec(text)) {
+    if (matches[1] != "../" && matches[1].substring(0,4) != "http")
+      files.push(full ? path + matches[1] : matches[1]);
+  }
+  console.log("ld", path, files);
+  return files;
+}
+
 
 export async function readYaml(path: string) {
   let text = await readTextFile(path);
@@ -45,19 +78,11 @@ export function parseYaml(file: string, filename: string) {
   }
 }
 
-const dirFilesRegex = /<\s*a[^>]*>(.*?)<\s*\/\s*a>/gi;
-
-export async function dirByHttp(path, full = false) {
-  let text = await readTextFile(path);
-  let matches: string[], files: string[] = [];
-  while (matches = dirFilesRegex.exec(text)) {
-    if (matches[1] != "../" && matches[1].substring(0,4) != "http")
-      files.push(full ? path + matches[1] : matches[1]);
+export function download(filename, text) {  
+  if(typeof fsSave != "undefined"){
+    fsSave(filename, text)
+    return
   }
-  return files;
-}
-
-export function download(filename, text) {
   var element = document.createElement("a");
   element.setAttribute(
     "href",
@@ -73,10 +98,6 @@ export function download(filename, text) {
   document.body.removeChild(element);
 }
 
-
-export async function fetchText(path){
-  return (await fetch(path)).text()
-}
 
 export function delay(n:number){
   return new Promise(r=>setTimeout(r, n));

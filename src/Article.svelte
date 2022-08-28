@@ -10,6 +10,7 @@
   import { createEventDispatcher } from "svelte";
   import ArticleBody from "./ArticleBody.svelte";
   import Research from "./Research.svelte";
+  import CanvasImage from "./CanvasImage.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -76,6 +77,11 @@
     entries={Object.values(rul.crafts)} 
     fields={["speedMax","soldiers", "vehicles", "weapons", "damageMax"]}
   />
+{:else if article.id == "SOLDIERS"}
+  <SectionTable {aId} 
+    entries={Object.values(rul.soldiers)} 
+    fields={statsList} 
+  />
 {:else if article.id == "ARMORS"}
   <SectionTable {aId}
     entries={Object.values(rul.armors)} 
@@ -115,7 +121,7 @@
     <ArticleBody id={article.id} text={article.text}/>    
     
     {#if !(article.id in rul.units)}
-      <Illustration id={article.image_id} />
+      <CanvasImage src={article.image_id} />
     {/if}
 
     <div style="height:200px">&nbsp;</div>

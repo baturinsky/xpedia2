@@ -1,57 +1,37 @@
 <script>
   import { rul } from "./Ruleset";
+
   export let src = null;
-  export let maxWidth = 1e6;
-  export let maxHeight = 1e6;
-  export let zoom = 1;
   export let item = null;
-
-  let canvas;
-  let ctx;
-  let img = null;
-  let loaded = false;
-
-  function updateImage() {
-    if (canvas == null) return;
-
-    canvas.width = Math.min(maxWidth, img.naturalWidth * zoom);
-    canvas.height = Math.min(maxHeight, img.naturalHeight * zoom);
-    ctx.imageSmoothingEnabled = false;
-    ctx.mozImageSmoothingEnabled = false;
-    ctx.webkitImageSmoothingEnabled = false;
-    ctx.drawImage(img, 0, 0, img.naturalWidth * zoom, img.naturalHeight * zoom);
-    loaded = true;
-  }
-
-  function prepareCanvas(node) {
-    canvas = node;
-    ctx = canvas.getContext("2d");
-    img = new Image();
-    img.onload = updateImage;
-    img.src = src;
-  }
-
+  export let maxWidth = null;
+  export let maxHeight = null
+  /**@type {HTMLImageElement}*/
+  let img;
+  let alt;
+ 
   $: {
+    if(typeof src == "string"){
+      alt = src;
+      src = rul.sprite(src);
+    }
     if (item) {
+      alt = item.id;
       src = rul.sprite(item.sprite);
       maxWidth = 32 * item.invWidth;
       maxHeight = 32 * item.invHeight;
     }
-
-    if (src && img) {
-      loaded = false;
-      img.src = src;
-    }
   }
+
+  function resize(){
+    img.style.width = `${img.naturalWidth*2}px`;
+    img.style.height = `${img.naturalHeight*2}px`;
+    console.log(maxWidth, maxHeight);
+  }
+
 </script>
 
-{#key src}
-  <span href={src} class="canvas-image">
-    <canvas
-      class="pixelated"
-      style="display:{loaded ? 'inline' : 'none'};"
-      bind:this={canvas}
-      use:prepareCanvas
-    />
-  </span>
-{/key}
+{#await src then data}
+<div style="display:inline-block; overflow:hidden; max-width:{maxWidth}px; max-height:{maxHeight}px;">
+  <img bind:this={img} alt={alt} class="sprite" on:load={resize} src={data}/>
+</div>
+{/await}
