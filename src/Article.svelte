@@ -75,8 +75,16 @@
 {:else if article.id == "CRAFTS"}
   <SectionTable {aId} 
     entries={Object.values(rul.crafts)} 
-    fields={["speedMax","soldiers", "vehicles", "weapons", "damageMax"]}
+    fields={["speedMax","soldiers", "vehicles", "weapons", "damageMax", "repairRate"]}
   />
+{:else if article.id == "CRAFT_WEAPONS"}
+  <SectionTable {aId} 
+    entries={Object.values(rul.craftWeapons)} 
+    fields={["damage","accuracy", "range", "ammoMax"]}
+    filters={{
+      weaponType:["any", ...Object.keys(rul.weaponTypes)]
+    }}
+  />  
 {:else if article.id == "SOLDIERS"}
   <SectionTable {aId} 
     entries={Object.values(rul.soldiers)} 
@@ -88,7 +96,7 @@
     fields={["size", "frontArmor", "sideArmor", "rearArmor", "underArmor"]}
     extraFields={[
       ...damageTypes, ...statsList, 
-      "psiVision", "visibilityAtDark", "visibilityAtDay", "camouflageAtDark", "camouflageAtDay",
+      "psiVision", "visibilityAtDark", "visibilityAtDay", "camouflageAtDark", "camouflageAtDay", "heatVision", "fearImmune",
       "ARMOR_ENERGY_SHIELD_CAPACITY", "ARMOR_ENERGY_SHIELD_PER_TURN", "ARMOR_ENERGY_SHIELD_FLASH_COLOR", "ARMOR_ENERGY_SHIELD_TYPE"
     ]}
     filters={{

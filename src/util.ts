@@ -1,5 +1,6 @@
 import JSYaml from "js-yaml";
-import { loadingFile } from "./store";
+import { warn, inform } from "./store";
+
 
 declare const
   fsFile: (path:string)=>string,
@@ -24,9 +25,10 @@ export async function readTextFile(path: string) {
   //console.log("fetch", path);
   try {
     text = await fetchText(path)
-    loadingFile.update(t => t + " " + path);
+    inform(path);
   } catch (e) {
     console.error(e);
+    warn(e);
     return null;
   }
   return text;
@@ -75,6 +77,7 @@ export function parseYaml(file: string, filename: string) {
     });
   } catch (e) {
     console.error(e.message);
+    warn(e.message);
   }
 }
 

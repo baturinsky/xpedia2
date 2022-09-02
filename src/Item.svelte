@@ -26,15 +26,6 @@
     console.info(entry);
 
     attacks = entry.attacks().slice();
-    title =
-      (entry.battleType ? rul.tr(internalBattleTypes[entry.battleType]) + " " : "") +
-      rul.tr("Item");
-
-    title = `${entry.weight?entry.weight + rul.tr("kg"):""}  
-${entry.invWidth>1||entry.invHeight>1?`${entry.invWidth}×${entry.invHeight}`:""}
-${entry.clipSize>0?entry.clipSize + rul.tr("-shot"):""}
-${title}`
-
     let ohpen = (entry.oneHandedPenalty || entry.battleType == 3?67:50);
 
     hand1bonus = entry.twoHanded?(entry.blockBothHands?
@@ -71,6 +62,9 @@ ${title}`
         "compatibleWeapons",
         "liveAlien",
         "recover",
+        "energyRecovery",
+        "healthRecovery",
+        "experienceTrainingMode",        
         "prisonType",
         "powerRangeReduction",
         "powerRangeThreshold",
@@ -78,7 +72,7 @@ ${title}`
         "loot",
         "ufos",
         "terrains",
-        "spawnUnit",     
+        "spawnUnit",             
         "manufacture",
         "componentOf",
       ],
@@ -106,7 +100,13 @@ ${title}`
 
 <table class="main-table">
   <thead>
-    <td colspan="2">{title}</td>
+    <td colspan="2">
+      {entry.weight?entry.weight + rul.tr("kg"):""}  
+      {entry.invWidth>1||entry.invHeight>1?`${entry.invWidth}×${entry.invHeight}`:""}
+      {entry.clipSize>0?entry.clipSize + rul.tr("-shot"):""}
+      <Link href={entry.internalBattleType}/>
+      <Tr s="Item"/>
+  </td>
   </thead>
   {#if (entry.sprite && entry.sprite != "Resources/Blanks/Blank.png") || attacks.length > 0}
     <tr>
@@ -269,6 +269,8 @@ ${title}`
             />
           {:else if key == "prisonType"}
             <Link href={"prisonType" + prop} />
+          {:else if key == "experienceTrainingMode"}
+            <Value val={prop} />: <Tr s={"experienceTrainingMode" + prop}/>
           {:else if key == "costBuy"}
             <Value val={prop} /> <Value val={entry.requiresBuy || ""} />
           {:else}

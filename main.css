@@ -20,9 +20,9 @@
   --table-secondary: #1e102c;
   --table-main: #180c24;
   --dead-link: #ffffff;
-  --link: #90ee90;
-  --title: #aaffff;
-  --em: #66ffff;
+  --link: #66ffff;
+  --title: #bbffff;
+  --em: #90ee90;
 }
 
 html {
@@ -1226,6 +1226,10 @@ button.download {
 .sort-order-arrow{
   display: inline-block;
   margin: 0px -5px 0px -5px;
+}
+
+.warning{
+  color:#f00;
 }
 
 @media screen and (max-width: 1300px) {

@@ -50,6 +50,7 @@ export class Search {
 
 export class Entry {
   id: string;
+  //article: Article;
   armors: string[];
   [id: string]: any;
 
@@ -61,10 +62,11 @@ export class Entry {
 
     rul[collection][this.id] = this;
 
-    Article.create({
-      id: this.id,
-      section: camelToUnderscore(collection).toUpperCase()
-    });
+    this.addToSection(camelToUnderscore(collection).toUpperCase());
+  }
+
+  addToSection(section: string) {
+    Article.create({ id: this.id, section });
   }
 
   sortField(field, noTitle = false) {
@@ -138,20 +140,19 @@ export class Event extends Entry {
 
 export class EventScript extends Entry {
   relatedEvents: string[];
+  relatedResearch: string[];
   eventWeights;
   oneTimeRandomEvents;
+  researchTriggers;
 
   constructor(raw: any) {
     super(raw, "eventScripts")
     let relatedEvents = new Set<string>([
       ...Object.values(this.eventWeights || []).map(w => Object.keys(w)).flat(),
-      ...Object.keys(this.oneTimeRandomEvents || {})
+      ...Object.keys(this.oneTimeRandomEvents || {})      
     ]);
     this.relatedEvents = [...relatedEvents];
-    for (let id of relatedEvents) {
-      if (rul.events[id])
-        rul.events[id].relatedScripts.push(this.type);
-    }
+    this.relatedResearch = [...new Set<string>(Object.keys(this.researchTriggers || {}))];
   }
 }
 
@@ -406,6 +407,7 @@ export class CraftWeapon extends Entry {
     this.weaponType = "weaponType" + (this.weaponType || 0)
     Entry.reserve({ id: this.weaponType }, "weaponTypes");
   }
+
 }
 
 export class Craft extends Entry {
@@ -874,7 +876,7 @@ export class Armor extends Entry {
     } else if (this.spriteInv) {
       let name: string = this.spriteInv;
       let l = name?.length;
-  
+
       if (this.spriteInv + ".SPK" in rul.sprites) {
         ds = {
           0: [await rul.sprites[this.spriteInv + ".SPK"].data()],
@@ -886,8 +888,8 @@ export class Armor extends Entry {
           }
         }
       }
-    }    
-    console.log({ds});
+    }
+    console.log({ ds });
     return ds;
   }
 
@@ -974,6 +976,8 @@ export class Item extends Entry {
 
   constructor(raw: any) {
     super(raw, "items")
+
+    //this.addToSection(this.internalBattleType);
 
     this.invWidth = this.invWidth || 1;
     this.invHeight = this.invHeight || 1;
@@ -1065,6 +1069,7 @@ export default class Ruleset {
   enviroEffects: { [key: string]: Entry } = {};
   craftWeapons: { [key: string]: CraftWeapon } = {};
   weaponTypes: { [key: string]: Entry } = {};
+  itemTypes: { [key: string]: Entry } = {};
   stats: { [key: string]: Entry } = {};
   battleTypes: { [key: string]: Entry } = {};
   elements: { [key: string]: DamageElement } = {};
@@ -1112,7 +1117,7 @@ export default class Ruleset {
 
   obsSprite(type: string, num: number) {
     let path = (this.obs[type] || [])[num]?.path;
-    if(!path)
+    if (!path)
       return emptyImg;
 
     return loadData(path);
@@ -1328,6 +1333,8 @@ export default class Ruleset {
     crosslink(this.events, "researchList", this.research, "events");
     crosslink(this.armors, "builtInWeapons", this.items, "builtIn");
     crosslink(this.armors, "specialWeapon", this.items, "builtIn");
+    crosslink(this.eventScripts, "relatedEvents", this.events, "relatedScripts");
+    crosslink(this.eventScripts, "relatedResearch", this.research, "relatedScripts");
 
     for (let option of [
       ["Craft", this.crafts],
@@ -1530,9 +1537,9 @@ export default class Ruleset {
   }
 
   async sprite(id: string, onlyIfExists = false) {
-    if(id instanceof Promise)
+    if (id instanceof Promise)
       return id;
-    if (id in this.sprites) 
+    if (id in this.sprites)
       return this.sprites[id].data();
 
     return onlyIfExists ? null : id;
@@ -1641,7 +1648,7 @@ export const entryConstructors = {
   units: Unit,
   crafts: Craft,
   craftWeapons: CraftWeapon,
-  weaponRtpes: Entry,
+  weaponTypes: Entry,
   ufos: Entry,
   facilities: Facility,
   events: Event,
@@ -1657,7 +1664,6 @@ export const entryConstructors = {
   enviroEffects: Entry,
   terrains: Entry,
   mapScripts: Entry,
-  weaponTypes: Entry,
   stats: Entry,
   elements: DamageElement,
   commendations: Commendation,

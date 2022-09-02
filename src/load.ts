@@ -1,10 +1,14 @@
 import JSZip from "jszip";
 //import lzs from "lz-string";
 import { readYaml, listDir, parseYaml, delay, readTextFile } from "./util";
-import { loadingFile } from "./store";
+import { inform, loadingFile } from "./store";
 import { download, fetchText } from "./util";
 import { defaultLanguage, rul } from "./Ruleset";
- 
+
+declare const
+  fsData: (path:string)=>string
+;
+
 export async function unpackZip(text) {
   let jszip = new JSZip();
   let data = await jszip.loadAsync(text, { base64: true });
@@ -269,7 +273,7 @@ export async function loadRules(rul) {
     }
   }
 
-  loadingFile.update(t => t + " parsing")
+  inform("parsing")
   rul.load(data);
   await delay(10);
 }

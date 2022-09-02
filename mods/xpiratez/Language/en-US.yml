@@ -1808,3 +1808,36 @@ en-US:
   ARMOR_ENERGY_SHIELD_TYPE: Shield type
   commendationWith: with
   killCriteria2: Criteria
+  experienceTrainingMode0: default algorithm -- if nothing is specified
+  experienceTrainingMode1: train melee
+  experienceTrainingMode2: train melee 50% chance
+  experienceTrainingMode3: train melee 33% chance
+  experienceTrainingMode4: train firing
+  experienceTrainingMode5: train firing 50% chance
+  experienceTrainingMode6: train firing 33% chance
+  experienceTrainingMode7: train throwing
+  experienceTrainingMode8: train throwing 50% chance
+  experienceTrainingMode9: train throwing 33% chance
+  experienceTrainingMode10: train firing and throwing
+  experienceTrainingMode11: train firing or throwing (coinflip)
+  experienceTrainingMode12: train reactions
+  experienceTrainingMode13: train reactions and melee
+  experienceTrainingMode14: train reactions and firing
+  experienceTrainingMode15: train reactions and throwing
+  experienceTrainingMode16: train reactions or melee (coinflip)
+  experienceTrainingMode17: train reactions or firing (coinflip)
+  experienceTrainingMode18: train reactions or throwing (coinflip)
+  experienceTrainingMode19: train bravery
+  experienceTrainingMode20: train bravery x2
+  experienceTrainingMode21: train bravery and reactions
+  experienceTrainingMode22: train bravery or reactions (coinflip)
+  experienceTrainingMode23: train bravery or reactions (coinflip) x2
+  experienceTrainingMode24: train psi strength
+  experienceTrainingMode25: train psi strength x2
+  experienceTrainingMode26: train psi skill
+  experienceTrainingMode27: train psi skill x2
+  experienceTrainingMode28: train psi strength and psi skill
+  experienceTrainingMode29: train psi strength and psi skill x2
+  experienceTrainingMode30: train psi strength or psi skill (coinflip)
+  experienceTrainingMode31: train psi strength or psi skill (coinflip) x2
+  experienceTrainingMode32: train nothing

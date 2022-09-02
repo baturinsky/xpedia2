@@ -124,7 +124,7 @@
     if (id) {
       let dd = id.indexOf("::");
       if (dd != -1) {
-        query = id.substring(dd + 2);
+        query = id.substring(dd + 2).toLowerCase();
         id = id.substring(0, dd);
       }
 
@@ -292,7 +292,7 @@
 </svelte:head>
 
 {#if !$loaded}
-  <div style="opacity:0.3">{$loadingFile}</div>
+  <div style="opacity:0.3">{@html $loadingFile}</div>
   <div class="centered">
     <CogAnimation size={200} />
   </div>
@@ -505,8 +505,8 @@
         <br />
         {#key found}
           {#if found && found.length > 0}
-            <LinksPage links={found.filter(a=>contains(rul.tr(a), query)).slice(0,200)}/><br/>
-            <LinksPage links={found.filter(a=>!contains(rul.tr(a), query)).slice(0,200)} title=" "/>
+            <LinksPage links={found.filter(a=>contains(rul.tr(a).toLowerCase(), query)).slice(0,200)}/><br/>
+            <LinksPage links={found.filter(a=>!contains(rul.tr(a).toLowerCase(), query)).slice(0,200)} title=" "/>
           {:else if query.length < 2}
             <i>Query too short</i>
           {:else if searchDelayHandle || searchinInProgres}

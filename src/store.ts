@@ -18,3 +18,12 @@ export function revealLock(on?) {
 }
 
 export const loaded = writable(false);
+
+export function warn(text:string){
+  loadingFile.update(t => t + " · <em class='warning'>" + text + "</em>");  
+}
+
+export function inform(text:string){
+  loadingFile.update(t => t + " · " + text);  
+}
+
