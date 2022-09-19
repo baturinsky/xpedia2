@@ -1,6 +1,6 @@
 <script>
   import { rul, Article as ArticleRul } from "./Ruleset";
-  import { LinksPage, Tr, tr, favicon, divider } from "./Components";
+  import { LinksPage, Tr, tr, favicon, divider, tableSections } from "./Components";
   import Article from "./Article.svelte";
   import CogAnimation from "./CogAnimation.svelte";
   import { afterUpdate, setContext } from "svelte";
@@ -342,13 +342,7 @@
               {#each rul.sortedTypeSections() as section, i}
                 <a
                   href={"##" + section.id}
-                  class={[
-                    "FACILITIES",
-                    "COMMENDATIONS",
-                    "CRAFTS",
-                    "ARMORS",
-                  ].includes(section.id) && "section-has-table"}
-                  ><Tr s={section.id} /></a
+                  ><Tr s={section.id} />{tableSections.includes(section.id)?'☰':''}</a
                 >
               {/each}
             </div>

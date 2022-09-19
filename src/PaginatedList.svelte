@@ -13,18 +13,19 @@
   
   let currentPage = 1
   let pagesNumber = 1;
-  export let pageSize = 200
+  export let pageSize = 40
+  export let onePageMax = 200
   
-
   $: {
-    pagesNumber = Math.ceil(items.length / pageSize)
+    pagesNumber = items.length<=onePageMax?1:Math.ceil(items.length / pageSize)
     if (items instanceof Set) {
       items = [...items];
     }
+    let sortedItems = sorter?sorter(items):items;
     if(Array.isArray(items)){
       if(currentPage>pagesNumber)
         currentPage = 1;
-      paginatedItems = paginate({ items:sorter?sorter(items):items, pageSize, currentPage })
+      paginatedItems = items.length<=onePageMax?items:paginate({ items:sortedItems, pageSize, currentPage })
     }
   }
 
@@ -44,7 +45,7 @@
       pageSize={pageSize}
       currentPage={currentPage}
       showStepOptions={true}
-      limit = {1}
+      limit = {7}
       on:setPage={(e) => currentPage = e.detail.page}
     />
   </div>

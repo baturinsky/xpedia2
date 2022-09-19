@@ -66,7 +66,7 @@ export class Entry {
   }
 
   addToSection(section: string) {
-    Article.create({ id: this.id, section });
+    Article.create(this.id, section);
   }
 
   sortField(field, noTitle = false) {
@@ -86,10 +86,6 @@ export class Entry {
     } else {
       return new Entry(raw, collection)
     }
-  }
-
-  addCategory(cat) {
-    rul.addCategory(cat, this.id)
   }
 
   get name() {
@@ -149,11 +145,27 @@ export class EventScript extends Entry {
     super(raw, "eventScripts")
     let relatedEvents = new Set<string>([
       ...Object.values(this.eventWeights || []).map(w => Object.keys(w)).flat(),
-      ...Object.keys(this.oneTimeRandomEvents || {})      
+      ...Object.keys(this.oneTimeRandomEvents || {})
     ]);
     this.relatedEvents = [...relatedEvents];
     this.relatedResearch = [...new Set<string>(Object.keys(this.researchTriggers || {}))];
   }
+}
+
+function totalSellCost(items: { [key: string]: number } = {}) {
+  let c = 0;
+  for (let k in items) {
+    c += items[k] * rul.items[k]?.costSell;
+  }
+  return c;
+}
+
+function totalSize(items: { [key: string]: number } = {}) {
+  let c = 0;
+  for (let k in items) {
+    c += items[k] * rul.items[k]?.size;
+  }
+  return c;
 }
 
 
@@ -168,6 +180,10 @@ export class Manufacture extends Entry {
 
   constructor(raw: any) {
     super(raw, "manufacture")
+
+    if (this.category) {
+      rul.addCategory(this.category, this.id, rul.manufactureCategories);
+    }
 
     if (this.requires) {
       for (let resName of this.requires) {
@@ -205,6 +221,10 @@ export class Manufacture extends Entry {
       this.totalProducedItems = this.producedItems;
     }
 
+    this.profit = totalSellCost(this.producedItems) - totalSellCost(this.requiredItems) - this.cost;
+    this.profitPerHour = this.profit / this.time;
+    this.sizeChange = totalSize(this.producedItems) - totalSize(this.requiredItems);
+
     backLink(this.id, Object.keys(this.totalProducedItems), rul.items, "manufacture")
 
     Service.add("allowsManufacture", this.name, this.requiresBaseFunc);
@@ -220,7 +240,7 @@ export class SoldierTransformation extends Entry {
   }
 }
 
-export class DamageElement extends Entry {
+export class DamageType extends Entry {
   items: string[];
   commendations: string[];
 }
@@ -257,7 +277,7 @@ export class Commendation extends Entry {
               deed.element = damageTypes[idt];
               deedList[1][i] = damageTypes[idt];
               this.damageTypes.push(damageTypes[idt]);
-              backLink(this.id, [deed.element], rul.elements, "commendations");
+              backLink(this.id, [deed.element], rul.damageTypes, "commendations");
               continue;
             }
 
@@ -288,11 +308,11 @@ export class Commendation extends Entry {
 
           if (deed.type || deed.element) {
             if (!deed.type) {
-              backLink2(this, rul.elements[deed.element].items, rul.items, "commendations", "items");
+              backLink2(this, rul.damageTypes[deed.element].items, rul.items, "commendations", "items");
             } else if (!deed.element) {
               backLink2(this, rul.battleTypes[deed.type]["items"], rul.items, "commendations", "items");
             } else {
-              let items = rul.elements[deed.element].items.filter(id => rul.items[id]?.internalBattleType == deed.type)
+              let items = rul.damageTypes[deed.element].items.filter(id => rul.items[id]?.internalBattleType == deed.type)
               backLink2(this, items, rul.items, "commendations", "items");
             }
           }
@@ -360,10 +380,7 @@ export class Research extends Entry {
 
 export class Service {
   constructor(public id: string) {
-    Article.create({
-      id,
-      section: "SERVICES",
-    });
+    Article.create(id, "SERVICES");
   }
 
   static add(prop: string, id: string, entries: string[]) {
@@ -492,8 +509,6 @@ export class Stats {
   melee: number;
 }
 
-export const statsList = ["tu", "stamina", "health", "bravery", "reactions", "firing", "throwing", "strength", "psiStrength", "psiSkill", "melee"];
-
 export class Unit extends Entry {
   stats: Stats;
   armor: string;
@@ -528,7 +543,7 @@ export class Attack {
   flatTime = false;
   damage: number;
   damageBonus: { [key: string]: number };
-  damageType: string;
+  damageType: number;
   accuracy: number;
   accuracyMultiplier: { [key: string]: number };
   alter: { [key: string]: string };
@@ -536,9 +551,8 @@ export class Attack {
   range: number;
   pellets: number = 1;
   name: string;
-  item: Item;
 
-  constructor(item: Item, public mode: string) {
+  constructor(public item: Item, public mode: string) {
     let capMode = mode.charAt(0).toUpperCase() + mode.substr(1);
 
     let isDefaultAttack =
@@ -629,7 +643,7 @@ export class Attack {
     }
 
     if (this.alter && this.alter.ResistType) {
-      this.damageType = this.alter.ResistType;
+      this.damageType = Number(this.alter.ResistType);
     }
 
     if (mode + "Range" in item) {
@@ -656,6 +670,39 @@ export class Attack {
       this.alter.range = `${item.maxRange}`;
 
     this.possible = true;
+
+    rul.attacks.push(this);
+  }
+
+  sortField(n:string, v) {
+
+    switch (n) {
+      case "internalBattleType":
+        return this.item.internalBattleType;
+
+      case "damageType":
+        return damageTypes[this.damageType];
+
+      case "item":
+        return this.item.id;
+
+      case "id":
+        return this.item.id;
+    }
+
+    if(this.alter && this.alter[n]){
+      return this.alter[n];
+    }
+
+    if(this.damageBonus && this.damageBonus[n]){
+      return this.damageBonus[n];
+    }
+
+    if(n.substring(0,4) == "acc*" && this.accuracyMultiplier){
+      return this.accuracyMultiplier[n.substring(4)]
+    }
+
+    return this[n];
   }
 }
 
@@ -672,7 +719,7 @@ export class Article {
     return this.sections[0]?.id;
   }
 
-  static create({ id, section }: { id: string, section: string }) {
+  static create(id: string, section: string) {
     if (rul.sections[section] == null) {
       new Section(section, true);
     }
@@ -740,16 +787,16 @@ export class Section {
     return this._articles;
   }
 
-  constructor(public id: string, generated = false) {
+  constructor(public id: string, xpediaOwn = false) {
     rul.sections[id] = this;
 
-    if (generated) {
+    if (xpediaOwn) {
       rul.typeSectionsOrder.push(this);
     } else {
       rul.sectionsOrder.push(this);
     }
 
-    Article.create({ id, section: id });
+    Article.create(id, id);
   }
 
   get title() {
@@ -930,10 +977,10 @@ export class Item extends Entry {
   bigSprite: string;
   meleePower: number;
   meleeBonus: any;
-  meleeType: string;
+  meleeType: number;
   power: number;
   damageBonus: any;
-  damageType: string;
+  damageType: number;
   shotgunPellets: number;
   meleeAlter: any;
   damageAlter: any;
@@ -971,13 +1018,16 @@ export class Item extends Entry {
   addDamageType(type: number) {
     this.damageTypes = this.damageTypes || [];
     addIfNew(this.damageTypes, type);
-    backLink(this.id, [damageTypes[type]], "elements", "items");
+    backLink(this.id, [damageTypes[type]], "damageTypes", "items");
   }
 
   constructor(raw: any) {
     super(raw, "items")
 
     //this.addToSection(this.internalBattleType);
+
+    if (this.damageType)
+      this.addDamageType(this.damageType)
 
     this.invWidth = this.invWidth || 1;
     this.invHeight = this.invHeight || 1;
@@ -1018,14 +1068,15 @@ export class Item extends Entry {
       backLink(this.id, [k], "stats", "meleeAccuracy");
 
     if (this.damageType != null) {
-      backLink(this.id, [damageTypes[this.damageType]], "elements", "items");
+      backLink(this.id, [damageTypes[this.damageType]], "damageTypes", "items");
     }
 
     if (this.damageAlter?.ResistType) {
       let rt = this.damageAlter?.ResistType;
-      backLink(this.id, [damageTypes[rt] || rt], "elements", "items");
+      backLink(this.id, [damageTypes[rt] || rt], "damageTypes", "items");
     }
 
+    this.attacks();
   }
 
   attacks() {
@@ -1047,6 +1098,21 @@ export class Item extends Entry {
     return this._attacks;
   }
 
+
+  sortField(n, v) {
+    if (n == "damageTypes") {
+      if (v !== true) {
+        let i = damageTypes.indexOf(v)
+        return this.damageTypes?.includes(i);
+      } else {
+        return this.damageTypes?.map(d => damageTypes[d])
+      }
+    }
+
+    return super.sortField(n, v);
+  }
+
+
 }
 
 export default class Ruleset {
@@ -1062,6 +1128,7 @@ export default class Ruleset {
   ourArmors: string[];
   items: { [key: string]: Item } = {};
   categories: { [key: string]: string[] } = {};
+  manufactureCategories: { [key: string]: string[] } = {};
   armors: { [key: string]: Armor } = {};
   units: { [key: string]: Unit } = {};
   crafts: { [key: string]: Craft } = {};
@@ -1072,7 +1139,7 @@ export default class Ruleset {
   itemTypes: { [key: string]: Entry } = {};
   stats: { [key: string]: Entry } = {};
   battleTypes: { [key: string]: Entry } = {};
-  elements: { [key: string]: DamageElement } = {};
+  damageTypes: { [key: string]: DamageType } = {};
   research: { [key: string]: Research } = {};
   soldierBonuses: { [key: string]: Entry } = {};
   commendations: { [key: string]: Commendation } = {};
@@ -1093,6 +1160,7 @@ export default class Ruleset {
   config: any;
   baseServices: { [key: string]: Service } = {};
   redirect: { [key: string]: string } = {};
+  attacks: Attack[] = [];
 
   lang: { [key: string]: string } = {};
   langs: { [key: string]: { [key: string]: string } } = {};
@@ -1101,10 +1169,12 @@ export default class Ruleset {
   langNames: string[];
   convertedLangs = {};
 
-  addCategory(catName: string, id: string) {
-    let cat = rul.categories[catName] || [];
+  addCategory(catName: string, id: string, where?) {
+    if (where == null)
+      where = rul.categories;
+    let cat = where[catName] || [];
     if (!cat.includes(id)) cat.push(id);
-    rul.categories[catName] = cat;
+    where[catName] = cat;
   }
 
   damageTypeName(type: number) {
@@ -1124,7 +1194,6 @@ export default class Ruleset {
   }
 
   combineFiles(data: any[], reversed = false) {
-    //  debugger;
     for (let file of reversed ? data.reverse() : data) {
       if (file == null)
         continue;
@@ -1162,7 +1231,6 @@ export default class Ruleset {
       }
     }
   }
-
 
   mergeRuls(reversed = false) {
     for (let categoryName in this.raw) {
@@ -1311,6 +1379,8 @@ export default class Ruleset {
       return [...x, ...y];
     }
 
+    new Section("ATTACKS", true);
+
     crosslink(this.units, "race", "alienRaces", "hasThisRace");
     crosslink(this.units, "rank", "alienRanks", "hasThisRank");
     crosslink(this.alienRaces, "members", "units", "memberOf");
@@ -1329,12 +1399,15 @@ export default class Ruleset {
     crosslink(this.items, "spawnUnit", this.units, "spawnedBy");
     crosslink(this.items, "internalBattleType", "battleTypes", "items");
     crosslink(this.items, "supportedInventorySections", "inventorySections", "items");
-    crosslink(this.commendations, "damageTypes", this.elements, "commendations");
+    crosslink(this.commendations, "damageTypes", this.damageTypes, "commendations");
     crosslink(this.events, "researchList", this.research, "events");
     crosslink(this.armors, "builtInWeapons", this.items, "builtIn");
     crosslink(this.armors, "specialWeapon", this.items, "builtIn");
     crosslink(this.eventScripts, "relatedEvents", this.events, "relatedScripts");
     crosslink(this.eventScripts, "relatedResearch", this.research, "relatedScripts");
+    crosslink(this.manufacture, "spawnedPersonType", this.soldiers, "manufacture");
+    crosslink(this.events, "spawnedPersonType", this.soldiers, "events");
+
 
     for (let option of [
       ["Craft", this.crafts],
@@ -1378,7 +1451,6 @@ export default class Ruleset {
     }
 
     for (let item of Object.values(this.items)) {
-      item.attacks();
 
       for (let ammoId of item.compatibleAmmo || []) {
         let ammo = this.items[ammoId];
@@ -1427,10 +1499,12 @@ export default class Ruleset {
 
     for (let cat of Object.keys(this.categories)) {
       if (this.categories[cat].length)
-        Article.create({
-          id: cat,
-          section: "CATEGORIES",
-        });
+        Article.create(cat, "CATEGORIES");
+    }
+
+    for (let cat of Object.keys(this.manufactureCategories)) {
+      if (this.manufactureCategories[cat].length)
+        Article.create(cat, "MANUFACTURE_CATEGORIES");
     }
 
 
@@ -1665,9 +1739,11 @@ export const entryConstructors = {
   terrains: Entry,
   mapScripts: Entry,
   stats: Entry,
-  elements: DamageElement,
+  damageTypes: DamageType,
   commendations: Commendation,
 }
+
+export const statsList = ["tu", "stamina", "health", "bravery", "reactions", "firing", "throwing", "strength", "psiStrength", "psiSkill", "melee"];
 
 export const damageTypes = [
   "STR_DAMAGE_NONE",

@@ -4,6 +4,7 @@
     LinksPage,
     Value,
     LinksList,
+    tr,
     Tr,
     invisible,
     divider,
@@ -23,6 +24,7 @@
   let filtersSelected = {};
   let sorted;
   let sortField;
+  let filterId = "";
   let sortDescending = false;
 
   onMount(() => {});
@@ -51,6 +53,9 @@
           let v = a.sortField(k, filtersSelected[k])
           return v === true || v == filtersSelected[k] || Array.isArray(v) && v.includes(filtersSelected[k]);
         });
+    }
+    if(filterId?.length>0){
+      sorted = sorted.filter(a=>a.sortField("id").toLowerCase().match(filterId))
     }
     
     sorted = sorted.sort((a, b) =>
@@ -137,6 +142,7 @@
     {/each}
   </select>
 {/each}
+<input bind:value={filterId} on:keyup={resort} type="text" placeholder={tr("Filter...")}/>
 </p>
 
 <PaginatedList items={sorted} let:paginatedItems>
@@ -170,6 +176,7 @@
     </thead>
     <tbody>
       {#each paginatedItems as entry}
+        <!-- svelte-ignore component-name-lowercase -->
         <tr>
           {#each shownFields as field}
             <td class="st-{field}"

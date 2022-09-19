@@ -115,7 +115,7 @@ export async function loadFromFiles() {
   let allModDirs = [...modDirs, ...xpediaDirs]
   let modMetadataById = {};
   let modMetadata = await Promise.all(allModDirs.map(dir => readYaml(`${dir}metadata.yml`)))
-  console.log(modMetadata);
+
   for (let i in modMetadata) {
     let data = modMetadata[i];
     if(data==null)
@@ -126,6 +126,15 @@ export async function loadFromFiles() {
 
   let activeMods: string[] = ["xcom1", ...options.mods.filter(m => m.active).map(m => m.id)];
 
+  modMetadata = modMetadata.filter(m=>activeMods.includes(m.id))
+  
+  let masterModIds = modMetadata.filter(m=>m.isMaster).map(m=>m.id);
+
+  modMetadata = modMetadata.filter(m=>m.isMaster || masterModIds.includes(m.master))
+  activeMods = modMetadata.map(m=>m.id)
+
+  debugger;
+  
   let xpediaMods = Object.keys(modMetadataById).filter(k => {
     let data = modMetadataById[k];
     return (data.master == null || activeMods.includes(data.master)) && xpediaDirs.includes(data.dir)

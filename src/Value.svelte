@@ -32,7 +32,7 @@
 {:else if val===true || val ===false}
   <span style="color:{val?'lime':'red'}"><Tr s={val.toString()}/></span>
 {:else if !isNaN(+val)}
-  <em class="num">{val.toLocaleString()}</em>
+  <em class="num">{val.toLocaleString('ru-RU', {maximumFractionDigits: 4}).replace(",",".")}</em>
 {:else if rul.article(val) && !simple}
   <Link href={val} {icon}/>
 {:else if rul.hasSprite(val)}

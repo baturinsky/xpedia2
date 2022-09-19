@@ -1119,7 +1119,7 @@ button.download {
 }
 
 .section-table tbody td {
-  padding: 0.1pt;
+  padding-right: 0.5rem;
   text-align: center;
 }
 
@@ -1189,7 +1189,6 @@ button.download {
 
 .dark-pagination-nav .pagination-nav {
   display: flex;
-  justify-content: center;
 }
 
 .dark-pagination-nav .option {

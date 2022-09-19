@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { rul, sortFirstLast, damageTypes, Stats, statsList, battleStats } from "./Ruleset";
+  import { rul, sortFirstLast, damageTypes, Stats, statsList, battleStats, internalBattleTypes } from "./Ruleset";
   import Illustration from "./Illustration.svelte";
   import Conditions from "./Conditions.svelte";
   import BaseServices from "./BaseServices.svelte";
@@ -11,6 +11,7 @@
   import ArticleBody from "./ArticleBody.svelte";
   import Research from "./Research.svelte";
   import CanvasImage from "./CanvasImage.svelte";
+  import Manufacture from "./Manufacture.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -61,7 +62,7 @@
   <SectionTable {aId}
     entries={Object.values(rul.facilities)} 
     fields={["size", "monthlyCost", "storage", "personnel","workshops", "kennel", "prison"]}
-    extraFields={["buildCost", "buildTime", "manaRecoveryPerDay", "sickBayAbsoluteBonus", "sickBayRelativeBonus"]}
+    extraFields={["buildCost", "buildTime", "manaRecoveryPerDay", "sickBayAbsoluteBonus", "sickBayRelativeBonus", "defense", "hitRatio"]}
   />
 {:else if article.id == "COMMENDATIONS"}
   <SectionTable {aId} 
@@ -75,7 +76,7 @@
 {:else if article.id == "CRAFTS"}
   <SectionTable {aId} 
     entries={Object.values(rul.crafts)} 
-    fields={["speedMax","soldiers", "vehicles", "weapons", "damageMax", "repairRate"]}
+    fields={["speedMax","soldiers", "vehicles", "weapons", "damageMax", "repairRate", "costRent"]}
   />
 {:else if article.id == "CRAFT_WEAPONS"}
   <SectionTable {aId} 
@@ -88,8 +89,38 @@
 {:else if article.id == "SOLDIERS"}
   <SectionTable {aId} 
     entries={Object.values(rul.soldiers)} 
-    fields={statsList} 
+    fields={[...statsList, "manufacture", "events"]} 
   />
+{:else if article.id == "ATTACKS"}
+  <SectionTable {aId} 
+    entries={rul.attacks} 
+    fields={["name", "accuracy", "damage", "damageType", "shots", "range"]} 
+    extraFields={["ToArmorPre", "ToStun", "RandomType", "ToHealth", "ToTile", "ResistType", "ToWound", "SmokeThreshold", ...statsList,
+  , ...(statsList.map(v=>"acc*" + v))]}
+    filters={{
+      internalBattleType:["any", ...internalBattleTypes],
+      damageTypes:["any", ...damageTypes],
+    }}
+  />
+{:else if article.id == "ITEMS"}
+  <SectionTable {aId} 
+    entries={Object.values(rul.items)} 
+    fields={["costSell", "costBuy", "size", "weight"]} 
+    extraFields={["invWidth", "invHeight", "clipSize", "internalBattleType", "damageTypes", "power"]}
+    filters={{
+      internalBattleType:["any", ...internalBattleTypes],
+      damageTypes:["any", ...damageTypes],
+    }}
+  />
+{:else if article.id == "MANUFACTURE"}
+  <SectionTable {aId} 
+    entries={Object.values(rul.manufacture)} 
+    fields={["cost", "profit", "profitPerHour", "sizeChange", "time"]} 
+    extraFields={["requiredItems", "producedItems", "requires", "requiresBaseFunc", "space"]}
+    filters={{
+      category:["any", ...Object.keys(rul.manufactureCategories)],
+    }}
+  />  
 {:else if article.id == "ARMORS"}
   <SectionTable {aId}
     entries={Object.values(rul.armors)} 
@@ -114,6 +145,11 @@
 {#if article.section == "CATEGORIES" && article.id != "CATEGORIES"}
   <LinksPage links={rul.categories[article.id]} />
 {/if}
+
+{#if article.section == "MANUFACTURE_CATEGORIES" && article.id != "MANUFACTURE_CATEGORIES"}
+  <LinksPage links={rul.manufactureCategories[article.id]} />
+{/if}
+
 
 <div style="max-width:100%">
   <div class="main-flex">

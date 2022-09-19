@@ -38,7 +38,7 @@ const renderers = {
   research: Research,
   units: Unit,
   stats: {},
-  elements: {},
+  damageTypes: {},
   commendations: Commendation,
   baseServices: BaseService,
   facilities: Facility,

@@ -6,6 +6,7 @@
   import AlterList from "./AlterList.svelte";
   import UseCost from "./UseCost.svelte";
   import SecondaryTable from "./SecondaryTable.svelte";
+  import Damage from "./Damage.svelte";
 
   /**@type {typeof import("./Ruleset").Item}*/
   export let entry;
@@ -158,7 +159,7 @@
                       <em class="big-number">{attack.accuracy}</em>{"%"}
                       {#if attack.range}
                         {@html rul
-                          .str("at !N! m")
+                          .str("up to !N! m")
                           .replace("!N!", `<em class="${attack.range==entry.maxRange?"bad":""}">${entry.minRange?entry.minRange+"-":""}${attack.range}</em>`)}
                       {/if}<br/>
                       <SpecialBonus bonus={attack.accuracyMultiplier} />
@@ -174,22 +175,7 @@
                     </td>
                   {/if}
                   <td>
-                    {#if "damage" in attack || "damageType" in attack}
-                        {attack.pellets > 1 && attack.damageBonus ? "(" : ""}
-                        <em>{attack.damage || 0}</em>
-                        <small>
-                          <SpecialBonus
-                            plus={true}
-                            bonus={attack.damageBonus}
-                          />
-                          {attack.pellets > 1 && attack.damageBonus ? ")" : ""}
-                        </small>
-                        {attack.pellets > 1 ? " ×" + attack.pellets : ""}
-                      <br />
-                      {#if attack.damageType != null}
-                        <Link href={damageTypes[attack.damageType]} />
-                      {/if}
-                    {/if}
+                    <Damage {attack}/>
                   </td>
                 </tr>
 
