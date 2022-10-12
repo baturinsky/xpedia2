@@ -83,7 +83,7 @@
         selectLang(data.lang);
       }
     } catch (e) {
-      console.error(e);
+      console.log(e);
     }
     saveLoaded = true;
   }

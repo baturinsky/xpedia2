@@ -1843,3 +1843,5 @@ en-US:
   experienceTrainingMode30: train psi strength or psi skill (coinflip)
   experienceTrainingMode31: train psi strength or psi skill (coinflip) x2
   experienceTrainingMode32: train nothing
+  tip_maxRuns: For missions - this mission type can only execute this number of times, -1 for infinite.
+  tip_avoidRepeats: This is used to ensure different coordinates for this mission. It means "store an array of x previous coordinates, and don't use them again"

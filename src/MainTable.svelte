@@ -26,7 +26,9 @@
       >
     </thead>
     {#each sorted.all as [key, prop]}
-      {#if special.includes(key)}
+      <!-- svelte-ignore empty-block -->
+      {#if key[0] == "_"}
+      {:else if special.includes(key)}
       <tr>
         <td><Value val={key} /></td><td>
           <slot {key} {prop}></slot>

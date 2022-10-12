@@ -52,8 +52,11 @@ export async function listDir(path, full = false) {
   let text = await readTextFile(path);
   let matches: string[], files: string[] = [];
   while (matches = dirFilesRegex.exec(text)) {
-    if (matches[1] != "../" && matches[1].substring(0,4) != "http")
-      files.push(full ? path + matches[1] : matches[1]);
+    let dir = matches[1];
+    if(matches[0].indexOf("href=#") != -1 || dir.indexOf("<") != -1)
+      continue;
+    if (dir != "../" && dir.substring(0,4) != "http")
+      files.push(full ? path + dir : dir);
   }
   console.log("ld", path, files);
   return files;
@@ -177,6 +180,10 @@ export function cullDoubles<T>(list:T[]){
 
 export function clamp(min:number, val:number, max:number) {
   return val < min ? min : val > max ? max : val;
+}
+
+export function unique(a:any[]){
+  return [...new Set(a)];
 }
 
 

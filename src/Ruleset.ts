@@ -1,7 +1,7 @@
 import SearchApi from 'js-worker-search';
 import { emptyImg } from "./Components";
 import { loadData } from './load';
-import { addAllIfNew, addIfNew, camelToUnderscore, capital, cullDoubles, delay, getFlagEmoji, removeByValue } from './util';
+import { addAllIfNew, addIfNew, camelToUnderscore, capital, cullDoubles, delay, getFlagEmoji, removeByValue, unique } from './util';
 
 export let rul!: Ruleset;
 export type SortFirsLastOptions = { first?: string[], last?: string[], exclude?: string[], sortBy?: Function }
@@ -117,6 +117,9 @@ export class MissionScript extends Entry {
       this.researchNeeded = Object.keys(this.researchTriggers).filter(k => this.researchTriggers[k]);
       this.researchForbidden = Object.keys(this.researchTriggers).filter(k => !this.researchTriggers[k]);
     }
+    if (this.missionWeights) {
+      this._missions = unique(Object.values(this.missionWeights).map(m => Object.keys(m)).flat());
+    }
   }
 }
 
@@ -155,15 +158,15 @@ export class EventScript extends Entry {
 function totalSellCost(items: { [key: string]: number } = {}) {
   let c = 0;
   for (let k in items) {
-    c += items[k] * rul.items[k]?.costSell;
+    c += items[k] * (rul.items[k] || rul.crafts[k])?.costSell || 0;
   }
-  return c;
+  return c || 0;
 }
 
 function totalSize(items: { [key: string]: number } = {}) {
   let c = 0;
   for (let k in items) {
-    c += items[k] * rul.items[k]?.size;
+    c += items[k] * (rul.items[k] || rul.crafts[k])?.size || 0;
   }
   return c;
 }
@@ -177,9 +180,12 @@ export class Manufacture extends Entry {
   requiresBaseFunc: string[];
   randomProducedItems: [number, { [key: string]: number }][];
   chanceSum: number;
+  cost: number;
 
   constructor(raw: any) {
     super(raw, "manufacture")
+
+    this.cost = this.cost || 0;
 
     if (this.category) {
       rul.addCategory(this.category, this.id, rul.manufactureCategories);
@@ -222,6 +228,9 @@ export class Manufacture extends Entry {
     }
 
     this.profit = totalSellCost(this.producedItems) - totalSellCost(this.requiredItems) - this.cost;
+    if (isNaN(this.profit)) {
+      console.log(this.id, totalSellCost(this.producedItems), totalSellCost(this.requiredItems), this.cost);
+    }
     this.profitPerHour = this.profit / this.time;
     this.sizeChange = totalSize(this.producedItems) - totalSize(this.requiredItems);
 
@@ -674,7 +683,7 @@ export class Attack {
     rul.attacks.push(this);
   }
 
-  sortField(n:string, v) {
+  sortField(n: string, v) {
 
     switch (n) {
       case "internalBattleType":
@@ -690,15 +699,15 @@ export class Attack {
         return this.item.id;
     }
 
-    if(this.alter && this.alter[n]){
+    if (this.alter && this.alter[n]) {
       return this.alter[n];
     }
 
-    if(this.damageBonus && this.damageBonus[n]){
+    if (this.damageBonus && this.damageBonus[n]) {
       return this.damageBonus[n];
     }
 
-    if(n.substring(0,4) == "acc*" && this.accuracyMultiplier){
+    if (n.substring(0, 4) == "acc*" && this.accuracyMultiplier) {
       return this.accuracyMultiplier[n.substring(4)]
     }
 
@@ -1351,13 +1360,15 @@ export default class Ruleset {
 
     this.sounds = []
 
-    for (let table of this.raw.extraSounds) {
-      for (let e of Object.entries(table.files)) {
-        this.sounds[e[0]] = table.modDir + e[1]
+    if (this.raw?.extraSounds?.length)
+      for (let table of this.raw.extraSounds) {
+        for (let e of Object.entries(table.files)) {
+          this.sounds[e[0]] = table.modDir + e[1]
+        }
       }
-    }
 
-    for (let spriteData of this.raw.extraSprites) new Sprite(spriteData);
+    if(this.raw?.extraSprites?.length)
+      for (let spriteData of this.raw?.extraSprites) new Sprite(spriteData);
 
     this.deleteModDirs();
 
@@ -1407,6 +1418,7 @@ export default class Ruleset {
     crosslink(this.eventScripts, "relatedResearch", this.research, "relatedScripts");
     crosslink(this.manufacture, "spawnedPersonType", this.soldiers, "manufacture");
     crosslink(this.events, "spawnedPersonType", this.soldiers, "events");
+    crosslink(this.missionScripts, "_missions", this.alienMissions, "scripts");
 
 
     for (let option of [
@@ -1519,6 +1531,8 @@ export default class Ruleset {
   }
 
   parseArticles(data: any) {
+    if(!data)    
+      return;
     for (let articleData of data) {
       if (articleData.id) {
         let article = new Article(articleData);

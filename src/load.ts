@@ -1,7 +1,7 @@
 import JSZip from "jszip";
 //import lzs from "lz-string";
 import { readYaml, listDir, parseYaml, delay, readTextFile } from "./util";
-import { inform, loadingFile } from "./store";
+import { inform, loadingFile, warn } from "./store";
 import { download, fetchText } from "./util";
 import { defaultLanguage, rul } from "./Ruleset";
 
@@ -102,6 +102,10 @@ export async function loadPacked() {
   }
 }
 
+function onlyDirs(files:string[]){
+  return files.filter(dir=>dir[dir.length-1] == "/")
+}
+
 export async function loadFromFiles() {
   let [options, modDirs, xpediaDirs]: [OXCOptions, string[], string[]] =
     await Promise.all([
@@ -109,7 +113,14 @@ export async function loadFromFiles() {
       listDir(`${OXCPath}user/mods/`, true),
       listDir(`${PediaPath}mods/`, true)
     ])
-  
+
+  modDirs = onlyDirs(modDirs);
+  xpediaDirs = onlyDirs(xpediaDirs);
+
+  if(options == null){
+    warn("can't find user/options.cfg file. Run this app from the root OXCE directory")
+    return;
+  }
 
   modDirs = [`${OXCPath}standard/xcom1/`, ...modDirs]
   let allModDirs = [...modDirs, ...xpediaDirs]
@@ -133,8 +144,6 @@ export async function loadFromFiles() {
   modMetadata = modMetadata.filter(m=>m.isMaster || masterModIds.includes(m.master))
   activeMods = modMetadata.map(m=>m.id)
 
-  debugger;
-  
   let xpediaMods = Object.keys(modMetadataById).filter(k => {
     let data = modMetadataById[k];
     return (data.master == null || activeMods.includes(data.master)) && xpediaDirs.includes(data.dir)
@@ -280,6 +289,11 @@ export async function loadRules(rul) {
       data = await loadFromFiles();
       useCache(data);
     }
+  }
+
+  if(data == null){
+    warn("Failed to load rules")
+    return;
   }
 
   inform("parsing")
