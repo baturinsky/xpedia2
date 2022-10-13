@@ -42,7 +42,7 @@ builder
   })
   .then(result => {
     console.log(result);
-    copyFile('xpedia.js', 'resources/js/xpedia.js');
+    //copyFile('xpedia.js', 'resources/js/xpedia.js');
     if (keys.has("serve"))
       open("http://localhost:3100/xpedia2/")
   });

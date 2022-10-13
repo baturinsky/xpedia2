@@ -258,7 +258,7 @@
         let idattr = el.attributes.tooltip;
         let rect = e.target.getBoundingClientRect();
         tooltip.style.left = rect.left + rect.width / 2 + "px";
-        tooltip.style.top = rect.top + "px";
+        tooltip.style.top = (rect.top>100?rect.top:rect.top+120) + "px";
         let id = idattr.value;
         toggleTooltip(
           id in rul.lang && !e.shiftKey ? rul.lang[id] : id.substring(4)
@@ -368,6 +368,7 @@
           reveal(false);
         }}
         on:click={(e) => {revealLock();saveState();}}
+        tooltip="tip_reveal"
       >
         👁
       </div>
@@ -381,6 +382,7 @@
             useCache("wipe");
             location.reload();
           }}
+          tooltip="tip_refresh"
         >
           ⭯
         </button>
@@ -538,9 +540,8 @@
             <li>{mod.name} {mod.version}</li>
           {/each}
         </ul>
-        <h2><Tr s="About XPedia" /></h2>
         {#if !packedData}
-          <h4><Tr s="Export" /></h4>
+          <h2><Tr s="Export" /></h2>
           <Tr s="aboutexport" /><br />
           <Download title="Export all languages" />
           <Download
@@ -549,6 +550,7 @@
           />
           <br />
         {/if}
+        <h2><Tr s="About XPedia" /></h2>
         <Tr s="aboutxpedia" />
       {/if}
     </div>

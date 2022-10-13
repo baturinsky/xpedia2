@@ -138,8 +138,8 @@ export class Event extends Entry {
 
 
 export class EventScript extends Entry {
-  relatedEvents: string[];
-  relatedResearch: string[];
+  _relatedEvents: string[];
+  _relatedResearch: string[];
   eventWeights;
   oneTimeRandomEvents;
   researchTriggers;
@@ -150,8 +150,8 @@ export class EventScript extends Entry {
       ...Object.values(this.eventWeights || []).map(w => Object.keys(w)).flat(),
       ...Object.keys(this.oneTimeRandomEvents || {})
     ]);
-    this.relatedEvents = [...relatedEvents];
-    this.relatedResearch = [...new Set<string>(Object.keys(this.researchTriggers || {}))];
+    this._relatedEvents = [...relatedEvents];
+    this._relatedResearch = [...new Set<string>(Object.keys(this.researchTriggers || {}))];
   }
 }
 
@@ -1032,6 +1032,11 @@ export class Item extends Entry {
 
   constructor(raw: any) {
     super(raw, "items")
+    for(let k in {...raw, ...(raw.damageAlter || {})}){
+      if(typeof raw[k] == "string" || typeof raw[k] == "number" || raw.damageAlter && raw.damageAlter[k] != null){
+        rul.itemFields.add(k);
+      }
+    }
 
     //this.addToSection(this.internalBattleType);
 
@@ -1118,6 +1123,9 @@ export class Item extends Entry {
       }
     }
 
+    if(this.damageAlter && this.damageAlter[n] != null)
+      return this.damageAlter[n];
+
     return super.sortField(n, v);
   }
 
@@ -1171,12 +1179,16 @@ export default class Ruleset {
   redirect: { [key: string]: string } = {};
   attacks: Attack[] = [];
 
+  itemFields = new Set<string>();
+
   lang: { [key: string]: string } = {};
   langs: { [key: string]: { [key: string]: string } } = {};
   mods: { [key: string]: { [key: string]: string } } = {};
   langName: string;
   langNames: string[];
   convertedLangs = {};
+
+
 
   addCategory(catName: string, id: string, where?) {
     if (where == null)
@@ -1414,12 +1426,11 @@ export default class Ruleset {
     crosslink(this.events, "researchList", this.research, "events");
     crosslink(this.armors, "builtInWeapons", this.items, "builtIn");
     crosslink(this.armors, "specialWeapon", this.items, "builtIn");
-    crosslink(this.eventScripts, "relatedEvents", this.events, "relatedScripts");
-    crosslink(this.eventScripts, "relatedResearch", this.research, "relatedScripts");
+    crosslink(this.eventScripts, "_relatedEvents", this.events, "relatedScripts");
+    crosslink(this.eventScripts, "_relatedResearch", this.research, "relatedScripts");
     crosslink(this.manufacture, "spawnedPersonType", this.soldiers, "manufacture");
     crosslink(this.events, "spawnedPersonType", this.soldiers, "events");
     crosslink(this.missionScripts, "_missions", this.alienMissions, "scripts");
-
 
     for (let option of [
       ["Craft", this.crafts],

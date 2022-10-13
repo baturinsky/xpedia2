@@ -12419,8 +12419,8 @@
         ...Object.values(this.eventWeights || []).map((w) => Object.keys(w)).flat(),
         ...Object.keys(this.oneTimeRandomEvents || {})
       ]);
-      this.relatedEvents = [...relatedEvents];
-      this.relatedResearch = [...new Set(Object.keys(this.researchTriggers || {}))];
+      this._relatedEvents = [...relatedEvents];
+      this._relatedResearch = [...new Set(Object.keys(this.researchTriggers || {}))];
     }
   };
   function totalSellCost(items = {}) {
@@ -13008,6 +13008,11 @@
   var Item = class extends Entry {
     constructor(raw) {
       super(raw, "items");
+      for (let k in { ...raw, ...raw.damageAlter || {} }) {
+        if (typeof raw[k] == "string" || typeof raw[k] == "number" || raw.damageAlter && raw.damageAlter[k] != null) {
+          rul.itemFields.add(k);
+        }
+      }
       if (this.damageType)
         this.addDamageType(this.damageType);
       this.invWidth = this.invWidth || 1;
@@ -13089,6 +13094,8 @@
           return this.damageTypes?.map((d) => damageTypes[d]);
         }
       }
+      if (this.damageAlter && this.damageAlter[n] != null)
+        return this.damageAlter[n];
       return super.sortField(n, v);
     }
   };
@@ -13136,6 +13143,7 @@
       this.baseServices = {};
       this.redirect = {};
       this.attacks = [];
+      this.itemFields = /* @__PURE__ */ new Set();
       this.lang = {};
       this.langs = {};
       this.mods = {};
@@ -13337,8 +13345,8 @@
       crosslink(this.events, "researchList", this.research, "events");
       crosslink(this.armors, "builtInWeapons", this.items, "builtIn");
       crosslink(this.armors, "specialWeapon", this.items, "builtIn");
-      crosslink(this.eventScripts, "relatedEvents", this.events, "relatedScripts");
-      crosslink(this.eventScripts, "relatedResearch", this.research, "relatedScripts");
+      crosslink(this.eventScripts, "_relatedEvents", this.events, "relatedScripts");
+      crosslink(this.eventScripts, "_relatedResearch", this.research, "relatedScripts");
       crosslink(this.manufacture, "spawnedPersonType", this.soldiers, "manufacture");
       crosslink(this.events, "spawnedPersonType", this.soldiers, "events");
       crosslink(this.missionScripts, "_missions", this.alienMissions, "scripts");
@@ -14901,7 +14909,8 @@
       if (filterId?.length > 0) {
         $$invalidate(5, sorted = sorted.filter((a) => a.sortField("id").toLowerCase().match(filterId)));
       }
-      $$invalidate(5, sorted = sorted.sort((a, b) => (a.sortField(sortField) || 0) > (b.sortField(sortField) || 0) == sortDescending ? -1 : 1));
+      let nullValue = sortDescending ? Number.MIN_VALUE : Number.MAX_VALUE;
+      $$invalidate(5, sorted = sorted.sort((a, b) => (a.sortField(sortField) ?? nullValue) > (b.sortField(sortField) ?? nullValue) == sortDescending ? -1 : 1));
     }
     function toggleField(field) {
       if (shownFields.includes(field)) {
@@ -24763,7 +24772,7 @@
     let current;
     linkspage = new LinksPage_default({
       props: {
-        links: rul.sections[ctx[0].id].articles.map(func_4)
+        links: rul.sections[ctx[0].id].articles.map(func_5)
       }
     });
     return {
@@ -24777,7 +24786,7 @@
       p(ctx2, dirty) {
         const linkspage_changes = {};
         if (dirty & 1)
-          linkspage_changes.links = rul.sections[ctx2[0].id].articles.map(func_4);
+          linkspage_changes.links = rul.sections[ctx2[0].id].articles.map(func_5);
         linkspage.$set(linkspage_changes);
       },
       i(local) {
@@ -24946,15 +24955,8 @@
       props: {
         aId: ctx[3],
         entries: Object.values(rul.items),
-        fields: ["costSell", "costBuy", "size", "weight"],
-        extraFields: [
-          "invWidth",
-          "invHeight",
-          "clipSize",
-          "internalBattleType",
-          "damageTypes",
-          "power"
-        ],
+        fields: ["costSell", "costBuy", "size", "weight", "power"],
+        extraFields: [...rul.itemFields].filter(func_4).sort(),
         filters: {
           internalBattleType: ["any", ...internalBattleTypes],
           damageTypes: ["any", ...damageTypes]
@@ -25990,7 +25992,8 @@
   var func4 = (s) => s.id;
   var func_2 = (s) => "recovery." + s;
   var func_3 = (v) => "acc*" + v;
-  var func_4 = (a) => a.id;
+  var func_4 = (f) => !["costSell", "costBuy", "size", "weight", "power"].includes(f);
+  var func_5 = (a) => a.id;
   function instance37($$self, $$props, $$invalidate) {
     const dispatch = createEventDispatcher();
     let { article = {} } = $$props;
@@ -26428,6 +26431,7 @@
         button = element("button");
         button.textContent = "\u2B6F";
         attr(button, "class", "navbar-button");
+        attr(button, "tooltip", "tip_refresh");
       },
       m(target, anchor) {
         insert(target, button, anchor);
@@ -26925,9 +26929,9 @@
     let t4;
     let ul;
     let t5;
+    let t6;
     let h23;
     let tr3;
-    let t6;
     let t7;
     let tr4;
     let current;
@@ -26949,8 +26953,8 @@
     for (let i = 0; i < each_value.length; i += 1) {
       each_blocks[i] = create_each_block28(get_each_context28(ctx, each_value, i));
     }
-    tr3 = new Tr_default({ props: { s: "About XPedia" } });
     let if_block = !packedData && create_if_block_67(ctx);
+    tr3 = new Tr_default({ props: { s: "About XPedia" } });
     tr4 = new Tr_default({ props: { s: "aboutxpedia" } });
     return {
       c() {
@@ -26978,11 +26982,11 @@
           each_blocks[i].c();
         }
         t5 = space();
-        h23 = element("h2");
-        create_component(tr3.$$.fragment);
-        t6 = space();
         if (if_block)
           if_block.c();
+        t6 = space();
+        h23 = element("h2");
+        create_component(tr3.$$.fragment);
         t7 = space();
         create_component(tr4.$$.fragment);
       },
@@ -27011,11 +27015,11 @@
           each_blocks[i].m(ul, null);
         }
         insert(target, t5, anchor);
-        insert(target, h23, anchor);
-        mount_component(tr3, h23, null);
-        insert(target, t6, anchor);
         if (if_block)
           if_block.m(target, anchor);
+        insert(target, t6, anchor);
+        insert(target, h23, anchor);
+        mount_component(tr3, h23, null);
         insert(target, t7, anchor);
         mount_component(tr4, target, anchor);
         current = true;
@@ -27084,8 +27088,8 @@
         transition_in(tr0.$$.fragment, local);
         transition_in(tr1.$$.fragment, local);
         transition_in(tr2.$$.fragment, local);
-        transition_in(tr3.$$.fragment, local);
         transition_in(if_block);
+        transition_in(tr3.$$.fragment, local);
         transition_in(tr4.$$.fragment, local);
         current = true;
       },
@@ -27093,8 +27097,8 @@
         transition_out(tr0.$$.fragment, local);
         transition_out(tr1.$$.fragment, local);
         transition_out(tr2.$$.fragment, local);
-        transition_out(tr3.$$.fragment, local);
         transition_out(if_block);
+        transition_out(tr3.$$.fragment, local);
         transition_out(tr4.$$.fragment, local);
         current = false;
       },
@@ -27129,13 +27133,13 @@
         destroy_each(each_blocks, detaching);
         if (detaching)
           detach(t5);
+        if (if_block)
+          if_block.d(detaching);
+        if (detaching)
+          detach(t6);
         if (detaching)
           detach(h23);
         destroy_component(tr3);
-        if (detaching)
-          detach(t6);
-        if (if_block)
-          if_block.d(detaching);
         if (detaching)
           detach(t7);
         destroy_component(tr4, detaching);
@@ -27355,7 +27359,7 @@
     };
   }
   function create_if_block_67(ctx) {
-    let h4;
+    let h2;
     let tr0;
     let t0;
     let tr1;
@@ -27378,7 +27382,7 @@
     });
     return {
       c() {
-        h4 = element("h4");
+        h2 = element("h2");
         create_component(tr0.$$.fragment);
         t0 = space();
         create_component(tr1.$$.fragment);
@@ -27391,8 +27395,8 @@
         br1 = element("br");
       },
       m(target, anchor) {
-        insert(target, h4, anchor);
-        mount_component(tr0, h4, null);
+        insert(target, h2, anchor);
+        mount_component(tr0, h2, null);
         insert(target, t0, anchor);
         mount_component(tr1, target, anchor);
         insert(target, br0, anchor);
@@ -27423,7 +27427,7 @@
       },
       d(detaching) {
         if (detaching)
-          detach(h4);
+          detach(h2);
         destroy_component(tr0);
         if (detaching)
           detach(t0);
@@ -27844,6 +27848,7 @@
         attr(a1, "href", a1_href_value = "##" + (ctx[5] ? ctx[5].id : "MAIN"));
         attr(div7, "class", div7_class_value = "navbar-button " + (ctx[19] ? "reveal-lock" : ""));
         attr(div7, "id", "reveal");
+        attr(div7, "tooltip", "tip_reveal");
         attr(div8, "class", "stretcher");
         attr(input, "class", "input");
         attr(input, "type", "text");
@@ -28289,7 +28294,6 @@
         }
       } catch (e) {
         console.log(e);
-        return;
       }
       saveLoaded = true;
     }
@@ -28403,7 +28407,7 @@
           let idattr = el.attributes.tooltip;
           let rect = e.target.getBoundingClientRect();
           $$invalidate(12, tooltip.style.left = rect.left + rect.width / 2 + "px", tooltip);
-          $$invalidate(12, tooltip.style.top = rect.top + "px", tooltip);
+          $$invalidate(12, tooltip.style.top = (rect.top > 100 ? rect.top : rect.top + 120) + "px", tooltip);
           let id2 = idattr.value;
           toggleTooltip(id2 in rul.lang && !e.shiftKey ? rul.lang[id2] : id2.substring(4));
         } else {

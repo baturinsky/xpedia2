@@ -105,8 +105,8 @@
 {:else if article.id == "ITEMS"}
   <SectionTable {aId} 
     entries={Object.values(rul.items)} 
-    fields={["costSell", "costBuy", "size", "weight"]} 
-    extraFields={["invWidth", "invHeight", "clipSize", "internalBattleType", "damageTypes", "power"]}
+    fields={["costSell", "costBuy", "size", "weight", "power"]} 
+    extraFields={[...rul.itemFields].filter(f=>!["costSell", "costBuy", "size", "weight", "power"].includes(f) ).sort()}
     filters={{
       internalBattleType:["any", ...internalBattleTypes],
       damageTypes:["any", ...damageTypes],

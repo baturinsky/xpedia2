@@ -58,8 +58,10 @@
       sorted = sorted.filter(a=>a.sortField("id").toLowerCase().match(filterId))
     }
     
+    let nullValue = sortDescending?Number.MIN_VALUE:Number.MAX_VALUE
+
     sorted = sorted.sort((a, b) =>
-      (a.sortField(sortField) || 0) > (b.sortField(sortField) || 0) ==
+      (a.sortField(sortField) ?? nullValue) > (b.sortField(sortField) ?? nullValue) ==
       sortDescending
         ? -1
         : 1
