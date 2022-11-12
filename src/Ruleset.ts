@@ -1309,7 +1309,8 @@ export default class Ruleset {
       return false;
 
     let lang = this.langs[langName];
-    if (lang.ALREADYCONVERTED)
+    
+    if (lang == null || lang.ALREADYCONVERTED)
       return;
     lang.ALREADYCONVERTED = "true";
 

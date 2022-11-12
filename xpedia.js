@@ -12129,16 +12129,22 @@
     return files.filter((dir) => dir[dir.length - 1] == "/");
   }
   async function loadFromFiles() {
-    let [options, modDirs, xpediaDirs] = await Promise.all([
+    let [options, modDirs, rootDirs, xpediaDirs] = await Promise.all([
       readYaml(`${OXCPath}user/options.cfg`),
       listDir(`${OXCPath}user/mods/`, true),
+      listDir(`${OXCPath}`, true),
       listDir(`${PediaPath}mods/`, true)
     ]);
     modDirs = onlyDirs(modDirs);
+    rootDirs = onlyDirs(rootDirs);
     xpediaDirs = onlyDirs(xpediaDirs);
+    options = null;
+    if (modDirs.length == 0) {
+      warn("can't find user/mods dir. Assuming we are in mod dir");
+      modDirs = rootDirs;
+    }
     if (options == null) {
-      warn("can't find user/options.cfg file. Run this app from the root OXCE directory");
-      return;
+      warn("can't find user/options.cfg file. Loading all mods");
     }
     modDirs = [`${OXCPath}standard/xcom1/`, ...modDirs];
     let allModDirs = [...modDirs, ...xpediaDirs];
@@ -12151,17 +12157,31 @@
       let dir = allModDirs[i];
       modMetadataById[data.id] = { ...data, dir };
     }
-    let activeMods = ["xcom1", ...options.mods.filter((m) => m.active).map((m) => m.id)];
-    modMetadata = modMetadata.filter((m) => activeMods.includes(m.id));
-    let masterModIds = modMetadata.filter((m) => m.isMaster).map((m) => m.id);
-    modMetadata = modMetadata.filter((m) => m.isMaster || masterModIds.includes(m.master));
-    activeMods = modMetadata.map((m) => m.id);
-    let xpediaMods = Object.keys(modMetadataById).filter((k) => {
-      let data = modMetadataById[k];
-      return (data.master == null || activeMods.includes(data.master)) && xpediaDirs.includes(data.dir);
-    });
-    activeMods = [...activeMods, ...xpediaMods];
-    let lname = options.options.language;
+    let activeMods;
+    if (options) {
+      activeMods = ["xcom1", ...options.mods.filter((m) => m.active).map((m) => m.id)];
+      modMetadata = modMetadata.filter((m) => activeMods.includes(m.id));
+      let masterModIds = modMetadata.filter((m) => m.isMaster).map((m) => m.id);
+      modMetadata = modMetadata.filter((m) => m.isMaster || masterModIds.includes(m.master));
+      activeMods = modMetadata.map((m) => m.id);
+      let xpediaMods = Object.keys(modMetadataById).filter((k) => {
+        let data = modMetadataById[k];
+        return (data.master == null || activeMods.includes(data.master)) && xpediaDirs.includes(data.dir);
+      });
+      activeMods = [...activeMods, ...xpediaMods];
+    } else {
+      const priority = (id) => {
+        let mod = modMetadataById[id];
+        if (mod.master == "xpedia")
+          return 0;
+        if (mod.master == null)
+          return 1;
+        if (mod.master == "xcom1")
+          return 2;
+        return 3;
+      };
+      activeMods = Object.keys(modMetadataById).sort((a, b) => priority(a) - priority(b));
+    }
     let activeModsMetadata = activeMods.map((id) => modMetadataById[id]);
     for (let mod of activeModsMetadata)
       mod.rulDir = mod.id == "xcom1" ? mod.dir : `${mod.dir}Ruleset/`;
@@ -13256,7 +13276,7 @@
       if (this.convertedLangs[langName])
         return false;
       let lang = this.langs[langName];
-      if (lang.ALREADYCONVERTED)
+      if (lang == null || lang.ALREADYCONVERTED)
         return;
       lang.ALREADYCONVERTED = "true";
       if (langName == defaultLanguage2)
