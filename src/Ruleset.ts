@@ -69,7 +69,7 @@ export class Entry {
     Article.create(this.id, section);
   }
 
-  sortField(field, noTitle = false) {
+  sortField(field: string, noTitle: any = false) {
     if (field == "id" && !noTitle)
       return this.title;
     return this[field];
@@ -127,7 +127,7 @@ export class MissionScript extends Entry {
 export class Soldiers extends Entry {
   armors: string[];
   statCaps: { [id: string]: number }
-  sortField(n, v) {
+  sortField(n: string) {
     return this[n] || this.statCaps[n];
   }
 }
@@ -350,7 +350,7 @@ export class Commendation extends Entry {
     return false;
   }
 
-  sortField(n, v) {
+  sortField(n: string) {
     if (n == null)
       return;
     let fb = this.finalBonus;
@@ -607,6 +607,16 @@ export class Attack {
 
     if (item.battleType == 3 || mode != "melee") this.alter = item.damageAlter;
 
+    if (this.alter && this.alter.ResistType) {
+      let dType = Number(this.alter.ResistType);
+      if(Number.isNaN(this.damageType)){
+        console.error(this.item.id + "attack has string damage type")
+      } else {
+        this.damageType = dType;
+        item.addDamageType(this.damageType);
+      }
+    }
+        
     if (mode != "ammo") {
       if (
         ((mode == "melee" && item.battleType == 3) || mode != "melee") &&
@@ -651,10 +661,6 @@ export class Attack {
 
     }
 
-    if (this.alter && this.alter.ResistType) {
-      this.damageType = Number(this.alter.ResistType);
-    }
-
     if (mode + "Range" in item) {
       this.alter = Object.assign({}, this.alter || {});
       this.alter.range = item[mode + "Range"];
@@ -683,7 +689,7 @@ export class Attack {
     rul.attacks.push(this);
   }
 
-  sortField(n: string, v) {
+  sortField(n: string) {
 
     switch (n) {
       case "internalBattleType":
@@ -752,10 +758,11 @@ export class Article {
     this.image_id = raw.image_id;
     if (raw.requires)
       this.requires = Array.isArray(raw.requires) ? raw.requires : [raw.requires];
+      
     rul.articles[this.id] = this;
 
     let id = raw.id;
-
+      
     rul.articles[id] = this;
 
     if (raw.section) {
@@ -1026,14 +1033,14 @@ export class Item extends Entry {
 
   addDamageType(type: number) {
     this.damageTypes = this.damageTypes || [];
-    addIfNew(this.damageTypes, type);
+    addIfNew(this.damageTypes, type);    
     backLink(this.id, [damageTypes[type]], "damageTypes", "items");
   }
 
   constructor(raw: any) {
     super(raw, "items")
-    for(let k in {...raw, ...(raw.damageAlter || {})}){
-      if(typeof raw[k] == "string" || typeof raw[k] == "number" || raw.damageAlter && raw.damageAlter[k] != null){
+    for (let k in { ...raw, ...(raw.damageAlter || {}) }) {
+      if (typeof raw[k] == "string" || typeof raw[k] == "number" || raw.damageAlter && raw.damageAlter[k] != null) {
         rul.itemFields.add(k);
       }
     }
@@ -1113,8 +1120,11 @@ export class Item extends Entry {
   }
 
 
-  sortField(n, v) {
-    if (n == "damageTypes") {
+  sortField(n:string, v) {
+    if (n === "category" && this.categories)
+      return this.categories.includes(v) ? v : null;
+
+    if (n === "damageTypes") {
       if (v !== true) {
         let i = damageTypes.indexOf(v)
         return this.damageTypes?.includes(i);
@@ -1123,7 +1133,11 @@ export class Item extends Entry {
       }
     }
 
-    if(this.damageAlter && this.damageAlter[n] != null)
+    if (n === "damageType" && this.damageTypes) {
+      return this.damageTypes.map(n=>damageTypes[n])
+    }
+
+    if (this.damageAlter && this.damageAlter[n] != null)
       return this.damageAlter[n];
 
     return super.sortField(n, v);
@@ -1309,7 +1323,7 @@ export default class Ruleset {
       return false;
 
     let lang = this.langs[langName];
-    
+
     if (lang == null || lang.ALREADYCONVERTED)
       return;
     lang.ALREADYCONVERTED = "true";
@@ -1380,7 +1394,7 @@ export default class Ruleset {
         }
       }
 
-    if(this.raw?.extraSprites?.length)
+    if (this.raw?.extraSprites?.length)
       for (let spriteData of this.raw?.extraSprites) new Sprite(spriteData);
 
     this.deleteModDirs();
@@ -1543,7 +1557,7 @@ export default class Ruleset {
   }
 
   parseArticles(data: any) {
-    if(!data)    
+    if (!data)
       return;
     for (let articleData of data) {
       if (articleData.id) {
@@ -1636,7 +1650,7 @@ export default class Ruleset {
     return this.sprites[id];
   }
 
-  async sprite(id: string, onlyIfExists = false) {
+  async sprite(id: string|Promise<any>, onlyIfExists = false) {
     if (id instanceof Promise)
       return id;
     if (id in this.sprites)
@@ -1723,7 +1737,8 @@ export default class Ruleset {
   }
 
   article(id: string) {
-    let a = this.articles[this.redirect[id]] || this.articles[id];
+    let redirect = this.redirect[id];
+    let a = (redirect && this.articles[redirect]) || this.articles[id];
     return a;
   }
 

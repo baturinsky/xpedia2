@@ -32,11 +32,11 @@ $:{
 }
 
 const renderers = {
+  units: Unit,
+  armors: Armor,
   items: Item,
   battleTypes: {},
-  armors: Armor,
   research: Research,
-  units: Unit,
   stats: {},
   damageTypes: {},
   commendations: Commendation,
@@ -66,20 +66,6 @@ const renderers = {
 }
 
 </script>
-
-
-{#if !armor && text}
-  <div class="main-table main-text">
-    {#if rul.items[id]?.sprite && text && rul.items[id].battleType != 2}
-      <div class="article-text-image">
-        <CanvasImage item={rul.items[id]} zoom={2}/>
-      </div>
-    {/if}
-    <div>
-      {@html text}
-    </div>
-  </div>
-{/if}
 
 {#each Object.entries(renderers).filter(([key])=>rul[key][id]) as [key, ren]}  
   {#if typeof ren == "function"}

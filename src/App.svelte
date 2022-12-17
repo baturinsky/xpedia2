@@ -1,6 +1,13 @@
 <script>
   import { rul, Article as ArticleRul } from "./Ruleset";
-  import { LinksPage, Tr, tr, favicon, divider, tableSections } from "./Components";
+  import {
+    LinksPage,
+    Tr,
+    tr,
+    favicon,
+    divider,
+    tableSections,
+  } from "./Components";
   import Article from "./Article.svelte";
   import CogAnimation from "./CogAnimation.svelte";
   import { afterUpdate, setContext } from "svelte";
@@ -11,9 +18,9 @@
     loaded,
     linksPageSorted,
     loadingFile,
-    leftRightClickSwipe
+    leftRightClickSwipe,
   } from "./store";
-  import {isAncestorOf} from "./util"
+  import { isAncestorOf } from "./util";
   import Download from "./Download.svelte";
   import onSwipe from "./swipe";
   import { useCache, packedData } from "./load";
@@ -52,15 +59,16 @@
   let _linksPageSorted;
   linksPageSorted.subscribe((v) => {
     _linksPageSorted = v;
-    saveState()
+    saveState();
   });
 
   let lrcs;
-  leftRightClickSwipe.subscribe((v) => {lrcs = v;});
+  leftRightClickSwipe.subscribe((v) => {
+    lrcs = v;
+  });
 
   function saveState() {
-    if(!saveLoaded)
-      return;
+    if (!saveLoaded) return;
     localStorage.xpediaSettings = JSON.stringify({
       hugeFont,
       seeSide,
@@ -163,15 +171,11 @@
   }
 
   function centerOnArticle() {
-    setTimeout(
-      () =>
-        activeOption?.scrollIntoView({ block: "center" }),
-      50
-    );
+    setTimeout(() => activeOption?.scrollIntoView({ block: "center" }), 50);
   }
 
   function nextArticle(delta) {
-    if(lrcs){
+    if (lrcs) {
       lrcs(delta);
       return;
     }
@@ -202,7 +206,7 @@
 
   $: {
     if (article) console.info(article);
-    document.documentElement.style.fontSize = hugeFont ? "24pt" : "12pt";    
+    document.documentElement.style.fontSize = hugeFont ? "24pt" : "12pt";
   }
 
   function dropdown(val = null) {
@@ -241,10 +245,10 @@
   })*/
 
   window.addEventListener("mousemove", async (e) => {
-    if(e.screenX<10 && e.screenY < innerHeight/3){
+    if (e.screenX < 10 && e.screenY < innerHeight / 3) {
       dropdown(true);
     } else {
-      if(e.target && !isAncestorOf(navbarDropDown,e.target)){
+      if (e.target && !isAncestorOf(navbarDropDown, e.target)) {
         dropdown(false);
       }
     }
@@ -258,7 +262,7 @@
         let idattr = el.attributes.tooltip;
         let rect = e.target.getBoundingClientRect();
         tooltip.style.left = rect.left + rect.width / 2 + "px";
-        tooltip.style.top = (rect.top>100?rect.top:rect.top+120) + "px";
+        tooltip.style.top = (rect.top > 100 ? rect.top : rect.top + 120) + "px";
         let id = idattr.value;
         toggleTooltip(
           id in rul.lang && !e.shiftKey ? rul.lang[id] : id.substring(4)
@@ -287,7 +291,7 @@
     <title>{tr("XPedia")}</title>
   {/if}
   <meta charset="utf8" />
-  <meta name="keywords" content="OpenXCom" />
+  <meta name="keywords" content="OpenXCom" />  
   <link rel="icon" type="image/png" href={favicon} />
 </svelte:head>
 
@@ -304,11 +308,11 @@
         class="navbar-dropdown-container"
         bind:this={navbarDropDown}
         on:mousemove={(e) => {
-          dropdown(true)
+          dropdown(true);
         }}
         on:mouseout={(e) => {
-          if(e.target && !isAncestorOf(e.target)){
-            dropdown(false)
+          if (e.target && !isAncestorOf(e.target)) {
+            dropdown(false);
           }
         }}
       >
@@ -326,7 +330,8 @@
         </div>
 
         <div
-          class="navbar-dropdown" style={showDropdown ? "visibility:visible" : "visibility:hidden"}     
+          class="navbar-dropdown"
+          style={showDropdown ? "visibility:visible" : "visibility:hidden"}
         >
           <div class="flex-horisontal">
             <div class="navbar-auto navbar-list">
@@ -340,9 +345,10 @@
             </div>
             <div class="navbar-custom navbar-list">
               {#each rul.sortedTypeSections() as section, i}
-                <a
-                  href={"##" + section.id}
-                  ><Tr s={section.id} />{tableSections.includes(section.id)?'☰':''}</a
+                <a href={"##" + section.id}
+                  ><Tr s={section.id} />{tableSections.includes(section.id)
+                    ? "☰"
+                    : ""}</a
                 >
               {/each}
             </div>
@@ -367,7 +373,10 @@
         on:mouseout={(e) => {
           reveal(false);
         }}
-        on:click={(e) => {revealLock();saveState();}}
+        on:click={(e) => {
+          revealLock();
+          saveState();
+        }}
         tooltip="tip_reveal"
       >
         👁
@@ -471,7 +480,9 @@
               <a
                 class="side-link"
                 href={"##" + option.id}
-                on:click={() => {ignoreNextAutoscroll = true}}
+                on:click={() => {
+                  ignoreNextAutoscroll = true;
+                }}
               >
                 <Tr s={option.id} />
               </a>
@@ -501,12 +512,21 @@
         <br />
         {#key found}
           {#if found && found.length > 0}
-            <LinksPage links={found.filter(a=>contains(rul.tr(a).toLowerCase(), query)).slice(0,200)}/><br/>
-            <LinksPage links={found.filter(a=>!contains(rul.tr(a).toLowerCase(), query)).slice(0,200)} title=" "/>
+            <LinksPage
+              links={found
+                .filter((a) => contains(rul.tr(a).toLowerCase(), query))
+                .slice(0, 200)}
+            /><br />
+            <LinksPage
+              links={found
+                .filter((a) => !contains(rul.tr(a).toLowerCase(), query))
+                .slice(0, 200)}
+              title=" "
+            />
           {:else if query.length < 2}
             <i>Query too short</i>
           {:else if searchDelayHandle || searchinInProgres}
-          <Tr s="Initializing search engine..."/><br/>
+            <Tr s="Initializing search engine..." /><br />
             <CogAnimation size={30} />
           {:else}
             <i><Tr s="Nothing found" /></i>

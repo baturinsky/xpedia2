@@ -31,9 +31,9 @@
 </script>
 
 <table class="main-table">
-  <tr class="table-header">
+  <thead>
     <td colspan="2">{title}</td>
-  </tr>
+  </thead>
   {#each sortFirstLast( entry, { last: longLists, exclude: ["name"] } ).all as [key, prop]}
     {#if longLists.includes(key) && prop && prop.length > 0}
       <tr

@@ -1,0 +1,16 @@
+:root {
+  --saturation: 10%;
+  --hue: 25;
+  --background: hsl(var(--hue), var(--saturation), 10%);
+  --link: #ffc67c;
+  --em: rgb(255, 217, 47);
+  --title: #ffffff;
+}
+
+a {
+  text-shadow: 1px 1px 0px black;  
+}
+
+h1, h2, h3, h4 {
+text-shadow: black 2px 2px 2px;
+}

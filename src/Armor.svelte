@@ -13,7 +13,7 @@
   import RecoveryTable from "./RecoveryTable.svelte";
 
   export let entry;
-  export let text;
+  export let text = "";
   let dollColumns = 6;
   let seeAllVariants = false;
   let zoom = 1;
@@ -107,7 +107,40 @@
                   : 120
               }px;margin-left:175px;`}
             >
-              {#if !seeAllVariants}<p>{@html text}</p>{/if}
+              {#if !seeAllVariants}
+                <div class="flex-horisontal" style="max-width: 95vw;">
+                  {#each ["stats", "armor"] as prop}
+                    {#if entry[prop]}
+                      <div class="armor-column">
+                        <header><Tr s={prop} /></header>
+                        {#each sortFirstLast(entry[prop]).all as [key, val], i}
+                          <div>
+                            <Value val={key} icon="monospace" />
+                          </div>
+                          <div>
+                            {#if "recovery" == prop}
+                              {#each Object.keys(val) as subfield, j}
+                                {#if j != 0}
+                                  <br />
+                                {/if}
+                                <Value val={subfield} />
+                                :
+                                <em>
+                                  <Value val={val[subfield]} />
+                                </em>
+                              {/each}
+                            {:else}
+                              <em>
+                                <Value {val} />
+                              </em>
+                            {/if}
+                          </div>
+                        {/each}
+                      </div>
+                    {/if}
+                  {/each}
+                </div>
+              {/if}
             </div>
           {/if}
         {/await}
@@ -117,52 +150,25 @@
   <tr>
     <td colspan="2">
       <div class="flex-horisontal" style="max-width: 95vw;">
-        {#each ["stats", "armor", "damageModifier" /*, "recovery"*/] as prop}
-          {#if entry[prop]}
-            <div
-              class="armor-column {prop == 'damageModifier' &&
-                'armor-column-resists'}"
-            >
-              <header><Tr s={prop} /></header>
-              {#each sortFirstLast(entry[prop]).all as [key, val], i}
-                <div>
-                  <Value
-                    val={prop == "damageModifier" ? damageTypes[key] : key}
-                    icon="monospace"
-                  />
-                </div>
-                <div>
-                  {#if "recovery" == prop}
-                    {#each Object.keys(val) as subfield, j}
-                      {#if j != 0}
-                        <br />
-                      {/if}
-                      <Value val={subfield} />
-                      :
-                      <em>
-                        <Value val={val[subfield]} />
-                      </em>
-                    {/each}
-                  {:else}
-                    <em>
-                      {#if prop == "damageModifier"}
-                        <span
-                          style={`text-weight:bold; color:hsl(${~~(
-                            val * 70
-                          )}, 100%, 50%);`}>{~~(val * 100)}</span
-                        >
-                      {:else}
-                        <Value {val} />
-                      {/if}
-                    </em>
-                  {/if}
-                </div>
-              {/each}
+        <div class="armor-column armor-column-resists">
+          <header><Tr s={"damageModifier"} /></header>
+          {#each sortFirstLast(entry.damageModifier).all as [key, val], i}
+            <div>
+              <Value val={damageTypes[key]} icon="monospace" />
             </div>
-          {/if}
-        {/each}
-      </div>
-    </td>
+            <div>
+              <em>
+                <span
+                  style={`text-weight:bold; color:hsl(${~~(
+                    val * 70
+                  )}, 100%, 50%);`}>{~~(val * 100)}</span
+                >
+              </em>
+            </div>
+          {/each}
+        </div>
+      </div></td
+    >
   </tr>
 
   {#each sortFirstLast( entry, { exclude: ["recovery", "type", "layersDefinition", "spriteFaceColor", "spriteHairColor", "spriteUtileColor", "spriteFaceGroup", "spriteHairGroup", "spriteUtileGroup", "customArmorPreviewIndex", "dollSprites", "layersDefaultPrefix", "frontArmor", "sideArmor", "rearArmor", "underArmor", "spriteInv", "armor", "damageModifier", "stats"], first: ["builtInWeapons", "size"] } ).all as [key, prop]}

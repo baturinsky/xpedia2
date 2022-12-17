@@ -8,6 +8,7 @@
   /**@type {HTMLImageElement}*/
   let img;
   let alt;
+  export let zoom = 2;
  
   $: {
     if(typeof src == "string"){
@@ -23,8 +24,8 @@
   }
 
   function resize(){
-    img.style.width = `${img.naturalWidth*2}px`;
-    img.style.height = `${img.naturalHeight*2}px`;
+    img.style.width = `${img.naturalWidth*zoom}px`;
+    img.style.height = `${img.naturalHeight*zoom}px`;
     console.log(maxWidth, maxHeight);
   }
 

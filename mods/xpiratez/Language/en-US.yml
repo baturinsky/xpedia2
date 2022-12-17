@@ -1346,8 +1346,10 @@ en-US:
   F57: F57 Virtuoso
   F58: F58 Se7en
   F59: F59 Lucifine
-  'true': 'TRUE'
-  'false': 'FALSE'
+  'true': ✔️
+  'false': ❌
+  tip_true: TRUE
+  tip_false: FALSE
   ACADEMY_CRUISE: Academy cruise
   AIRCAR_RACE: Yello's Aircar Rally
   CITY: City
@@ -1847,3 +1849,4 @@ en-US:
   tip_avoidRepeats: This is used to ensure different coordinates for this mission. It means "store an array of x previous coordinates, and don't use them again"
   tip_reveal: Show all names untranslated. Click to toggle.
   tip_refresh: Purge the cache and reload mod data from files.
+  BT_NONE: Misc

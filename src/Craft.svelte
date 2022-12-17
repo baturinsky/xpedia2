@@ -18,7 +18,7 @@
       exclude:["type", "battlescapeTerrainData", "craftInventoryTile", "deployment"]
     }).all as [key, prop]}
     <tr>
-      <Value val={key} />
+      <td><Value val={key} /></td>
       <td>
         {#if "weaponStrings" == key}
           <Value

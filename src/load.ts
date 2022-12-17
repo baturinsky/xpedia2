@@ -120,13 +120,11 @@ export async function loadFromFiles() {
   rootDirs = onlyDirs(rootDirs);
   xpediaDirs = onlyDirs(xpediaDirs);
 
-  options = null;
-
   if(modDirs.length == 0){
     warn("can't find user/mods dir. Assuming we are in mod dir")
     modDirs = rootDirs;
   }
-
+  
   if(options == null){
     warn("can't find user/options.cfg file. Loading all mods")
   }
@@ -147,10 +145,12 @@ export async function loadFromFiles() {
 
   let activeMods: string[];
     
+  let masterModIds = modMetadata.filter(m=>m.isMaster).map(m=>m.id);
+  masterModIds.push("xpedia");
+
   if(options){
     activeMods = ["xcom1", ...options.mods.filter(m => m.active).map(m => m.id)];
-    modMetadata = modMetadata.filter(m=>activeMods.includes(m.id))  
-    let masterModIds = modMetadata.filter(m=>m.isMaster).map(m=>m.id);  
+    modMetadata = modMetadata.filter(m=>activeMods.includes(m.id))      
     modMetadata = modMetadata.filter(m=>m.isMaster || masterModIds.includes(m.master))
     activeMods = modMetadata.map(m=>m.id)  
     let xpediaMods = Object.keys(modMetadataById).filter(k => {
@@ -161,6 +161,7 @@ export async function loadFromFiles() {
     activeMods = [...activeMods, ...xpediaMods];
   
   } else { 
+    modMetadata = modMetadata.filter(m=>m.isMaster || masterModIds.includes(m.master))
     const priority = (id:string)=>{
       let mod = modMetadataById[id];
       if(mod.master == "xpedia")
@@ -349,7 +350,9 @@ export async function exportPedia(onlyCurrentLanguage = false) {
 
   let html = `
 <head>
+  <meta name="description" content="Online reference for OpenXCom games" />
   <style>${style}</style>
+  <link id="user-css" href="user.css"/ rel="stylesheet">
   <script>
   window.gameDir = ".";
   window.xpediaDir = "xpedia2/";
