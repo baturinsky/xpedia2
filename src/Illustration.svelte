@@ -27,7 +27,6 @@
     img.style.border = "none";
   }
 
-  console.log(id);
 </script>
 
 {#if id && rul.sprite(id)}

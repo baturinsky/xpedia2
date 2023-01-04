@@ -1,17 +1,20 @@
 <script lang="ts">
+  import { clog } from "./util";
   import { Value, rul } from "./Components";
-  import { sortFirstLast, SortFirsLastOptions } from "./Ruleset";
+  import { sortFirstLast, SortFirstLastOptions } from "./Ruleset";
   export let entry;
-  export let sort: SortFirsLastOptions = {};
+  export let sort: SortFirstLastOptions = {};
   export let title: string;
   export let subtitle = "";
+  /** Fields that use custom renderer for the value*/
   export let special = [];
+  /** Fields that use custom renderer for the both key and rendered*/
   export let wide = [];
 
   let sorted;
 
   $: {
-    console.log("MT", entry, sort, wide);
+    //clog("MT", entry, sort, wide);
     sorted = sortFirstLast(entry, sort);
   }
 </script>
@@ -22,7 +25,7 @@
   <table class="main-table">
     <thead>
       <td colspan="2"
-        >{@html rul.tr(title)} {@html rul.tr(subtitle)}</td
+        ><Value val={title}/> <Value val={subtitle}/></td
       >
     </thead>
     {#each sorted.all as [key, prop]}
@@ -30,7 +33,7 @@
       {#if key[0] == "_"}
       {:else if special.includes(key)}
       <tr>
-        <td><Value val={key} /></td><td>
+        <td><Value val={key} capital={true}/></td><td>
           <slot {key} {prop}></slot>
         </td>
       </tr>          
@@ -39,7 +42,7 @@
       {:else}
         {#if prop != null && !(prop.length == 0)}
           <tr>
-            <td><Value val={key} /></td><td>
+            <td><Value val={key} capital={true}/></td><td>
               <Value val={prop} />
             </td>
           </tr>

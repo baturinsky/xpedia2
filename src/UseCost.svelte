@@ -3,9 +3,6 @@
   import {Tr, Link, Value} from "./Components"
   export let cost;
   export let flatTime;
-  $:{
-    console.log(cost);
-  }
 </script>
 
 {#if cost}

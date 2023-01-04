@@ -26,7 +26,6 @@
   function resize(){
     img.style.width = `${img.naturalWidth*zoom}px`;
     img.style.height = `${img.naturalHeight*zoom}px`;
-    console.log(maxWidth, maxHeight);
   }
 
 </script>

@@ -13,7 +13,6 @@
   import RecoveryTable from "./RecoveryTable.svelte";
 
   export let entry;
-  export let text = "";
   let dollColumns = 6;
   let seeAllVariants = false;
   let zoom = 1;
@@ -26,8 +25,6 @@
   };
 
   $: {
-    console.log(entry);
-
     seeAlso = [];
     if (
       "storeItem" in entry &&

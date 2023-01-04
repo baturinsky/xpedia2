@@ -29,7 +29,8 @@ export const tableSections = [
   "CRAFT_WEAPONS",
   "SOLDIERS",
   "ARMORS",
-  "MANUFACTURE"
+  "MANUFACTURE",
+  "ITEMS"
 ];
 
 export function invisible(t){

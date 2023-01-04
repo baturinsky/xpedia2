@@ -4,10 +4,6 @@
   import MainTable from "./MainTable.svelte";
 
   export let entry;
-
-  $: {
-    console.log(entry);
-  }
 </script>
 
 <MainTable {entry} sort={{exclude:["chanceSum", "totalProducedItems"]}} title="Manufacture" wide={["randomProducedItems"]}>

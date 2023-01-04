@@ -142,7 +142,7 @@
     {aId}
     entries={rul.attacks}
     fields={["name", "accuracy", "damage", "damageType", "shots", "range"]}
-    extraFields={[
+    extraFields={[      
       "ToArmorPre",
       "ToStun",
       "RandomType",
@@ -164,16 +164,13 @@
   <SectionTable
     {aId}
     entries={Object.values(rul.items)}
-    fields={["costSell", "costBuy", "size", "weight", "power"]}
-    extraFields={[...rul.itemFields]
-      .filter(
-        (f) => !["costSell", "costBuy", "size", "weight", "power"].includes(f)
-      )
-      .sort()}
+    fields={["costSell", "costBuy", "size", "weight", "power", "invSize"]}
+    extraFields={[...rul.itemFields].sort()}
     filters={{
       internalBattleType: ["any", ...internalBattleTypes],
       damageTypes: ["any", ...damageTypes],
-      category: ["any", ...rul.sortStrings(Object.keys(rul.categories))],
+      category: ["any", ...rul.sortStrings(Object.keys(rul.categories))],      
+      invSize: ["any"]
     }}
   />
 {:else if article.id == "MANUFACTURE"}

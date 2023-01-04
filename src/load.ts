@@ -72,7 +72,7 @@ function parsePackedYaml(text: string) {
       try {
         parsed = parseYaml(file, filename);
       } catch (e) {
-        console.log(e.message);
+        console.error(e.message);
       }
     }
 
@@ -352,7 +352,6 @@ export async function exportPedia(onlyCurrentLanguage = false) {
 <head>
   <meta name="description" content="Online reference for OpenXCom games" />
   <style>${style}</style>
-  <link id="user-css" href="user.css"/ rel="stylesheet">
   <script>
   window.gameDir = ".";
   window.xpediaDir = "xpedia2/";

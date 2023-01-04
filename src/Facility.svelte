@@ -10,8 +10,6 @@
 
   $: {
     size = entry.size || 1;
-    console.log(size);
-    console.info(entry);
   }
 </script>
 

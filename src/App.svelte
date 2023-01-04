@@ -1,4 +1,5 @@
 <script>
+  "use strict";
   import { rul, Article as ArticleRul } from "./Ruleset";
   import {
     LinksPage,
@@ -20,7 +21,7 @@
     loadingFile,
     leftRightClickSwipe,
   } from "./store";
-  import { isAncestorOf } from "./util";
+  import { isAncestorOf, clog } from "./util";
   import Download from "./Download.svelte";
   import onSwipe from "./swipe";
   import { useCache, packedData } from "./load";
@@ -153,8 +154,8 @@
         if (!article || article.id != id) article = rul.article(id);
       }
 
-      console.log(id);
-      console.log(article);
+      clog(id);
+      clog(article);
     }
 
     if (article) {
@@ -205,7 +206,7 @@
   window.onhashchange = checkHash;
 
   $: {
-    if (article) console.info(article);
+    if (article) clog(article);
     document.documentElement.style.fontSize = hugeFont ? "24pt" : "12pt";
   }
 
@@ -381,8 +382,8 @@
       >
         👁
       </div>
-
-      <div class="stretcher" />
+      
+      <div class="stretcher on-wide" />
 
       {#if !packedData}
         <button

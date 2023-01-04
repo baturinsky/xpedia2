@@ -362,7 +362,7 @@ img {
 }
 
 .armor-column-resists {
-  grid-template-columns: auto auto auto auto;
+  grid-template-columns: auto auto auto auto auto auto;
 }
 
 audio {

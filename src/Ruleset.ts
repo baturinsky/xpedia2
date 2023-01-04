@@ -2,22 +2,36 @@ import SearchApi from 'js-worker-search';
 import { emptyImg } from "./Components";
 import { loadData } from './load';
 import { addAllIfNew, addIfNew, camelToUnderscore, capital, cullDoubles, delay, getFlagEmoji, removeByValue, unique } from './util';
+import * as util from "./util"
 
 export let rul!: Ruleset;
-export type SortFirsLastOptions = { first?: string[], last?: string[], exclude?: string[], sortBy?: Function }
+export type SortFirstLastOptions = { first?: string[], last?: string[], exclude?: string[], sortBy?: Function }
+type StringValue = [string, any]
 export const defaultLanguage = "en-US"
 
 const obsTables = { "BIGOBS.PCK": "big", "FLOOROB.PCK": "floor", "HANDOB.PCK": "hand", "BASEBITS.PCK": "base", "INTICON.PCK": "icon" };
 
-function orderedFilteredEntries(item, fields) {
+function orderedFilteredEntries(item: Object, fields?: string[]) {
   if (item == null)
     return;
-  return fields ? fields.map(key => item[key] != null ? [key, item[key]] : null).filter(v => v != null) : [];
+  return fields ? fields.map(key => item[key] != null ? [key, item[key]] as StringValue : null).filter(v => v != null) : [];
 }
 
-export function sortFirstLast(item, options: SortFirsLastOptions = {}) {
+/**
+ * Sorts item's keys, putting "first" first, "last" last, excluding "exclude" and using "sortBy" function
+ * returns lists of key-value pairs
+ * "misc" in return is everything that is not "first" or "last"
+ */
+export function sortFirstLast(item: Object, options: SortFirstLastOptions = {}): { first: StringValue[], misc: StringValue[], last: StringValue[], exclude: StringValue[], all: StringValue[] } {
   if (item == null)
-    return { all: [] };
+    return { all: [], first: [], misc: [], last: [], exclude: [] };
+
+  if(options.exclude){
+    if(options.first)
+      options.first = util.exclude(options.first, options.exclude);
+    if(options.last)
+      options.last = util.exclude(options.last, options.exclude);
+  }
 
   let first = orderedFilteredEntries(item, options.first);
   let last = orderedFilteredEntries(item, options.last);
@@ -496,6 +510,8 @@ export class StartingConditions extends Entry {
   allowedItemCategories: string[];
   allowedArmors: string[];
   forbiddenArmors: string[];
+  allowedSoldierTypes: string[];
+  forbiddenSoldierTypes: string[];
   allowedVehicles: string[];
   deployments: string[];
 
@@ -609,14 +625,14 @@ export class Attack {
 
     if (this.alter && this.alter.ResistType) {
       let dType = Number(this.alter.ResistType);
-      if(Number.isNaN(this.damageType)){
+      if (Number.isNaN(this.damageType)) {
         console.error(this.item.id + "attack has string damage type")
       } else {
         this.damageType = dType;
         item.addDamageType(this.damageType);
       }
     }
-        
+
     if (mode != "ammo") {
       if (
         ((mode == "melee" && item.battleType == 3) || mode != "melee") &&
@@ -758,11 +774,11 @@ export class Article {
     this.image_id = raw.image_id;
     if (raw.requires)
       this.requires = Array.isArray(raw.requires) ? raw.requires : [raw.requires];
-      
+
     rul.articles[this.id] = this;
 
     let id = raw.id;
-      
+
     rul.articles[id] = this;
 
     if (raw.section) {
@@ -1019,6 +1035,7 @@ export class Item extends Entry {
   dropoff: number;
   damageTypes: number[]
   psiVision: number;
+  invSize: string;
 
   get sprite() {
     if (this.bigSprite) {
@@ -1033,7 +1050,7 @@ export class Item extends Entry {
 
   addDamageType(type: number) {
     this.damageTypes = this.damageTypes || [];
-    addIfNew(this.damageTypes, type);    
+    addIfNew(this.damageTypes, type);
     backLink(this.id, [damageTypes[type]], "damageTypes", "items");
   }
 
@@ -1098,6 +1115,8 @@ export class Item extends Entry {
     }
 
     this.attacks();
+
+    this.invSize = `${this.invWidth}×${this.invHeight}`;
   }
 
   attacks() {
@@ -1120,7 +1139,7 @@ export class Item extends Entry {
   }
 
 
-  sortField(n:string, v) {
+  sortField(n: string, v) {
     if (n === "category" && this.categories)
       return this.categories.includes(v) ? v : null;
 
@@ -1134,7 +1153,7 @@ export class Item extends Entry {
     }
 
     if (n === "damageType" && this.damageTypes) {
-      return this.damageTypes.map(n=>damageTypes[n])
+      return this.damageTypes.map(n => damageTypes[n])
     }
 
     if (this.damageAlter && this.damageAlter[n] != null)
@@ -1446,27 +1465,51 @@ export default class Ruleset {
     crosslink(this.manufacture, "spawnedPersonType", this.soldiers, "manufacture");
     crosslink(this.events, "spawnedPersonType", this.soldiers, "events");
     crosslink(this.missionScripts, "_missions", this.alienMissions, "scripts");
+    crosslink(this.alienDeployments, "terrains", this.terrains, "alienDeployments");
+    crosslink(this.terrains, "enviroEffects", this.enviroEffects, "terrains");
+
+    let all = {
+      Armors: Object.values(this.armors).filter(a => a.units).map(a => a.id),
+      SoldierTypes: Object.keys(rul.soldiers),
+      Vehicles: Object.keys(rul.units).filter(k=>rul.items[k]?.battleType == 3),
+      Craft: Object.keys(rul.crafts)
+    }
+
+    for (let sc of Object.values(this.startingConditions)) {
+      if (sc.forbiddenSoldierTypes?.length > 0) {
+        let forbiddenSoldierTypes = new Set(sc.forbiddenSoldierTypes);
+        sc.allowedSoldierTypes = Object.keys(rul.soldiers).filter(st => !forbiddenSoldierTypes.has(st));
+      }
+
+      sc.allowedSoldierTypes ||= all.SoldierTypes;
+      sc.allowedArmors ||= all.Armors;
+
+      if (sc.forbiddenArmors?.length > 0) {
+        let forbiddenArmors = new Set(sc.forbiddenArmors);
+        sc.allowedArmors = all.Armors.filter(a => !forbiddenArmors.has(a));
+      }
+
+      let armorsAllowedForSoldiers = new Set();
+      for(let st of sc.allowedSoldierTypes)
+        for(let a of rul.soldiers[st].armors)
+          armorsAllowedForSoldiers.add(a)
+      
+      sc.allowedArmors = sc.allowedArmors.filter(a=>armorsAllowedForSoldiers.has(a));
+    }
 
     for (let option of [
       ["Craft", this.crafts],
-      ["Armors", this.armors],
       ["SoldierTypes", this.soldiers],
-      ["Vehicles", this.units]]
+      ["Vehicles", this.units],
+      ["Armors", this.armors],
+    ] as [string,{[key:string]:Craft|Soldiers|Unit|Armor}][]
     ) {
+      for (let sc of Object.values(this.startingConditions)) {
+        if(sc[`allowed${option[0]}`])
+          sc[`forbidden${option[0]}`] = all[option[0]].filter(e=>!sc[`allowed${option[0]}`].includes(e))
+      }
       crosslink(this.startingConditions, `allowed${option[0]}`, option[1], "allowedIn");
       crosslink(this.startingConditions, `forbidden${option[0]}`, option[1], "forbiddenIn");
-    }
-
-    let ourArmors = Object.values(this.armors).filter(a => a.units);
-
-    for (let sc of Object.values(this.startingConditions)) {
-      if (sc.forbiddenArmors) {
-        let set = new Set(sc.forbiddenArmors);
-        for (let a of ourArmors) {
-          if (!set.has(a.id))
-            a.startingConditions.push(sc.id);
-        }
-      }
     }
 
     for (let c of Object.values(this.commendations)) {
@@ -1650,7 +1693,7 @@ export default class Ruleset {
     return this.sprites[id];
   }
 
-  async sprite(id: string|Promise<any>, onlyIfExists = false) {
+  async sprite(id: string | Promise<any>, onlyIfExists = false) {
     if (id instanceof Promise)
       return id;
     if (id in this.sprites)

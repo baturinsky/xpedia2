@@ -19,12 +19,12 @@
     }).all as [key, prop]}
     <tr>
       <td><Value val={key} /></td>
-      <td>
+      <td>        
         {#if "weaponStrings" == key}
           <Value
             val={prop.map((slot) => rul.tr(slot).replace(">{ALT}{0}", ""))}
           />
-        {:else if "sprite" == key}          
+        {:else if "sprite" == key}
           <Value obs="base" val={33 + prop}/>
           <Value obs="icon" val={prop + 11}/>
           <Value obs="icon" val={prop}/>

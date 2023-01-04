@@ -194,3 +194,21 @@ export function withoutKeys(o:Object, keys:string[]){
   }
   return o;
 }
+
+export function clog(...args){
+  //console.log(...args);
+}
+
+export function allFieldValuesOf(objects:Object[], field:string){
+  let s = new Set();
+
+  for(let o of objects){
+    s.add(o[field]);
+  }
+  return [...s];
+}
+
+export function exclude<T>(a:T[], b:T[]){
+  let s = new Set(b);
+  return a.filter(v=>!s.has(v))
+}

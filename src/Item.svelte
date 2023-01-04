@@ -1,6 +1,11 @@
 <script>
-  import { rul, sortFirstLast, damageTypes, internalBattleTypes } from "./Ruleset";
-  import {Tr, Link, Value} from "./Components"
+  import {
+    rul,
+    sortFirstLast,
+    damageTypes,
+    internalBattleTypes,
+  } from "./Ruleset";
+  import { Tr, Link, Value } from "./Components";
   import SpecialBonus from "./SpecialBonus.svelte";
   import CanvasImage from "./CanvasImage.svelte";
   import AlterList from "./AlterList.svelte";
@@ -24,14 +29,15 @@
   }
 
   $: {
-    console.info(entry);
-
+    //console.log(entry);
     attacks = entry.attacks().slice();
-    let ohpen = (entry.oneHandedPenalty || entry.battleType == 3?67:50);
+    let ohpen = entry.oneHandedPenalty || entry.battleType == 3 ? 67 : 50;
 
-    hand1bonus = entry.twoHanded?(entry.blockBothHands?
-      rul.tr("2handOnly"):`${rul.tr("1handPenalty")} ${ohpen}%`)
-      :"";
+    hand1bonus = entry.twoHanded
+      ? entry.blockBothHands
+        ? rul.tr("2handOnly")
+        : `${rul.tr("1handPenalty")} ${ohpen}%`
+      : "";
 
     if (entry.compatibleAmmo)
       for (let ammoId of entry.compatibleAmmo) {
@@ -49,7 +55,7 @@
         "tuUse",
         "monthlySalary",
         "monthlyMaintenance",
-        "size",        
+        "size",
         "isConsumable",
         "medikitTargetSelf",
         "medikitType",
@@ -65,7 +71,7 @@
         "recover",
         "energyRecovery",
         "healthRecovery",
-        "experienceTrainingMode",        
+        "experienceTrainingMode",
         "prisonType",
         "powerRangeReduction",
         "powerRangeThreshold",
@@ -73,7 +79,7 @@
         "loot",
         "ufos",
         "terrains",
-        "spawnUnit",             
+        "spawnUnit",
         "manufacture",
         "componentOf",
       ],
@@ -94,20 +100,18 @@
         "damageType",
       ],
     });
-    console.info(attacks);
   }
-
 </script>
 
 <table class="main-table">
   <thead>
     <td colspan="2">
-      {entry.weight?entry.weight + rul.tr("kg"):""}  
-      {entry.invWidth>1||entry.invHeight>1?`${entry.invWidth}×${entry.invHeight}`:""}
-      {entry.clipSize>0?entry.clipSize + rul.tr("-shot"):""}
-      <Link href={entry.internalBattleType}/>
-      <Tr s="Item"/>
-  </td>
+      {entry.weight ? entry.weight + rul.tr("kg") : ""}
+      {entry.invSize}
+      {entry.clipSize > 0 ? entry.clipSize + rul.tr("-shot") : ""}
+      <Link href={entry.internalBattleType} />
+      <Tr s="Item" />
+    </td>
   </thead>
   {#if (entry.sprite && entry.sprite != "Resources/Blanks/Blank.png") || attacks.length > 0}
     <tr>
@@ -119,15 +123,18 @@
                 {#if entry.battleType == 2}
                   <td colspan="3" />
                 {:else}
-                  <td><Tr s="mode"/></td>
+                  <td><Tr s="mode" /></td>
                   <td>
-                    <Tr s="accuracy"/> <Tr s="kneeling"/> {entry.kneelBonus||120}%
-                    -{entry.dropoff}/<Tr s="accPerTile"/>
+                    <Tr s="accuracy" />
+                    <Tr s="kneeling" />
+                    {entry.kneelBonus || 120}% -{entry.dropoff}/<Tr
+                      s="accPerTile"
+                    />
                     {@html hand1bonus}
                   </td>
-                  <td><Tr s="cost"/></td>
+                  <td><Tr s="cost" /></td>
                 {/if}
-                <td><Tr s="damage"/></td>
+                <td><Tr s="damage" /></td>
               </thead>
               {#each attacks as attack}
                 <tr>
@@ -160,22 +167,29 @@
                       {#if attack.range}
                         {@html rul
                           .str("up to !N! m")
-                          .replace("!N!", `<em class="${attack.range==entry.maxRange?"bad":""}">${entry.minRange?entry.minRange+"-":""}${attack.range}</em>`)}
-                      {/if}<br/>
+                          .replace(
+                            "!N!",
+                            `<em class="${
+                              attack.range == entry.maxRange ? "bad" : ""
+                            }">${entry.minRange ? entry.minRange + "-" : ""}${
+                              attack.range
+                            }</em>`
+                          )}
+                      {/if}<br />
                       <SpecialBonus bonus={attack.accuracyMultiplier} />
                     </td>
                     <td>
-                      <UseCost cost={attack.cost} flatTime={attack.flatTime}/>
+                      <UseCost cost={attack.cost} flatTime={attack.flatTime} />
                       {#if entry.costPrime}
                         <div>
-                          <Tr s="Prime:"/> <UseCost cost={entry.costPrime}/>
+                          <Tr s="Prime:" />
+                          <UseCost cost={entry.costPrime} />
                         </div>
                       {/if}
-
                     </td>
                   {/if}
                   <td>
-                    <Damage {attack}/>
+                    <Damage {attack} />
                   </td>
                 </tr>
 
@@ -212,26 +226,39 @@
         </tr>
       {/if}
     {:else if key == "manufacture"}
-    <SecondaryTable text={key}>
-      <table class="item-manufacture">
-        {#each prop as man, i}          
-        {@const m=rul.manufacture[man]}
-        <tr><td colspan="3" style="text-align: left;"><em><Value val={man} /></em></td></tr>
-          <tr>
-            <td style="text-align: right;"><Value val={m?.requiredItems || ""} /></td>
-            <td>➔</td>
-            <td style="text-align: left;">
-              <Value val={m?.totalProducedItems[entry.id]} />&nbsp;<Value val={entry.id}/>
-            </td>
-          </tr>
-        {/each}
-      </table>
-    </SecondaryTable>
+      <SecondaryTable text={key}>
+        <table class="item-manufacture">
+          {#each prop as man, i}
+            {@const m = rul.manufacture[man]}
+            <tr>
+              <td colspan="3" style="text-align: left;">
+                <Value val={man} />
+                {#if m?.requiresBaseFunc}
+                  / <Value val={m?.requiresBaseFunc} />
+                {/if}
+              </td>
+            </tr>
+            <tr>
+              <td style="text-align: right;">
+                <Value val={m?.requiredItems || ""} />
+                {#if m?.cost}$<Value val={m?.cost}/>{/if}
+                ⌛<em><Value val={m?.time}/></em>
+              </td>
+              <td>➔</td>
+              <td style="text-align: left;">
+                <Value val={m?.totalProducedItems[entry.id]} />&nbsp;<Value
+                  val={entry.id}
+                />
+              </td>
+            </tr>
+          {/each}
+        </table>
+      </SecondaryTable>
     {:else if key == "componentOf"}
-      <SecondaryTable text={key}><Value val={prop}/></SecondaryTable>
+      <SecondaryTable text={key}><Value val={prop} /></SecondaryTable>
     {:else}
       <tr>
-        <td><Value val={key} capital={true}/></td>
+        <td><Value val={key} capital={true} /></td>
         <td class="item-right-column">
           {#if ["damageBonus", "meleeBonus", "accuracyMultiplier", "meleeMultiplier", "closeQuartersMultiplier"].includes(key)}
             <SpecialBonus bonus={prop} />
@@ -256,7 +283,7 @@
           {:else if key == "prisonType"}
             <Link href={"prisonType" + prop} />
           {:else if key == "experienceTrainingMode"}
-            <Value val={prop} />: <Tr s={"experienceTrainingMode" + prop}/>
+            <Value val={prop} />: <Tr s={"experienceTrainingMode" + prop} />
           {:else if key == "costBuy"}
             <Value val={prop} /> <Value val={entry.requiresBuy || ""} />
           {:else}

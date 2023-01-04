@@ -5,9 +5,6 @@
 
   export let entry;
 
-  $: {
-    console.log(entry);
-  }
 </script>
 
 <table class="main-table">

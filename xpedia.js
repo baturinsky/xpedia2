@@ -4421,7 +4421,7 @@
       lookup.delete(block.key);
     });
   }
-  function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, lookup, node, destroy, create_each_block29, next, get_context) {
+  function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, lookup, node, destroy, create_each_block28, next, get_context) {
     let o = old_blocks.length;
     let n = list.length;
     let i = o;
@@ -4437,7 +4437,7 @@
       const key = get_key(child_ctx);
       let block = lookup.get(key);
       if (!block) {
-        block = create_each_block29(key, child_ctx);
+        block = create_each_block28(key, child_ctx);
         block.c();
       } else if (dynamic) {
         block.p(child_ctx, dirty);
@@ -8718,6 +8718,8 @@
     }
     return o;
   }
+  function clog(...args) {
+  }
 
   // src/PaginatedList.svelte
   function get_each_context2(ctx, list, i) {
@@ -12053,7 +12055,7 @@
     $$self.$$.update = () => {
       if ($$self.$$.dirty & 81) {
         $: {
-          console.log("MT", entry, sort, wide);
+          clog("MT", entry, sort, wide);
           $$invalidate(5, sorted = sortFirstLast(entry, sort));
         }
       }
@@ -12088,7 +12090,8 @@
     "CRAFT_WEAPONS",
     "SOLDIERS",
     "ARMORS",
-    "MANUFACTURE"
+    "MANUFACTURE",
+    "ITEM"
   ];
   function invisible(t) {
     return `<span style="visibility:hidden">${t}</span>`;
@@ -12138,7 +12141,6 @@
     modDirs = onlyDirs(modDirs);
     rootDirs = onlyDirs(rootDirs);
     xpediaDirs = onlyDirs(xpediaDirs);
-    options = null;
     if (modDirs.length == 0) {
       warn("can't find user/mods dir. Assuming we are in mod dir");
       modDirs = rootDirs;
@@ -12158,10 +12160,11 @@
       modMetadataById[data.id] = { ...data, dir };
     }
     let activeMods;
+    let masterModIds = modMetadata.filter((m) => m.isMaster).map((m) => m.id);
+    masterModIds.push("xpedia");
     if (options) {
       activeMods = ["xcom1", ...options.mods.filter((m) => m.active).map((m) => m.id)];
       modMetadata = modMetadata.filter((m) => activeMods.includes(m.id));
-      let masterModIds = modMetadata.filter((m) => m.isMaster).map((m) => m.id);
       modMetadata = modMetadata.filter((m) => m.isMaster || masterModIds.includes(m.master));
       activeMods = modMetadata.map((m) => m.id);
       let xpediaMods = Object.keys(modMetadataById).filter((k) => {
@@ -12170,6 +12173,7 @@
       });
       activeMods = [...activeMods, ...xpediaMods];
     } else {
+      modMetadata = modMetadata.filter((m) => m.isMaster || masterModIds.includes(m.master));
       const priority = (id) => {
         let mod = modMetadataById[id];
         if (mod.master == "xpedia")
@@ -12319,6 +12323,7 @@
     let packed = await packZip(JSON.stringify(src));
     let html = `
 <head>
+  <meta name="description" content="Online reference for OpenXCom games" />
   <style>${style}</style>
   <script>
   window.gameDir = ".";
@@ -12422,7 +12427,7 @@
     }
   };
   var Soldiers = class extends Entry {
-    sortField(n, v) {
+    sortField(n) {
       return this[n] || this.statCaps[n];
     }
   };
@@ -12596,7 +12601,7 @@
       }
       return false;
     }
-    sortField(n, v) {
+    sortField(n) {
       if (n == null)
         return;
       let fb = this.finalBonus;
@@ -12761,6 +12766,15 @@
         this.alter = item.meleeAlter;
       if (item.battleType == 3 || mode != "melee")
         this.alter = item.damageAlter;
+      if (this.alter && this.alter.ResistType) {
+        let dType = Number(this.alter.ResistType);
+        if (Number.isNaN(this.damageType)) {
+          console.error(this.item.id + "attack has string damage type");
+        } else {
+          this.damageType = dType;
+          item.addDamageType(this.damageType);
+        }
+      }
       if (mode != "ammo") {
         if ((mode == "melee" && item.battleType == 3 || mode != "melee") && item.flatRate)
           this.flatTime = item.flatRate;
@@ -12786,9 +12800,6 @@
         for (let k in this.accuracyMultiplier || [])
           backLink(item.id, [k], "stats", "weaponDamage");
       }
-      if (this.alter && this.alter.ResistType) {
-        this.damageType = Number(this.alter.ResistType);
-      }
       if (mode + "Range" in item) {
         this.alter = Object.assign({}, this.alter || {});
         this.alter.range = item[mode + "Range"];
@@ -12806,7 +12817,7 @@
       this.possible = true;
       rul.attacks.push(this);
     }
-    sortField(n, v) {
+    sortField(n) {
       switch (n) {
         case "internalBattleType":
           return this.item.internalBattleType;
@@ -13106,13 +13117,18 @@
       return this._attacks;
     }
     sortField(n, v) {
-      if (n == "damageTypes") {
+      if (n === "category" && this.categories)
+        return this.categories.includes(v) ? v : null;
+      if (n === "damageTypes") {
         if (v !== true) {
           let i = damageTypes.indexOf(v);
           return this.damageTypes?.includes(i);
         } else {
           return this.damageTypes?.map((d) => damageTypes[d]);
         }
+      }
+      if (n === "damageType" && this.damageTypes) {
+        return this.damageTypes.map((n2) => damageTypes[n2]);
       }
       if (this.damageAlter && this.damageAlter[n] != null)
         return this.damageAlter[n];
@@ -13370,6 +13386,23 @@
       crosslink(this.manufacture, "spawnedPersonType", this.soldiers, "manufacture");
       crosslink(this.events, "spawnedPersonType", this.soldiers, "events");
       crosslink(this.missionScripts, "_missions", this.alienMissions, "scripts");
+      let all = {
+        armors: Object.values(this.armors).filter((a) => a.units).map((a) => a.id),
+        soldierTypes: Object.keys(rul.soldiers),
+        crafts: Object.keys(rul.crafts)
+      };
+      for (let sc of Object.values(this.startingConditions)) {
+        if (sc.forbiddenSoldierTypes?.length > 0) {
+          let forbiddenSoldierTypes = new Set(sc.forbiddenSoldierTypes);
+          sc.allowedSoldierTypes = Object.keys(rul.soldiers).filter((st) => !forbiddenSoldierTypes.has(st));
+        }
+        if (sc.forbiddenArmors?.length > 0) {
+          let forbiddenArmors = new Set(sc.forbiddenArmors);
+          sc.allowedArmors = all.armors.filter((a) => !forbiddenArmors.has(a));
+        }
+        sc.allowedsoldierTypes ||= [];
+        sc.allowedArmors ||= [];
+      }
       for (let option of [
         ["Craft", this.crafts],
         ["Armors", this.armors],
@@ -13378,16 +13411,6 @@
       ]) {
         crosslink(this.startingConditions, `allowed${option[0]}`, option[1], "allowedIn");
         crosslink(this.startingConditions, `forbidden${option[0]}`, option[1], "forbiddenIn");
-      }
-      let ourArmors = Object.values(this.armors).filter((a) => a.units);
-      for (let sc of Object.values(this.startingConditions)) {
-        if (sc.forbiddenArmors) {
-          let set2 = new Set(sc.forbiddenArmors);
-          for (let a of ourArmors) {
-            if (!set2.has(a.id))
-              a.startingConditions.push(sc.id);
-          }
-        }
       }
       for (let c of Object.values(this.commendations)) {
         c.parseKillCriteria();
@@ -13600,7 +13623,8 @@
       return strs[0] > strs[1] ? 1 : -1;
     }
     article(id) {
-      let a = this.articles[this.redirect[id]] || this.articles[id];
+      let redirect = this.redirect[id];
+      let a = redirect && this.articles[redirect] || this.articles[id];
       return a;
     }
     sortStrings(s) {
@@ -15073,7 +15097,7 @@
         img_1 = element("img");
         attr(img_1, "alt", ctx[4]);
         attr(img_1, "class", "sprite");
-        if (!src_url_equal(img_1.src, img_1_src_value = ctx[8]))
+        if (!src_url_equal(img_1.src, img_1_src_value = ctx[9]))
           attr(img_1, "src", img_1_src_value);
         set_style(div, "display", "inline-block");
         set_style(div, "overflow", "hidden");
@@ -15083,7 +15107,7 @@
       m(target, anchor) {
         insert(target, div, anchor);
         append(div, img_1);
-        ctx[7](img_1);
+        ctx[8](img_1);
         if (!mounted) {
           dispose = listen(img_1, "load", ctx[5]);
           mounted = true;
@@ -15093,7 +15117,7 @@
         if (dirty & 16) {
           attr(img_1, "alt", ctx2[4]);
         }
-        if (dirty & 1 && !src_url_equal(img_1.src, img_1_src_value = ctx2[8])) {
+        if (dirty & 1 && !src_url_equal(img_1.src, img_1_src_value = ctx2[9])) {
           attr(img_1, "src", img_1_src_value);
         }
         if (dirty & 2) {
@@ -15106,7 +15130,7 @@
       d(detaching) {
         if (detaching)
           detach(div);
-        ctx[7](null);
+        ctx[8](null);
         mounted = false;
         dispose();
       }
@@ -15126,7 +15150,7 @@
       pending: create_pending_block3,
       then: create_then_block3,
       catch: create_catch_block3,
-      value: 8
+      value: 9
     };
     handle_promise(promise = ctx[0], info);
     return {
@@ -15166,10 +15190,10 @@
     let { maxHeight = null } = $$props;
     let img;
     let alt;
+    let { zoom = 2 } = $$props;
     function resize() {
-      $$invalidate(3, img.style.width = `${img.naturalWidth * 2}px`, img);
-      $$invalidate(3, img.style.height = `${img.naturalHeight * 2}px`, img);
-      console.log(maxWidth, maxHeight);
+      $$invalidate(3, img.style.width = `${img.naturalWidth * zoom}px`, img);
+      $$invalidate(3, img.style.height = `${img.naturalHeight * zoom}px`, img);
     }
     function img_1_binding($$value) {
       binding_callbacks[$$value ? "unshift" : "push"](() => {
@@ -15186,6 +15210,8 @@
         $$invalidate(1, maxWidth = $$props2.maxWidth);
       if ("maxHeight" in $$props2)
         $$invalidate(2, maxHeight = $$props2.maxHeight);
+      if ("zoom" in $$props2)
+        $$invalidate(7, zoom = $$props2.zoom);
     };
     $$self.$$.update = () => {
       if ($$self.$$.dirty & 65) {
@@ -15203,7 +15229,7 @@
         }
       }
     };
-    return [src, maxWidth, maxHeight, img, alt, resize, item, img_1_binding];
+    return [src, maxWidth, maxHeight, img, alt, resize, item, zoom, img_1_binding];
   }
   var CanvasImage = class extends SvelteComponent {
     constructor(options) {
@@ -15212,7 +15238,8 @@
         src: 0,
         item: 6,
         maxWidth: 1,
-        maxHeight: 2
+        maxHeight: 2,
+        zoom: 7
       });
     }
   };
@@ -15749,13 +15776,6 @@
         $$invalidate(0, cost = $$props2.cost);
       if ("flatTime" in $$props2)
         $$invalidate(1, flatTime = $$props2.flatTime);
-    };
-    $$self.$$.update = () => {
-      if ($$self.$$.dirty & 1) {
-        $: {
-          console.log(cost);
-        }
-      }
     };
     return [cost, flatTime];
   }
@@ -18294,7 +18314,6 @@
     $$self.$$.update = () => {
       if ($$self.$$.dirty & 3) {
         $: {
-          console.info(entry);
           $$invalidate(1, attacks = entry.attacks().slice());
           let ohpen = entry.oneHandedPenalty || entry.battleType == 3 ? 67 : 50;
           $$invalidate(4, hand1bonus = entry.twoHanded ? entry.blockBothHands ? rul.tr("2handOnly") : `${rul.tr("1handPenalty")} ${ohpen}%` : "");
@@ -18358,7 +18377,6 @@
               "damageType"
             ]
           }));
-          console.info(attacks);
         }
       }
     };
@@ -18530,52 +18548,59 @@
   // src/Armor.svelte
   function get_each_context15(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[7] = list[i][0];
-    child_ctx[8] = list[i][1];
+    child_ctx[6] = list[i][0];
+    child_ctx[7] = list[i][1];
     return child_ctx;
   }
   function get_each_context_14(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[11] = list[i];
-    child_ctx[13] = i;
+    child_ctx[10] = list[i];
+    child_ctx[12] = i;
     return child_ctx;
   }
   function get_each_context_24(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[8] = list[i];
+    child_ctx[6] = list[i][0];
+    child_ctx[13] = list[i][1];
+    child_ctx[12] = i;
     return child_ctx;
   }
   function get_each_context_34(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[7] = list[i][0];
-    child_ctx[16] = list[i][1];
-    child_ctx[13] = i;
+    child_ctx[7] = list[i];
     return child_ctx;
   }
   function get_each_context_43(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[18] = list[i];
-    child_ctx[20] = i;
+    child_ctx[6] = list[i][0];
+    child_ctx[13] = list[i][1];
+    child_ctx[12] = i;
     return child_ctx;
   }
   function get_each_context_52(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[22] = list[i];
-    child_ctx[13] = i;
+    child_ctx[19] = list[i];
+    child_ctx[21] = i;
     return child_ctx;
   }
   function get_each_context_6(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[24] = list[i];
-    child_ctx[20] = i;
+    child_ctx[22] = list[i];
+    child_ctx[12] = i;
     return child_ctx;
   }
-  function create_if_block_143(ctx) {
+  function get_each_context_7(ctx, list, i) {
+    const child_ctx = ctx.slice();
+    child_ctx[24] = list[i];
+    child_ctx[21] = i;
+    return child_ctx;
+  }
+  function create_if_block_133(ctx) {
     let span;
     let t1;
     let linkslist;
     let current;
-    linkslist = new LinksList_default({ props: { items: ctx[2] } });
+    linkslist = new LinksList_default({ props: { items: ctx[1] } });
     return {
       c() {
         span = element("span");
@@ -18592,8 +18617,8 @@
       },
       p(ctx2, dirty) {
         const linkslist_changes = {};
-        if (dirty & 4)
-          linkslist_changes.items = ctx2[2];
+        if (dirty & 2)
+          linkslist_changes.items = ctx2[1];
         linkslist.$set(linkslist_changes);
       },
       i(local) {
@@ -18616,795 +18641,19 @@
     };
   }
   function create_catch_block4(ctx) {
-    return { c: noop, m: noop, p: noop, d: noop };
+    return {
+      c: noop,
+      m: noop,
+      p: noop,
+      i: noop,
+      o: noop,
+      d: noop
+    };
   }
   function create_then_block4(ctx) {
     let if_block_anchor;
-    let if_block = ctx[21] && create_if_block_92(ctx);
-    return {
-      c() {
-        if (if_block)
-          if_block.c();
-        if_block_anchor = empty();
-      },
-      m(target, anchor) {
-        if (if_block)
-          if_block.m(target, anchor);
-        insert(target, if_block_anchor, anchor);
-      },
-      p(ctx2, dirty) {
-        if (ctx2[21]) {
-          if (if_block) {
-            if_block.p(ctx2, dirty);
-          } else {
-            if_block = create_if_block_92(ctx2);
-            if_block.c();
-            if_block.m(if_block_anchor.parentNode, if_block_anchor);
-          }
-        } else if (if_block) {
-          if_block.d(1);
-          if_block = null;
-        }
-      },
-      d(detaching) {
-        if (if_block)
-          if_block.d(detaching);
-        if (detaching)
-          detach(if_block_anchor);
-      }
-    };
-  }
-  function create_if_block_92(ctx) {
-    let show_if = Object.keys(ctx[21]).length > 1;
-    let t0;
-    let t1;
-    let div;
-    let div_style_value;
-    let if_block0 = show_if && create_if_block_133(ctx);
-    let each_value_5 = Object.keys(ctx[21]).sort(ctx[6]);
-    let each_blocks = [];
-    for (let i = 0; i < each_value_5.length; i += 1) {
-      each_blocks[i] = create_each_block_52(get_each_context_52(ctx, each_value_5, i));
-    }
-    let if_block1 = !ctx[3] && create_if_block_102(ctx);
-    return {
-      c() {
-        if (if_block0)
-          if_block0.c();
-        t0 = space();
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].c();
-        }
-        t1 = space();
-        div = element("div");
-        if (if_block1)
-          if_block1.c();
-        attr(div, "style", div_style_value = `min-height:${ctx[3] ? (Math.floor(Object.keys(ctx[21]).length / dollColumns) + 1) * 120 : 120}px;margin-left:175px;`);
-      },
-      m(target, anchor) {
-        if (if_block0)
-          if_block0.m(target, anchor);
-        insert(target, t0, anchor);
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].m(target, anchor);
-        }
-        insert(target, t1, anchor);
-        insert(target, div, anchor);
-        if (if_block1)
-          if_block1.m(div, null);
-      },
-      p(ctx2, dirty) {
-        if (dirty & 1)
-          show_if = Object.keys(ctx2[21]).length > 1;
-        if (show_if) {
-          if (if_block0) {
-            if_block0.p(ctx2, dirty);
-          } else {
-            if_block0 = create_if_block_133(ctx2);
-            if_block0.c();
-            if_block0.m(t0.parentNode, t0);
-          }
-        } else if (if_block0) {
-          if_block0.d(1);
-          if_block0 = null;
-        }
-        if (dirty & 25) {
-          each_value_5 = Object.keys(ctx2[21]).sort(ctx2[6]);
-          let i;
-          for (i = 0; i < each_value_5.length; i += 1) {
-            const child_ctx = get_each_context_52(ctx2, each_value_5, i);
-            if (each_blocks[i]) {
-              each_blocks[i].p(child_ctx, dirty);
-            } else {
-              each_blocks[i] = create_each_block_52(child_ctx);
-              each_blocks[i].c();
-              each_blocks[i].m(t1.parentNode, t1);
-            }
-          }
-          for (; i < each_blocks.length; i += 1) {
-            each_blocks[i].d(1);
-          }
-          each_blocks.length = each_value_5.length;
-        }
-        if (!ctx2[3]) {
-          if (if_block1) {
-            if_block1.p(ctx2, dirty);
-          } else {
-            if_block1 = create_if_block_102(ctx2);
-            if_block1.c();
-            if_block1.m(div, null);
-          }
-        } else if (if_block1) {
-          if_block1.d(1);
-          if_block1 = null;
-        }
-        if (dirty & 9 && div_style_value !== (div_style_value = `min-height:${ctx2[3] ? (Math.floor(Object.keys(ctx2[21]).length / dollColumns) + 1) * 120 : 120}px;margin-left:175px;`)) {
-          attr(div, "style", div_style_value);
-        }
-      },
-      d(detaching) {
-        if (if_block0)
-          if_block0.d(detaching);
-        if (detaching)
-          detach(t0);
-        destroy_each(each_blocks, detaching);
-        if (detaching)
-          detach(t1);
-        if (detaching)
-          detach(div);
-        if (if_block1)
-          if_block1.d();
-      }
-    };
-  }
-  function create_if_block_133(ctx) {
-    let p;
-    let button;
-    let t0_value = ctx[3] ? "Hide" : "See";
-    let t0;
-    let t1;
-    let mounted;
-    let dispose;
-    return {
-      c() {
-        p = element("p");
-        button = element("button");
-        t0 = text(t0_value);
-        t1 = text(" all variants");
-        attr(button, "class", "btn-hover-effect btn-hover-effect--effect-1");
-      },
-      m(target, anchor) {
-        insert(target, p, anchor);
-        append(p, button);
-        append(button, t0);
-        append(button, t1);
-        if (!mounted) {
-          dispose = listen(button, "click", ctx[5]);
-          mounted = true;
-        }
-      },
-      p(ctx2, dirty) {
-        if (dirty & 8 && t0_value !== (t0_value = ctx2[3] ? "Hide" : "See"))
-          set_data(t0, t0_value);
-      },
-      d(detaching) {
-        if (detaching)
-          detach(p);
-        mounted = false;
-        dispose();
-      }
-    };
-  }
-  function create_if_block_112(ctx) {
-    let div;
-    let t;
-    let if_block = ctx[3] && create_if_block_123(ctx);
-    let each_value_6 = ctx[21][ctx[22]];
-    let each_blocks = [];
-    for (let i = 0; i < each_value_6.length; i += 1) {
-      each_blocks[i] = create_each_block_6(get_each_context_6(ctx, each_value_6, i));
-    }
-    return {
-      c() {
-        div = element("div");
-        if (if_block)
-          if_block.c();
-        t = space();
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].c();
-        }
-        attr(div, "class", "armor");
-        set_style(div, "left", ctx[13] % dollColumns * 80 + "px");
-        set_style(div, "top", Math.floor(ctx[13] / dollColumns) * 120 + "px");
-      },
-      m(target, anchor) {
-        insert(target, div, anchor);
-        if (if_block)
-          if_block.m(div, null);
-        append(div, t);
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].m(div, null);
-        }
-      },
-      p(ctx2, dirty) {
-        if (ctx2[3]) {
-          if (if_block) {
-            if_block.p(ctx2, dirty);
-          } else {
-            if_block = create_if_block_123(ctx2);
-            if_block.c();
-            if_block.m(div, t);
-          }
-        } else if (if_block) {
-          if_block.d(1);
-          if_block = null;
-        }
-        if (dirty & 17) {
-          each_value_6 = ctx2[21][ctx2[22]];
-          let i;
-          for (i = 0; i < each_value_6.length; i += 1) {
-            const child_ctx = get_each_context_6(ctx2, each_value_6, i);
-            if (each_blocks[i]) {
-              each_blocks[i].p(child_ctx, dirty);
-            } else {
-              each_blocks[i] = create_each_block_6(child_ctx);
-              each_blocks[i].c();
-              each_blocks[i].m(div, null);
-            }
-          }
-          for (; i < each_blocks.length; i += 1) {
-            each_blocks[i].d(1);
-          }
-          each_blocks.length = each_value_6.length;
-        }
-      },
-      d(detaching) {
-        if (detaching)
-          detach(div);
-        if (if_block)
-          if_block.d();
-        destroy_each(each_blocks, detaching);
-      }
-    };
-  }
-  function create_if_block_123(ctx) {
-    let div;
-    let t_value = ctx[22] + "";
-    let t;
-    return {
-      c() {
-        div = element("div");
-        t = text(t_value);
-        attr(div, "class", "armor-variant");
-      },
-      m(target, anchor) {
-        insert(target, div, anchor);
-        append(div, t);
-      },
-      p(ctx2, dirty) {
-        if (dirty & 1 && t_value !== (t_value = ctx2[22] + ""))
-          set_data(t, t_value);
-      },
-      d(detaching) {
-        if (detaching)
-          detach(div);
-      }
-    };
-  }
-  function create_each_block_6(ctx) {
-    let img;
-    let img_src_value;
-    let img_alt_value;
-    return {
-      c() {
-        img = element("img");
-        if (!src_url_equal(img.src, img_src_value = ctx[24]))
-          attr(img, "src", img_src_value);
-        attr(img, "alt", img_alt_value = ctx[22]);
-        attr(img, "onerror", ctx[4]);
-        attr(img, "class", "armor-layer");
-      },
-      m(target, anchor) {
-        insert(target, img, anchor);
-      },
-      p(ctx2, dirty) {
-        if (dirty & 1 && !src_url_equal(img.src, img_src_value = ctx2[24])) {
-          attr(img, "src", img_src_value);
-        }
-        if (dirty & 1 && img_alt_value !== (img_alt_value = ctx2[22])) {
-          attr(img, "alt", img_alt_value);
-        }
-      },
-      d(detaching) {
-        if (detaching)
-          detach(img);
-      }
-    };
-  }
-  function create_each_block_52(ctx) {
-    let if_block_anchor;
-    let if_block = (ctx[3] || ctx[13] == 0) && create_if_block_112(ctx);
-    return {
-      c() {
-        if (if_block)
-          if_block.c();
-        if_block_anchor = empty();
-      },
-      m(target, anchor) {
-        if (if_block)
-          if_block.m(target, anchor);
-        insert(target, if_block_anchor, anchor);
-      },
-      p(ctx2, dirty) {
-        if (ctx2[3] || ctx2[13] == 0) {
-          if (if_block) {
-            if_block.p(ctx2, dirty);
-          } else {
-            if_block = create_if_block_112(ctx2);
-            if_block.c();
-            if_block.m(if_block_anchor.parentNode, if_block_anchor);
-          }
-        } else if (if_block) {
-          if_block.d(1);
-          if_block = null;
-        }
-      },
-      d(detaching) {
-        if (if_block)
-          if_block.d(detaching);
-        if (detaching)
-          detach(if_block_anchor);
-      }
-    };
-  }
-  function create_if_block_102(ctx) {
-    let p;
-    return {
-      c() {
-        p = element("p");
-      },
-      m(target, anchor) {
-        insert(target, p, anchor);
-        p.innerHTML = ctx[1];
-      },
-      p(ctx2, dirty) {
-        if (dirty & 2)
-          p.innerHTML = ctx2[1];
-        ;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(p);
-      }
-    };
-  }
-  function create_pending_block4(ctx) {
-    return { c: noop, m: noop, p: noop, d: noop };
-  }
-  function create_if_block_54(ctx) {
-    let div;
-    let header;
-    let tr2;
-    let t0;
-    let t1;
-    let div_class_value;
     let current;
-    tr2 = new Tr_default({ props: { s: ctx[8] } });
-    let each_value_3 = sortFirstLast(ctx[0][ctx[8]]).all;
-    let each_blocks = [];
-    for (let i = 0; i < each_value_3.length; i += 1) {
-      each_blocks[i] = create_each_block_34(get_each_context_34(ctx, each_value_3, i));
-    }
-    const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
-      each_blocks[i] = null;
-    });
-    return {
-      c() {
-        div = element("div");
-        header = element("header");
-        create_component(tr2.$$.fragment);
-        t0 = space();
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].c();
-        }
-        t1 = space();
-        attr(div, "class", div_class_value = "armor-column " + (ctx[8] == "damageModifier" && "armor-column-resists"));
-      },
-      m(target, anchor) {
-        insert(target, div, anchor);
-        append(div, header);
-        mount_component(tr2, header, null);
-        append(div, t0);
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].m(div, null);
-        }
-        append(div, t1);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        if (dirty & 1) {
-          each_value_3 = sortFirstLast(ctx2[0][ctx2[8]]).all;
-          let i;
-          for (i = 0; i < each_value_3.length; i += 1) {
-            const child_ctx = get_each_context_34(ctx2, each_value_3, i);
-            if (each_blocks[i]) {
-              each_blocks[i].p(child_ctx, dirty);
-              transition_in(each_blocks[i], 1);
-            } else {
-              each_blocks[i] = create_each_block_34(child_ctx);
-              each_blocks[i].c();
-              transition_in(each_blocks[i], 1);
-              each_blocks[i].m(div, t1);
-            }
-          }
-          group_outros();
-          for (i = each_value_3.length; i < each_blocks.length; i += 1) {
-            out(i);
-          }
-          check_outros();
-        }
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(tr2.$$.fragment, local);
-        for (let i = 0; i < each_value_3.length; i += 1) {
-          transition_in(each_blocks[i]);
-        }
-        current = true;
-      },
-      o(local) {
-        transition_out(tr2.$$.fragment, local);
-        each_blocks = each_blocks.filter(Boolean);
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          transition_out(each_blocks[i]);
-        }
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(div);
-        destroy_component(tr2);
-        destroy_each(each_blocks, detaching);
-      }
-    };
-  }
-  function create_else_block_13(ctx) {
-    let em;
-    let current_block_type_index;
-    let if_block;
-    let current;
-    const if_block_creators = [create_if_block_84, create_else_block_22];
-    const if_blocks = [];
-    function select_block_type_1(ctx2, dirty) {
-      if (ctx2[8] == "damageModifier")
-        return 0;
-      return 1;
-    }
-    current_block_type_index = select_block_type_1(ctx, -1);
-    if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-    return {
-      c() {
-        em = element("em");
-        if_block.c();
-      },
-      m(target, anchor) {
-        insert(target, em, anchor);
-        if_blocks[current_block_type_index].m(em, null);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        if_block.p(ctx2, dirty);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(if_block);
-        current = true;
-      },
-      o(local) {
-        transition_out(if_block);
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(em);
-        if_blocks[current_block_type_index].d();
-      }
-    };
-  }
-  function create_if_block_64(ctx) {
-    let each_1_anchor;
-    let current;
-    let each_value_4 = Object.keys(ctx[16]);
-    let each_blocks = [];
-    for (let i = 0; i < each_value_4.length; i += 1) {
-      each_blocks[i] = create_each_block_43(get_each_context_43(ctx, each_value_4, i));
-    }
-    const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
-      each_blocks[i] = null;
-    });
-    return {
-      c() {
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].c();
-        }
-        each_1_anchor = empty();
-      },
-      m(target, anchor) {
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].m(target, anchor);
-        }
-        insert(target, each_1_anchor, anchor);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        if (dirty & 1) {
-          each_value_4 = Object.keys(ctx2[16]);
-          let i;
-          for (i = 0; i < each_value_4.length; i += 1) {
-            const child_ctx = get_each_context_43(ctx2, each_value_4, i);
-            if (each_blocks[i]) {
-              each_blocks[i].p(child_ctx, dirty);
-              transition_in(each_blocks[i], 1);
-            } else {
-              each_blocks[i] = create_each_block_43(child_ctx);
-              each_blocks[i].c();
-              transition_in(each_blocks[i], 1);
-              each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
-            }
-          }
-          group_outros();
-          for (i = each_value_4.length; i < each_blocks.length; i += 1) {
-            out(i);
-          }
-          check_outros();
-        }
-      },
-      i(local) {
-        if (current)
-          return;
-        for (let i = 0; i < each_value_4.length; i += 1) {
-          transition_in(each_blocks[i]);
-        }
-        current = true;
-      },
-      o(local) {
-        each_blocks = each_blocks.filter(Boolean);
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          transition_out(each_blocks[i]);
-        }
-        current = false;
-      },
-      d(detaching) {
-        destroy_each(each_blocks, detaching);
-        if (detaching)
-          detach(each_1_anchor);
-      }
-    };
-  }
-  function create_else_block_22(ctx) {
-    let value;
-    let current;
-    value = new Value_default({ props: { val: ctx[16] } });
-    return {
-      c() {
-        create_component(value.$$.fragment);
-      },
-      m(target, anchor) {
-        mount_component(value, target, anchor);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        const value_changes = {};
-        if (dirty & 1)
-          value_changes.val = ctx2[16];
-        value.$set(value_changes);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(value.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(value.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(value, detaching);
-      }
-    };
-  }
-  function create_if_block_84(ctx) {
-    let span;
-    let t_value = ~~(ctx[16] * 100) + "";
-    let t;
-    let span_style_value;
-    return {
-      c() {
-        span = element("span");
-        t = text(t_value);
-        attr(span, "style", span_style_value = `text-weight:bold; color:hsl(${~~(ctx[16] * 70)}, 100%, 50%);`);
-      },
-      m(target, anchor) {
-        insert(target, span, anchor);
-        append(span, t);
-      },
-      p(ctx2, dirty) {
-        if (dirty & 1 && t_value !== (t_value = ~~(ctx2[16] * 100) + ""))
-          set_data(t, t_value);
-        if (dirty & 1 && span_style_value !== (span_style_value = `text-weight:bold; color:hsl(${~~(ctx2[16] * 70)}, 100%, 50%);`)) {
-          attr(span, "style", span_style_value);
-        }
-      },
-      i: noop,
-      o: noop,
-      d(detaching) {
-        if (detaching)
-          detach(span);
-      }
-    };
-  }
-  function create_if_block_74(ctx) {
-    let br;
-    return {
-      c() {
-        br = element("br");
-      },
-      m(target, anchor) {
-        insert(target, br, anchor);
-      },
-      d(detaching) {
-        if (detaching)
-          detach(br);
-      }
-    };
-  }
-  function create_each_block_43(ctx) {
-    let t0;
-    let value0;
-    let t1;
-    let em;
-    let value1;
-    let current;
-    let if_block = ctx[20] != 0 && create_if_block_74(ctx);
-    value0 = new Value_default({ props: { val: ctx[18] } });
-    value1 = new Value_default({
-      props: {
-        val: ctx[16][ctx[18]]
-      }
-    });
-    return {
-      c() {
-        if (if_block)
-          if_block.c();
-        t0 = space();
-        create_component(value0.$$.fragment);
-        t1 = text("\r\n                      :\r\n                      ");
-        em = element("em");
-        create_component(value1.$$.fragment);
-      },
-      m(target, anchor) {
-        if (if_block)
-          if_block.m(target, anchor);
-        insert(target, t0, anchor);
-        mount_component(value0, target, anchor);
-        insert(target, t1, anchor);
-        insert(target, em, anchor);
-        mount_component(value1, em, null);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        const value0_changes = {};
-        if (dirty & 1)
-          value0_changes.val = ctx2[18];
-        value0.$set(value0_changes);
-        const value1_changes = {};
-        if (dirty & 1)
-          value1_changes.val = ctx2[16][ctx2[18]];
-        value1.$set(value1_changes);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(value0.$$.fragment, local);
-        transition_in(value1.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(value0.$$.fragment, local);
-        transition_out(value1.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        if (if_block)
-          if_block.d(detaching);
-        if (detaching)
-          detach(t0);
-        destroy_component(value0, detaching);
-        if (detaching)
-          detach(t1);
-        if (detaching)
-          detach(em);
-        destroy_component(value1);
-      }
-    };
-  }
-  function create_each_block_34(ctx) {
-    let div0;
-    let value;
-    let t;
-    let div1;
-    let current_block_type_index;
-    let if_block;
-    let current;
-    value = new Value_default({
-      props: {
-        val: ctx[8] == "damageModifier" ? damageTypes[ctx[7]] : ctx[7],
-        icon: "monospace"
-      }
-    });
-    const if_block_creators = [create_if_block_64, create_else_block_13];
-    const if_blocks = [];
-    function select_block_type(ctx2, dirty) {
-      if ("recovery" == ctx2[8])
-        return 0;
-      return 1;
-    }
-    current_block_type_index = select_block_type(ctx, -1);
-    if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-    return {
-      c() {
-        div0 = element("div");
-        create_component(value.$$.fragment);
-        t = space();
-        div1 = element("div");
-        if_block.c();
-      },
-      m(target, anchor) {
-        insert(target, div0, anchor);
-        mount_component(value, div0, null);
-        insert(target, t, anchor);
-        insert(target, div1, anchor);
-        if_blocks[current_block_type_index].m(div1, null);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        const value_changes = {};
-        if (dirty & 1)
-          value_changes.val = ctx2[8] == "damageModifier" ? damageTypes[ctx2[7]] : ctx2[7];
-        value.$set(value_changes);
-        if_block.p(ctx2, dirty);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(value.$$.fragment, local);
-        transition_in(if_block);
-        current = true;
-      },
-      o(local) {
-        transition_out(value.$$.fragment, local);
-        transition_out(if_block);
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(div0);
-        destroy_component(value);
-        if (detaching)
-          detach(t);
-        if (detaching)
-          detach(div1);
-        if_blocks[current_block_type_index].d();
-      }
-    };
-  }
-  function create_each_block_24(ctx) {
-    let if_block_anchor;
-    let current;
-    let if_block = ctx[0][ctx[8]] && create_if_block_54(ctx);
+    let if_block = ctx[15] && create_if_block_54(ctx);
     return {
       c() {
         if (if_block)
@@ -19418,7 +18667,7 @@
         current = true;
       },
       p(ctx2, dirty) {
-        if (ctx2[0][ctx2[8]]) {
+        if (ctx2[15]) {
           if (if_block) {
             if_block.p(ctx2, dirty);
             if (dirty & 1) {
@@ -19456,10 +18705,889 @@
       }
     };
   }
+  function create_if_block_54(ctx) {
+    let show_if = Object.keys(ctx[15]).length > 1;
+    let t0;
+    let t1;
+    let div;
+    let div_style_value;
+    let current;
+    let if_block0 = show_if && create_if_block_123(ctx);
+    let each_value_6 = Object.keys(ctx[15]).sort(ctx[5]);
+    let each_blocks = [];
+    for (let i = 0; i < each_value_6.length; i += 1) {
+      each_blocks[i] = create_each_block_6(get_each_context_6(ctx, each_value_6, i));
+    }
+    let if_block1 = !ctx[2] && create_if_block_64(ctx);
+    return {
+      c() {
+        if (if_block0)
+          if_block0.c();
+        t0 = space();
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          each_blocks[i].c();
+        }
+        t1 = space();
+        div = element("div");
+        if (if_block1)
+          if_block1.c();
+        attr(div, "style", div_style_value = `min-height:${ctx[2] ? (Math.floor(Object.keys(ctx[15]).length / dollColumns) + 1) * 120 : 120}px;margin-left:175px;`);
+      },
+      m(target, anchor) {
+        if (if_block0)
+          if_block0.m(target, anchor);
+        insert(target, t0, anchor);
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          each_blocks[i].m(target, anchor);
+        }
+        insert(target, t1, anchor);
+        insert(target, div, anchor);
+        if (if_block1)
+          if_block1.m(div, null);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        if (dirty & 1)
+          show_if = Object.keys(ctx2[15]).length > 1;
+        if (show_if) {
+          if (if_block0) {
+            if_block0.p(ctx2, dirty);
+          } else {
+            if_block0 = create_if_block_123(ctx2);
+            if_block0.c();
+            if_block0.m(t0.parentNode, t0);
+          }
+        } else if (if_block0) {
+          if_block0.d(1);
+          if_block0 = null;
+        }
+        if (dirty & 13) {
+          each_value_6 = Object.keys(ctx2[15]).sort(ctx2[5]);
+          let i;
+          for (i = 0; i < each_value_6.length; i += 1) {
+            const child_ctx = get_each_context_6(ctx2, each_value_6, i);
+            if (each_blocks[i]) {
+              each_blocks[i].p(child_ctx, dirty);
+            } else {
+              each_blocks[i] = create_each_block_6(child_ctx);
+              each_blocks[i].c();
+              each_blocks[i].m(t1.parentNode, t1);
+            }
+          }
+          for (; i < each_blocks.length; i += 1) {
+            each_blocks[i].d(1);
+          }
+          each_blocks.length = each_value_6.length;
+        }
+        if (!ctx2[2]) {
+          if (if_block1) {
+            if_block1.p(ctx2, dirty);
+            if (dirty & 4) {
+              transition_in(if_block1, 1);
+            }
+          } else {
+            if_block1 = create_if_block_64(ctx2);
+            if_block1.c();
+            transition_in(if_block1, 1);
+            if_block1.m(div, null);
+          }
+        } else if (if_block1) {
+          group_outros();
+          transition_out(if_block1, 1, 1, () => {
+            if_block1 = null;
+          });
+          check_outros();
+        }
+        if (!current || dirty & 5 && div_style_value !== (div_style_value = `min-height:${ctx2[2] ? (Math.floor(Object.keys(ctx2[15]).length / dollColumns) + 1) * 120 : 120}px;margin-left:175px;`)) {
+          attr(div, "style", div_style_value);
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(if_block1);
+        current = true;
+      },
+      o(local) {
+        transition_out(if_block1);
+        current = false;
+      },
+      d(detaching) {
+        if (if_block0)
+          if_block0.d(detaching);
+        if (detaching)
+          detach(t0);
+        destroy_each(each_blocks, detaching);
+        if (detaching)
+          detach(t1);
+        if (detaching)
+          detach(div);
+        if (if_block1)
+          if_block1.d();
+      }
+    };
+  }
+  function create_if_block_123(ctx) {
+    let p;
+    let button;
+    let t0_value = ctx[2] ? "Hide" : "See";
+    let t0;
+    let t1;
+    let mounted;
+    let dispose;
+    return {
+      c() {
+        p = element("p");
+        button = element("button");
+        t0 = text(t0_value);
+        t1 = text(" all variants");
+        attr(button, "class", "btn-hover-effect btn-hover-effect--effect-1");
+      },
+      m(target, anchor) {
+        insert(target, p, anchor);
+        append(p, button);
+        append(button, t0);
+        append(button, t1);
+        if (!mounted) {
+          dispose = listen(button, "click", ctx[4]);
+          mounted = true;
+        }
+      },
+      p(ctx2, dirty) {
+        if (dirty & 4 && t0_value !== (t0_value = ctx2[2] ? "Hide" : "See"))
+          set_data(t0, t0_value);
+      },
+      d(detaching) {
+        if (detaching)
+          detach(p);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_if_block_102(ctx) {
+    let div;
+    let t;
+    let if_block = ctx[2] && create_if_block_112(ctx);
+    let each_value_7 = ctx[15][ctx[22]];
+    let each_blocks = [];
+    for (let i = 0; i < each_value_7.length; i += 1) {
+      each_blocks[i] = create_each_block_7(get_each_context_7(ctx, each_value_7, i));
+    }
+    return {
+      c() {
+        div = element("div");
+        if (if_block)
+          if_block.c();
+        t = space();
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          each_blocks[i].c();
+        }
+        attr(div, "class", "armor");
+        set_style(div, "left", ctx[12] % dollColumns * 80 + "px");
+        set_style(div, "top", Math.floor(ctx[12] / dollColumns) * 120 + "px");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        if (if_block)
+          if_block.m(div, null);
+        append(div, t);
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          each_blocks[i].m(div, null);
+        }
+      },
+      p(ctx2, dirty) {
+        if (ctx2[2]) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block_112(ctx2);
+            if_block.c();
+            if_block.m(div, t);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
+        if (dirty & 9) {
+          each_value_7 = ctx2[15][ctx2[22]];
+          let i;
+          for (i = 0; i < each_value_7.length; i += 1) {
+            const child_ctx = get_each_context_7(ctx2, each_value_7, i);
+            if (each_blocks[i]) {
+              each_blocks[i].p(child_ctx, dirty);
+            } else {
+              each_blocks[i] = create_each_block_7(child_ctx);
+              each_blocks[i].c();
+              each_blocks[i].m(div, null);
+            }
+          }
+          for (; i < each_blocks.length; i += 1) {
+            each_blocks[i].d(1);
+          }
+          each_blocks.length = each_value_7.length;
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        if (if_block)
+          if_block.d();
+        destroy_each(each_blocks, detaching);
+      }
+    };
+  }
+  function create_if_block_112(ctx) {
+    let div;
+    let t_value = ctx[22] + "";
+    let t;
+    return {
+      c() {
+        div = element("div");
+        t = text(t_value);
+        attr(div, "class", "armor-variant");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        append(div, t);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 1 && t_value !== (t_value = ctx2[22] + ""))
+          set_data(t, t_value);
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div);
+      }
+    };
+  }
+  function create_each_block_7(ctx) {
+    let img;
+    let img_src_value;
+    let img_alt_value;
+    return {
+      c() {
+        img = element("img");
+        if (!src_url_equal(img.src, img_src_value = ctx[24]))
+          attr(img, "src", img_src_value);
+        attr(img, "alt", img_alt_value = ctx[22]);
+        attr(img, "onerror", ctx[3]);
+        attr(img, "class", "armor-layer");
+      },
+      m(target, anchor) {
+        insert(target, img, anchor);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 1 && !src_url_equal(img.src, img_src_value = ctx2[24])) {
+          attr(img, "src", img_src_value);
+        }
+        if (dirty & 1 && img_alt_value !== (img_alt_value = ctx2[22])) {
+          attr(img, "alt", img_alt_value);
+        }
+      },
+      d(detaching) {
+        if (detaching)
+          detach(img);
+      }
+    };
+  }
+  function create_each_block_6(ctx) {
+    let if_block_anchor;
+    let if_block = (ctx[2] || ctx[12] == 0) && create_if_block_102(ctx);
+    return {
+      c() {
+        if (if_block)
+          if_block.c();
+        if_block_anchor = empty();
+      },
+      m(target, anchor) {
+        if (if_block)
+          if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+      },
+      p(ctx2, dirty) {
+        if (ctx2[2] || ctx2[12] == 0) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block_102(ctx2);
+            if_block.c();
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
+      },
+      d(detaching) {
+        if (if_block)
+          if_block.d(detaching);
+        if (detaching)
+          detach(if_block_anchor);
+      }
+    };
+  }
+  function create_if_block_64(ctx) {
+    let div;
+    let current;
+    let each_value_3 = ["stats", "armor"];
+    let each_blocks = [];
+    for (let i = 0; i < 2; i += 1) {
+      each_blocks[i] = create_each_block_34(get_each_context_34(ctx, each_value_3, i));
+    }
+    const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
+      each_blocks[i] = null;
+    });
+    return {
+      c() {
+        div = element("div");
+        for (let i = 0; i < 2; i += 1) {
+          each_blocks[i].c();
+        }
+        attr(div, "class", "flex-horisontal");
+        set_style(div, "max-width", "95vw");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        for (let i = 0; i < 2; i += 1) {
+          each_blocks[i].m(div, null);
+        }
+        current = true;
+      },
+      p(ctx2, dirty) {
+        if (dirty & 1) {
+          each_value_3 = ["stats", "armor"];
+          let i;
+          for (i = 0; i < 2; i += 1) {
+            const child_ctx = get_each_context_34(ctx2, each_value_3, i);
+            if (each_blocks[i]) {
+              each_blocks[i].p(child_ctx, dirty);
+              transition_in(each_blocks[i], 1);
+            } else {
+              each_blocks[i] = create_each_block_34(child_ctx);
+              each_blocks[i].c();
+              transition_in(each_blocks[i], 1);
+              each_blocks[i].m(div, null);
+            }
+          }
+          group_outros();
+          for (i = 2; i < 2; i += 1) {
+            out(i);
+          }
+          check_outros();
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        for (let i = 0; i < 2; i += 1) {
+          transition_in(each_blocks[i]);
+        }
+        current = true;
+      },
+      o(local) {
+        each_blocks = each_blocks.filter(Boolean);
+        for (let i = 0; i < 2; i += 1) {
+          transition_out(each_blocks[i]);
+        }
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        destroy_each(each_blocks, detaching);
+      }
+    };
+  }
+  function create_if_block_74(ctx) {
+    let div;
+    let header;
+    let tr2;
+    let t0;
+    let t1;
+    let current;
+    tr2 = new Tr_default({ props: { s: ctx[7] } });
+    let each_value_4 = sortFirstLast(ctx[0][ctx[7]]).all;
+    let each_blocks = [];
+    for (let i = 0; i < each_value_4.length; i += 1) {
+      each_blocks[i] = create_each_block_43(get_each_context_43(ctx, each_value_4, i));
+    }
+    const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
+      each_blocks[i] = null;
+    });
+    return {
+      c() {
+        div = element("div");
+        header = element("header");
+        create_component(tr2.$$.fragment);
+        t0 = space();
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          each_blocks[i].c();
+        }
+        t1 = space();
+        attr(div, "class", "armor-column");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        append(div, header);
+        mount_component(tr2, header, null);
+        append(div, t0);
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          each_blocks[i].m(div, null);
+        }
+        append(div, t1);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        if (dirty & 1) {
+          each_value_4 = sortFirstLast(ctx2[0][ctx2[7]]).all;
+          let i;
+          for (i = 0; i < each_value_4.length; i += 1) {
+            const child_ctx = get_each_context_43(ctx2, each_value_4, i);
+            if (each_blocks[i]) {
+              each_blocks[i].p(child_ctx, dirty);
+              transition_in(each_blocks[i], 1);
+            } else {
+              each_blocks[i] = create_each_block_43(child_ctx);
+              each_blocks[i].c();
+              transition_in(each_blocks[i], 1);
+              each_blocks[i].m(div, t1);
+            }
+          }
+          group_outros();
+          for (i = each_value_4.length; i < each_blocks.length; i += 1) {
+            out(i);
+          }
+          check_outros();
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(tr2.$$.fragment, local);
+        for (let i = 0; i < each_value_4.length; i += 1) {
+          transition_in(each_blocks[i]);
+        }
+        current = true;
+      },
+      o(local) {
+        transition_out(tr2.$$.fragment, local);
+        each_blocks = each_blocks.filter(Boolean);
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          transition_out(each_blocks[i]);
+        }
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        destroy_component(tr2);
+        destroy_each(each_blocks, detaching);
+      }
+    };
+  }
+  function create_else_block_13(ctx) {
+    let em;
+    let value;
+    let current;
+    value = new Value_default({ props: { val: ctx[13] } });
+    return {
+      c() {
+        em = element("em");
+        create_component(value.$$.fragment);
+      },
+      m(target, anchor) {
+        insert(target, em, anchor);
+        mount_component(value, em, null);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        const value_changes = {};
+        if (dirty & 1)
+          value_changes.val = ctx2[13];
+        value.$set(value_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(value.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(value.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(em);
+        destroy_component(value);
+      }
+    };
+  }
+  function create_if_block_84(ctx) {
+    let each_1_anchor;
+    let current;
+    let each_value_5 = Object.keys(ctx[13]);
+    let each_blocks = [];
+    for (let i = 0; i < each_value_5.length; i += 1) {
+      each_blocks[i] = create_each_block_52(get_each_context_52(ctx, each_value_5, i));
+    }
+    const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
+      each_blocks[i] = null;
+    });
+    return {
+      c() {
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          each_blocks[i].c();
+        }
+        each_1_anchor = empty();
+      },
+      m(target, anchor) {
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          each_blocks[i].m(target, anchor);
+        }
+        insert(target, each_1_anchor, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        if (dirty & 1) {
+          each_value_5 = Object.keys(ctx2[13]);
+          let i;
+          for (i = 0; i < each_value_5.length; i += 1) {
+            const child_ctx = get_each_context_52(ctx2, each_value_5, i);
+            if (each_blocks[i]) {
+              each_blocks[i].p(child_ctx, dirty);
+              transition_in(each_blocks[i], 1);
+            } else {
+              each_blocks[i] = create_each_block_52(child_ctx);
+              each_blocks[i].c();
+              transition_in(each_blocks[i], 1);
+              each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
+            }
+          }
+          group_outros();
+          for (i = each_value_5.length; i < each_blocks.length; i += 1) {
+            out(i);
+          }
+          check_outros();
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        for (let i = 0; i < each_value_5.length; i += 1) {
+          transition_in(each_blocks[i]);
+        }
+        current = true;
+      },
+      o(local) {
+        each_blocks = each_blocks.filter(Boolean);
+        for (let i = 0; i < each_blocks.length; i += 1) {
+          transition_out(each_blocks[i]);
+        }
+        current = false;
+      },
+      d(detaching) {
+        destroy_each(each_blocks, detaching);
+        if (detaching)
+          detach(each_1_anchor);
+      }
+    };
+  }
+  function create_if_block_92(ctx) {
+    let br;
+    return {
+      c() {
+        br = element("br");
+      },
+      m(target, anchor) {
+        insert(target, br, anchor);
+      },
+      d(detaching) {
+        if (detaching)
+          detach(br);
+      }
+    };
+  }
+  function create_each_block_52(ctx) {
+    let t0;
+    let value0;
+    let t1;
+    let em;
+    let value1;
+    let current;
+    let if_block = ctx[21] != 0 && create_if_block_92(ctx);
+    value0 = new Value_default({ props: { val: ctx[19] } });
+    value1 = new Value_default({
+      props: {
+        val: ctx[13][ctx[19]]
+      }
+    });
+    return {
+      c() {
+        if (if_block)
+          if_block.c();
+        t0 = space();
+        create_component(value0.$$.fragment);
+        t1 = text("\r\n                                :\r\n                                ");
+        em = element("em");
+        create_component(value1.$$.fragment);
+      },
+      m(target, anchor) {
+        if (if_block)
+          if_block.m(target, anchor);
+        insert(target, t0, anchor);
+        mount_component(value0, target, anchor);
+        insert(target, t1, anchor);
+        insert(target, em, anchor);
+        mount_component(value1, em, null);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        const value0_changes = {};
+        if (dirty & 1)
+          value0_changes.val = ctx2[19];
+        value0.$set(value0_changes);
+        const value1_changes = {};
+        if (dirty & 1)
+          value1_changes.val = ctx2[13][ctx2[19]];
+        value1.$set(value1_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(value0.$$.fragment, local);
+        transition_in(value1.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(value0.$$.fragment, local);
+        transition_out(value1.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        if (if_block)
+          if_block.d(detaching);
+        if (detaching)
+          detach(t0);
+        destroy_component(value0, detaching);
+        if (detaching)
+          detach(t1);
+        if (detaching)
+          detach(em);
+        destroy_component(value1);
+      }
+    };
+  }
+  function create_each_block_43(ctx) {
+    let div0;
+    let value;
+    let t;
+    let div1;
+    let current_block_type_index;
+    let if_block;
+    let current;
+    value = new Value_default({
+      props: { val: ctx[6], icon: "monospace" }
+    });
+    const if_block_creators = [create_if_block_84, create_else_block_13];
+    const if_blocks = [];
+    function select_block_type(ctx2, dirty) {
+      if ("recovery" == ctx2[7])
+        return 0;
+      return 1;
+    }
+    current_block_type_index = select_block_type(ctx, -1);
+    if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    return {
+      c() {
+        div0 = element("div");
+        create_component(value.$$.fragment);
+        t = space();
+        div1 = element("div");
+        if_block.c();
+      },
+      m(target, anchor) {
+        insert(target, div0, anchor);
+        mount_component(value, div0, null);
+        insert(target, t, anchor);
+        insert(target, div1, anchor);
+        if_blocks[current_block_type_index].m(div1, null);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        const value_changes = {};
+        if (dirty & 1)
+          value_changes.val = ctx2[6];
+        value.$set(value_changes);
+        if_block.p(ctx2, dirty);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(value.$$.fragment, local);
+        transition_in(if_block);
+        current = true;
+      },
+      o(local) {
+        transition_out(value.$$.fragment, local);
+        transition_out(if_block);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div0);
+        destroy_component(value);
+        if (detaching)
+          detach(t);
+        if (detaching)
+          detach(div1);
+        if_blocks[current_block_type_index].d();
+      }
+    };
+  }
+  function create_each_block_34(ctx) {
+    let if_block_anchor;
+    let current;
+    let if_block = ctx[0][ctx[7]] && create_if_block_74(ctx);
+    return {
+      c() {
+        if (if_block)
+          if_block.c();
+        if_block_anchor = empty();
+      },
+      m(target, anchor) {
+        if (if_block)
+          if_block.m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        if (ctx2[0][ctx2[7]]) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+            if (dirty & 1) {
+              transition_in(if_block, 1);
+            }
+          } else {
+            if_block = create_if_block_74(ctx2);
+            if_block.c();
+            transition_in(if_block, 1);
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
+        } else if (if_block) {
+          group_outros();
+          transition_out(if_block, 1, 1, () => {
+            if_block = null;
+          });
+          check_outros();
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(if_block);
+        current = true;
+      },
+      o(local) {
+        transition_out(if_block);
+        current = false;
+      },
+      d(detaching) {
+        if (if_block)
+          if_block.d(detaching);
+        if (detaching)
+          detach(if_block_anchor);
+      }
+    };
+  }
+  function create_pending_block4(ctx) {
+    return {
+      c: noop,
+      m: noop,
+      p: noop,
+      i: noop,
+      o: noop,
+      d: noop
+    };
+  }
+  function create_each_block_24(ctx) {
+    let div0;
+    let value;
+    let t0;
+    let div1;
+    let em;
+    let span;
+    let t1_value = ~~(ctx[13] * 100) + "";
+    let t1;
+    let span_style_value;
+    let t2;
+    let current;
+    value = new Value_default({
+      props: {
+        val: damageTypes[ctx[6]],
+        icon: "monospace"
+      }
+    });
+    return {
+      c() {
+        div0 = element("div");
+        create_component(value.$$.fragment);
+        t0 = space();
+        div1 = element("div");
+        em = element("em");
+        span = element("span");
+        t1 = text(t1_value);
+        t2 = space();
+        attr(span, "style", span_style_value = `text-weight:bold; color:hsl(${~~(ctx[13] * 70)}, 100%, 50%);`);
+      },
+      m(target, anchor) {
+        insert(target, div0, anchor);
+        mount_component(value, div0, null);
+        insert(target, t0, anchor);
+        insert(target, div1, anchor);
+        append(div1, em);
+        append(em, span);
+        append(span, t1);
+        append(div1, t2);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        const value_changes = {};
+        if (dirty & 1)
+          value_changes.val = damageTypes[ctx2[6]];
+        value.$set(value_changes);
+        if ((!current || dirty & 1) && t1_value !== (t1_value = ~~(ctx2[13] * 100) + ""))
+          set_data(t1, t1_value);
+        if (!current || dirty & 1 && span_style_value !== (span_style_value = `text-weight:bold; color:hsl(${~~(ctx2[13] * 70)}, 100%, 50%);`)) {
+          attr(span, "style", span_style_value);
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(value.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(value.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div0);
+        destroy_component(value);
+        if (detaching)
+          detach(t0);
+        if (detaching)
+          detach(div1);
+      }
+    };
+  }
   function create_else_block9(ctx) {
     let value;
     let current;
-    value = new Value_default({ props: { val: ctx[8] } });
+    value = new Value_default({ props: { val: ctx[7] } });
     return {
       c() {
         create_component(value.$$.fragment);
@@ -19471,7 +19599,7 @@
       p(ctx2, dirty) {
         const value_changes = {};
         if (dirty & 1)
-          value_changes.val = ctx2[8];
+          value_changes.val = ctx2[7];
         value.$set(value_changes);
       },
       i(local) {
@@ -19493,7 +19621,7 @@
     let value;
     let current;
     value = new Value_default({
-      props: { val: ctx[8].filter(func_12) }
+      props: { val: ctx[7].filter(func_12) }
     });
     return {
       c() {
@@ -19506,7 +19634,7 @@
       p(ctx2, dirty) {
         const value_changes = {};
         if (dirty & 1)
-          value_changes.val = ctx2[8].filter(func_12);
+          value_changes.val = ctx2[7].filter(func_12);
         value.$set(value_changes);
       },
       i(local) {
@@ -19527,7 +19655,7 @@
   function create_if_block_38(ctx) {
     let specialbonus;
     let current;
-    specialbonus = new SpecialBonus_default({ props: { bonus: ctx[8] } });
+    specialbonus = new SpecialBonus_default({ props: { bonus: ctx[7] } });
     return {
       c() {
         create_component(specialbonus.$$.fragment);
@@ -19539,7 +19667,7 @@
       p(ctx2, dirty) {
         const specialbonus_changes = {};
         if (dirty & 1)
-          specialbonus_changes.bonus = ctx2[8];
+          specialbonus_changes.bonus = ctx2[7];
         specialbonus.$set(specialbonus_changes);
       },
       i(local) {
@@ -19559,23 +19687,23 @@
   }
   function create_if_block_28(ctx) {
     let a;
-    let t_value = ctx[8] + "";
+    let t_value = ctx[7] + "";
     let t;
     let a_href_value;
     return {
       c() {
         a = element("a");
         t = text(t_value);
-        attr(a, "href", a_href_value = rul.sprite(ctx[8]));
+        attr(a, "href", a_href_value = rul.sprite(ctx[7]));
       },
       m(target, anchor) {
         insert(target, a, anchor);
         append(a, t);
       },
       p(ctx2, dirty) {
-        if (dirty & 1 && t_value !== (t_value = ctx2[8] + ""))
+        if (dirty & 1 && t_value !== (t_value = ctx2[7] + ""))
           set_data(t, t_value);
-        if (dirty & 1 && a_href_value !== (a_href_value = rul.sprite(ctx2[8]))) {
+        if (dirty & 1 && a_href_value !== (a_href_value = rul.sprite(ctx2[7]))) {
           attr(a, "href", a_href_value);
         }
       },
@@ -19590,7 +19718,7 @@
   function create_if_block_111(ctx) {
     let value;
     let current;
-    value = new Value_default({ props: { val: ctx[8][0] } });
+    value = new Value_default({ props: { val: ctx[7][0] } });
     return {
       c() {
         create_component(value.$$.fragment);
@@ -19602,7 +19730,7 @@
       p(ctx2, dirty) {
         const value_changes = {};
         if (dirty & 1)
-          value_changes.val = ctx2[8][0];
+          value_changes.val = ctx2[7][0];
         value.$set(value_changes);
       },
       i(local) {
@@ -19622,7 +19750,7 @@
   }
   function create_if_block14(ctx) {
     let table;
-    let each_value_1 = ctx[8];
+    let each_value_1 = ctx[7];
     let each_blocks = [];
     for (let i = 0; i < each_value_1.length; i += 1) {
       each_blocks[i] = create_each_block_14(get_each_context_14(ctx, each_value_1, i));
@@ -19643,7 +19771,7 @@
       },
       p(ctx2, dirty) {
         if (dirty & 1) {
-          each_value_1 = ctx2[8];
+          each_value_1 = ctx2[7];
           let i;
           for (i = 0; i < each_value_1.length; i += 1) {
             const child_ctx = get_each_context_14(ctx2, each_value_1, i);
@@ -19673,11 +19801,11 @@
   function create_each_block_14(ctx) {
     let tr2;
     let td0;
-    let t0_value = rul.damageTypeName(ctx[13]) + "";
+    let t0_value = rul.damageTypeName(ctx[12]) + "";
     let t0;
     let t1;
     let td1;
-    let t2_value = Math.round(ctx[11] * 100) + "";
+    let t2_value = Math.round(ctx[10] * 100) + "";
     let t2;
     let t3;
     return {
@@ -19704,7 +19832,7 @@
         append(td1, t3);
       },
       p(ctx2, dirty) {
-        if (dirty & 1 && t2_value !== (t2_value = Math.round(ctx2[11] * 100) + ""))
+        if (dirty & 1 && t2_value !== (t2_value = Math.round(ctx2[10] * 100) + ""))
           set_data(t2, t2_value);
       },
       d(detaching) {
@@ -19725,7 +19853,7 @@
     let current_block_type_index;
     let if_block;
     let current;
-    value = new Value_default({ props: { val: ctx[7] } });
+    value = new Value_default({ props: { val: ctx[6] } });
     const if_block_creators = [
       create_if_block14,
       create_if_block_111,
@@ -19735,32 +19863,32 @@
       create_else_block9
     ];
     const if_blocks = [];
-    function select_block_type_2(ctx2, dirty) {
+    function select_block_type_1(ctx2, dirty) {
       if (dirty & 1)
         show_if = null;
       if (dirty & 1)
         show_if_1 = null;
       if (dirty & 1)
         show_if_2 = null;
-      if (ctx2[7] == "damageModifier")
+      if (ctx2[6] == "damageModifier")
         return 0;
       if (show_if == null)
-        show_if = !!["corpseBattle"].includes(ctx2[7]);
+        show_if = !!["corpseBattle"].includes(ctx2[6]);
       if (show_if)
         return 1;
-      if ("spriteSheet" == ctx2[7])
+      if ("spriteSheet" == ctx2[6])
         return 2;
       if (show_if_1 == null)
-        show_if_1 = !!["psiDefence", "meleeDodge"].includes(ctx2[7]);
+        show_if_1 = !!["psiDefence", "meleeDodge"].includes(ctx2[6]);
       if (show_if_1)
         return 3;
       if (show_if_2 == null)
-        show_if_2 = !!["builtInWeapons", "users", "units"].includes(ctx2[7]);
+        show_if_2 = !!["builtInWeapons", "users", "units"].includes(ctx2[6]);
       if (show_if_2)
         return 4;
       return 5;
     }
-    current_block_type_index = select_block_type_2(ctx, -1);
+    current_block_type_index = select_block_type_1(ctx, -1);
     if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
     return {
       c() {
@@ -19783,10 +19911,10 @@
       p(ctx2, dirty) {
         const value_changes = {};
         if (dirty & 1)
-          value_changes.val = ctx2[7];
+          value_changes.val = ctx2[6];
         value.$set(value_changes);
         let previous_block_index = current_block_type_index;
-        current_block_type_index = select_block_type_2(ctx2, dirty);
+        current_block_type_index = select_block_type_1(ctx2, dirty);
         if (current_block_type_index === previous_block_index) {
           if_blocks[current_block_type_index].p(ctx2, dirty);
         } else {
@@ -19838,17 +19966,21 @@
     let div0;
     let promise;
     let t2;
-    let tr2;
+    let tr3;
     let td2;
+    let div2;
     let div1;
+    let header;
+    let tr2;
     let t3;
     let t4;
-    let subheader;
     let t5;
+    let subheader;
+    let t6;
     let recoverytable;
     let current;
     tr0 = new Tr_default({ props: { s: "Armor" } });
-    let if_block = ctx[2].length > 0 && create_if_block_143(ctx);
+    let if_block = ctx[1].length > 0 && create_if_block_133(ctx);
     let info = {
       ctx,
       current: null,
@@ -19857,12 +19989,14 @@
       pending: create_pending_block4,
       then: create_then_block4,
       catch: create_catch_block4,
-      value: 21
+      value: 15,
+      blocks: [, , ,]
     };
     handle_promise(promise = ctx[0].dollSprites(), info);
-    let each_value_2 = ["stats", "armor", "damageModifier"];
+    tr2 = new Tr_default({ props: { s: "damageModifier" } });
+    let each_value_2 = sortFirstLast(ctx[0].damageModifier).all;
     let each_blocks_1 = [];
-    for (let i = 0; i < 3; i += 1) {
+    for (let i = 0; i < each_value_2.length; i += 1) {
       each_blocks_1[i] = create_each_block_24(get_each_context_24(ctx, each_value_2, i));
     }
     const out = (i) => transition_out(each_blocks_1[i], 1, 1, () => {
@@ -19919,25 +20053,30 @@
         div0 = element("div");
         info.block.c();
         t2 = space();
-        tr2 = element("tr");
+        tr3 = element("tr");
         td2 = element("td");
+        div2 = element("div");
         div1 = element("div");
-        for (let i = 0; i < 3; i += 1) {
+        header = element("header");
+        create_component(tr2.$$.fragment);
+        t3 = space();
+        for (let i = 0; i < each_blocks_1.length; i += 1) {
           each_blocks_1[i].c();
         }
-        t3 = space();
+        t4 = space();
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
-        t4 = space();
-        create_component(subheader.$$.fragment);
         t5 = space();
+        create_component(subheader.$$.fragment);
+        t6 = space();
         create_component(recoverytable.$$.fragment);
         attr(td0, "colspan", "2");
         attr(div0, "class", "armors");
         attr(td1, "colspan", "2");
-        attr(div1, "class", "flex-horisontal");
-        set_style(div1, "max-width", "95vw");
+        attr(div1, "class", "armor-column armor-column-resists");
+        attr(div2, "class", "flex-horisontal");
+        set_style(div2, "max-width", "95vw");
         attr(td2, "colspan", "2");
         attr(table, "class", "main-table");
       },
@@ -19957,32 +20096,36 @@
         info.mount = () => div0;
         info.anchor = null;
         append(table, t2);
-        append(table, tr2);
-        append(tr2, td2);
-        append(td2, div1);
-        for (let i = 0; i < 3; i += 1) {
+        append(table, tr3);
+        append(tr3, td2);
+        append(td2, div2);
+        append(div2, div1);
+        append(div1, header);
+        mount_component(tr2, header, null);
+        append(div1, t3);
+        for (let i = 0; i < each_blocks_1.length; i += 1) {
           each_blocks_1[i].m(div1, null);
         }
-        append(table, t3);
+        append(table, t4);
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].m(table, null);
         }
-        append(table, t4);
-        mount_component(subheader, table, null);
         append(table, t5);
+        mount_component(subheader, table, null);
+        append(table, t6);
         mount_component(recoverytable, table, null);
         current = true;
       },
       p(new_ctx, [dirty]) {
         ctx = new_ctx;
-        if (ctx[2].length > 0) {
+        if (ctx[1].length > 0) {
           if (if_block) {
             if_block.p(ctx, dirty);
-            if (dirty & 4) {
+            if (dirty & 2) {
               transition_in(if_block, 1);
             }
           } else {
-            if_block = create_if_block_143(ctx);
+            if_block = create_if_block_133(ctx);
             if_block.c();
             transition_in(if_block, 1);
             if_block.m(td0, null);
@@ -20000,9 +20143,9 @@
           update_await_block_branch(info, ctx, dirty);
         }
         if (dirty & 1) {
-          each_value_2 = ["stats", "armor", "damageModifier"];
+          each_value_2 = sortFirstLast(ctx[0].damageModifier).all;
           let i;
-          for (i = 0; i < 3; i += 1) {
+          for (i = 0; i < each_value_2.length; i += 1) {
             const child_ctx = get_each_context_24(ctx, each_value_2, i);
             if (each_blocks_1[i]) {
               each_blocks_1[i].p(child_ctx, dirty);
@@ -20015,7 +20158,7 @@
             }
           }
           group_outros();
-          for (i = 3; i < 3; i += 1) {
+          for (i = each_value_2.length; i < each_blocks_1.length; i += 1) {
             out(i);
           }
           check_outros();
@@ -20056,7 +20199,7 @@
               each_blocks[i] = create_each_block15(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
-              each_blocks[i].m(table, t4);
+              each_blocks[i].m(table, t5);
             }
           }
           group_outros();
@@ -20075,7 +20218,9 @@
           return;
         transition_in(tr0.$$.fragment, local);
         transition_in(if_block);
-        for (let i = 0; i < 3; i += 1) {
+        transition_in(info.block);
+        transition_in(tr2.$$.fragment, local);
+        for (let i = 0; i < each_value_2.length; i += 1) {
           transition_in(each_blocks_1[i]);
         }
         for (let i = 0; i < each_value.length; i += 1) {
@@ -20088,8 +20233,13 @@
       o(local) {
         transition_out(tr0.$$.fragment, local);
         transition_out(if_block);
-        each_blocks_1 = each_blocks_1.filter(Boolean);
         for (let i = 0; i < 3; i += 1) {
+          const block = info.blocks[i];
+          transition_out(block);
+        }
+        transition_out(tr2.$$.fragment, local);
+        each_blocks_1 = each_blocks_1.filter(Boolean);
+        for (let i = 0; i < each_blocks_1.length; i += 1) {
           transition_out(each_blocks_1[i]);
         }
         each_blocks = each_blocks.filter(Boolean);
@@ -20109,6 +20259,7 @@
         info.block.d();
         info.token = null;
         info = null;
+        destroy_component(tr2);
         destroy_each(each_blocks_1, detaching);
         destroy_each(each_blocks, detaching);
         destroy_component(subheader);
@@ -20120,7 +20271,6 @@
   var func_12 = (s) => s.substr(0, 8) != "INV_NULL";
   function instance24($$self, $$props, $$invalidate) {
     let { entry } = $$props;
-    let { text: text2 } = $$props;
     let seeAllVariants = false;
     let seeAlso = [];
     const imageNotFound = () => {
@@ -20128,19 +20278,16 @@
       console.log(this.src + " not found");
       this.src = emptyImg;
     };
-    const click_handler = (e) => $$invalidate(3, seeAllVariants = !seeAllVariants);
-    const func5 = (a, b) => rul.bodiesCompare([a, b]);
+    const click_handler = (e) => $$invalidate(2, seeAllVariants = !seeAllVariants);
+    const func6 = (a, b) => rul.bodiesCompare([a, b]);
     $$self.$$set = ($$props2) => {
       if ("entry" in $$props2)
         $$invalidate(0, entry = $$props2.entry);
-      if ("text" in $$props2)
-        $$invalidate(1, text2 = $$props2.text);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 5) {
+      if ($$self.$$.dirty & 3) {
         $: {
-          console.log(entry);
-          $$invalidate(2, seeAlso = []);
+          $$invalidate(1, seeAlso = []);
           if ("storeItem" in entry && entry.storeItem != "STR_NONE" && entry.storeItem != entry.type) {
             seeAlso.push(entry.storeItem);
           }
@@ -20152,12 +20299,12 @@
         }
       }
     };
-    return [entry, text2, seeAlso, seeAllVariants, imageNotFound, click_handler, func5];
+    return [entry, seeAlso, seeAllVariants, imageNotFound, click_handler, func6];
   }
   var Armor2 = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance24, create_fragment24, safe_not_equal, { entry: 0, text: 1 });
+      init(this, options, instance24, create_fragment24, safe_not_equal, { entry: 0 });
     }
   };
   var Armor_default = Armor2;
@@ -20312,9 +20459,10 @@
   }
   function create_each_block16(ctx) {
     let tr2;
+    let td0;
     let value;
     let t0;
-    let td;
+    let td1;
     let current_block_type_index;
     let if_block;
     let t1;
@@ -20334,18 +20482,20 @@
     return {
       c() {
         tr2 = element("tr");
+        td0 = element("td");
         create_component(value.$$.fragment);
         t0 = space();
-        td = element("td");
+        td1 = element("td");
         if_block.c();
         t1 = space();
       },
       m(target, anchor) {
         insert(target, tr2, anchor);
-        mount_component(value, tr2, null);
+        append(tr2, td0);
+        mount_component(value, td0, null);
         append(tr2, t0);
-        append(tr2, td);
-        if_blocks[current_block_type_index].m(td, null);
+        append(tr2, td1);
+        if_blocks[current_block_type_index].m(td1, null);
         append(tr2, t1);
         current = true;
       },
@@ -20372,7 +20522,7 @@
             if_block.p(ctx2, dirty);
           }
           transition_in(if_block, 1);
-          if_block.m(td, null);
+          if_block.m(td1, null);
         }
       },
       i(local) {
@@ -20486,7 +20636,7 @@
   }
   function instance25($$self, $$props, $$invalidate) {
     let { entry } = $$props;
-    const func5 = (slot) => rul.tr(slot).replace(">{ALT}{0}", "");
+    const func6 = (slot) => rul.tr(slot).replace(">{ALT}{0}", "");
     $$self.$$set = ($$props2) => {
       if ("entry" in $$props2)
         $$invalidate(0, entry = $$props2.entry);
@@ -20498,7 +20648,7 @@
         }
       }
     };
-    return [entry, func5];
+    return [entry, func6];
   }
   var Craft2 = class extends SvelteComponent {
     constructor(options) {
@@ -20798,13 +20948,6 @@
       if ("entry" in $$props2)
         $$invalidate(0, entry = $$props2.entry);
     };
-    $$self.$$.update = () => {
-      if ($$self.$$.dirty & 1) {
-        $: {
-          console.log(entry);
-        }
-      }
-    };
     return [entry];
   }
   var CraftWeapon2 = class extends SvelteComponent {
@@ -20816,186 +20959,94 @@
   var CraftWeapon_default = CraftWeapon2;
 
   // src/Unit.svelte
-  function get_each_context18(ctx, list, i) {
-    const child_ctx = ctx.slice();
-    child_ctx[2] = list[i][0];
-    child_ctx[3] = list[i][1];
-    return child_ctx;
-  }
-  function create_each_block18(ctx) {
-    let tr2;
-    let td0;
-    let value0;
-    let td1;
-    let value1;
-    let t;
-    let current;
-    value0 = new Value_default({
-      props: { val: ctx[2], simple: true }
-    });
-    value1 = new Value_default({ props: { val: ctx[3] } });
-    return {
-      c() {
-        tr2 = element("tr");
-        td0 = element("td");
-        create_component(value0.$$.fragment);
-        td1 = element("td");
-        create_component(value1.$$.fragment);
-        t = space();
-      },
-      m(target, anchor) {
-        insert(target, tr2, anchor);
-        append(tr2, td0);
-        mount_component(value0, td0, null);
-        append(tr2, td1);
-        mount_component(value1, td1, null);
-        append(tr2, t);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        const value0_changes = {};
-        if (dirty & 1)
-          value0_changes.val = ctx2[2];
-        value0.$set(value0_changes);
-        const value1_changes = {};
-        if (dirty & 1)
-          value1_changes.val = ctx2[3];
-        value1.$set(value1_changes);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(value0.$$.fragment, local);
-        transition_in(value1.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(value0.$$.fragment, local);
-        transition_out(value1.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(tr2);
-        destroy_component(value0);
-        destroy_component(value1);
-      }
-    };
-  }
   function create_fragment27(ctx) {
-    let table;
-    let tr2;
-    let td;
-    let t1;
+    let maintable;
+    let t;
+    let armor;
     let current;
-    let each_value = ctx[0].all;
-    let each_blocks = [];
-    for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block18(get_each_context18(ctx, each_value, i));
-    }
-    const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
-      each_blocks[i] = null;
+    maintable = new MainTable_default({
+      props: {
+        title: rul.tr("Unit"),
+        entry: ctx[0],
+        sort: {
+          first: ["stats", "armor", "canSurrender"],
+          last: Object.keys(ctx[0]).filter(func3),
+          exclude: ["type"]
+        }
+      }
+    });
+    armor = new Armor_default({
+      props: {
+        entry: rul.armors[ctx[0].armor]
+      }
     });
     return {
       c() {
-        table = element("table");
-        tr2 = element("tr");
-        td = element("td");
-        td.textContent = `${rul.tr("Unit")}`;
-        t1 = space();
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].c();
-        }
-        attr(td, "colspan", "2");
-        attr(td, "class", "table-header");
-        attr(table, "class", "main-table");
+        create_component(maintable.$$.fragment);
+        t = space();
+        create_component(armor.$$.fragment);
       },
       m(target, anchor) {
-        insert(target, table, anchor);
-        append(table, tr2);
-        append(tr2, td);
-        append(table, t1);
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].m(table, null);
-        }
+        mount_component(maintable, target, anchor);
+        insert(target, t, anchor);
+        mount_component(armor, target, anchor);
         current = true;
       },
       p(ctx2, [dirty]) {
-        if (dirty & 1) {
-          each_value = ctx2[0].all;
-          let i;
-          for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context18(ctx2, each_value, i);
-            if (each_blocks[i]) {
-              each_blocks[i].p(child_ctx, dirty);
-              transition_in(each_blocks[i], 1);
-            } else {
-              each_blocks[i] = create_each_block18(child_ctx);
-              each_blocks[i].c();
-              transition_in(each_blocks[i], 1);
-              each_blocks[i].m(table, null);
-            }
-          }
-          group_outros();
-          for (i = each_value.length; i < each_blocks.length; i += 1) {
-            out(i);
-          }
-          check_outros();
-        }
+        const maintable_changes = {};
+        if (dirty & 1)
+          maintable_changes.entry = ctx2[0];
+        if (dirty & 1)
+          maintable_changes.sort = {
+            first: ["stats", "armor", "canSurrender"],
+            last: Object.keys(ctx2[0]).filter(func3),
+            exclude: ["type"]
+          };
+        maintable.$set(maintable_changes);
+        const armor_changes = {};
+        if (dirty & 1)
+          armor_changes.entry = rul.armors[ctx2[0].armor];
+        armor.$set(armor_changes);
       },
       i(local) {
         if (current)
           return;
-        for (let i = 0; i < each_value.length; i += 1) {
-          transition_in(each_blocks[i]);
-        }
+        transition_in(maintable.$$.fragment, local);
+        transition_in(armor.$$.fragment, local);
         current = true;
       },
       o(local) {
-        each_blocks = each_blocks.filter(Boolean);
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          transition_out(each_blocks[i]);
-        }
+        transition_out(maintable.$$.fragment, local);
+        transition_out(armor.$$.fragment, local);
         current = false;
       },
       d(detaching) {
+        destroy_component(maintable, detaching);
         if (detaching)
-          detach(table);
-        destroy_each(each_blocks, detaching);
+          detach(t);
+        destroy_component(armor, detaching);
       }
     };
   }
+  var func3 = (s) => s.indexOf("ound") != -1;
   function instance27($$self, $$props, $$invalidate) {
     let { entry } = $$props;
-    let sorted;
     $$self.$$set = ($$props2) => {
       if ("entry" in $$props2)
-        $$invalidate(1, entry = $$props2.entry);
+        $$invalidate(0, entry = $$props2.entry);
     };
-    $$self.$$.update = () => {
-      if ($$self.$$.dirty & 2) {
-        $: {
-          console.log(entry);
-          $$invalidate(0, sorted = sortFirstLast(entry, {
-            first: ["stats", "armor", "canSurrender"],
-            last: Object.keys(entry).filter((s) => s.indexOf("ound") != -1),
-            exclude: ["type"]
-          }));
-        }
-      }
-    };
-    return [sorted, entry];
+    return [entry];
   }
-  var Unit2 = class extends SvelteComponent {
+  var Unit_1 = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance27, create_fragment27, safe_not_equal, { entry: 1 });
+      init(this, options, instance27, create_fragment27, safe_not_equal, { entry: 0 });
     }
   };
-  var Unit_default = Unit2;
+  var Unit_default = Unit_1;
 
   // src/Research.svelte
-  function get_each_context19(ctx, list, i) {
+  function get_each_context18(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[3] = list[i][0];
     child_ctx[4] = list[i][1];
@@ -21323,7 +21374,7 @@
       }
     };
   }
-  function create_each_block19(ctx) {
+  function create_each_block18(ctx) {
     let show_if;
     let show_if_1;
     let current_block_type_index;
@@ -21402,7 +21453,7 @@
   }
   function create_fragment28(ctx) {
     let table;
-    let tr2;
+    let thead;
     let td;
     let t0;
     let t1;
@@ -21413,7 +21464,7 @@
     }).all;
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block19(get_each_context19(ctx, each_value, i));
+      each_blocks[i] = create_each_block18(get_each_context18(ctx, each_value, i));
     }
     const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
       each_blocks[i] = null;
@@ -21421,7 +21472,7 @@
     return {
       c() {
         table = element("table");
-        tr2 = element("tr");
+        thead = element("thead");
         td = element("td");
         t0 = text(ctx[1]);
         t1 = space();
@@ -21429,13 +21480,12 @@
           each_blocks[i].c();
         }
         attr(td, "colspan", "2");
-        attr(tr2, "class", "table-header");
         attr(table, "class", "main-table");
       },
       m(target, anchor) {
         insert(target, table, anchor);
-        append(table, tr2);
-        append(tr2, td);
+        append(table, thead);
+        append(thead, td);
         append(td, t0);
         append(table, t1);
         for (let i = 0; i < each_blocks.length; i += 1) {
@@ -21453,12 +21503,12 @@
           }).all;
           let i;
           for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context19(ctx2, each_value, i);
+            const child_ctx = get_each_context18(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
               transition_in(each_blocks[i], 1);
             } else {
-              each_blocks[i] = create_each_block19(child_ctx);
+              each_blocks[i] = create_each_block18(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
               each_blocks[i].m(table, null);
@@ -21515,13 +21565,6 @@
       if ("title" in $$props2)
         $$invalidate(1, title = $$props2.title);
     };
-    $$self.$$.update = () => {
-      if ($$self.$$.dirty & 1) {
-        $: {
-          console.log(entry);
-        }
-      }
-    };
     return [entry, title, longLists];
   }
   var Research2 = class extends SvelteComponent {
@@ -21533,7 +21576,7 @@
   var Research_default = Research2;
 
   // src/Manufacture.svelte
-  function get_each_context20(ctx, list, i) {
+  function get_each_context19(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[1] = list[i];
     return child_ctx;
@@ -21599,7 +21642,7 @@
       }
     };
   }
-  function create_each_block20(ctx) {
+  function create_each_block19(ctx) {
     let tr2;
     let td0;
     let t0_value = (ctx[1][0] / ctx[0].chanceSum * 100).toFixed(2) + "";
@@ -21701,7 +21744,7 @@
     let each_value = ctx[0].randomProducedItems;
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block20(get_each_context20(ctx, each_value, i));
+      each_blocks[i] = create_each_block19(get_each_context19(ctx, each_value, i));
     }
     const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
       each_blocks[i] = null;
@@ -21743,12 +21786,12 @@
           each_value = ctx2[0].randomProducedItems;
           let i;
           for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context20(ctx2, each_value, i);
+            const child_ctx = get_each_context19(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
               transition_in(each_blocks[i], 1);
             } else {
-              each_blocks[i] = create_each_block20(child_ctx);
+              each_blocks[i] = create_each_block19(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
               each_blocks[i].m(table, null);
@@ -21843,13 +21886,6 @@
       if ("entry" in $$props2)
         $$invalidate(0, entry = $$props2.entry);
     };
-    $$self.$$.update = () => {
-      if ($$self.$$.dirty & 1) {
-        $: {
-          console.log(entry);
-        }
-      }
-    };
     return [entry];
   }
   var Manufacture2 = class extends SvelteComponent {
@@ -21861,7 +21897,7 @@
   var Manufacture_default = Manufacture2;
 
   // src/Ufo.svelte
-  function get_each_context21(ctx, list, i) {
+  function get_each_context20(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[1] = list[i];
     child_ctx[3] = i;
@@ -22035,7 +22071,7 @@
     let each_value = Object.keys(ctx[0].raceBonus).sort();
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block21(get_each_context21(ctx, each_value, i));
+      each_blocks[i] = create_each_block20(get_each_context20(ctx, each_value, i));
     }
     const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
       each_blocks[i] = null;
@@ -22075,12 +22111,12 @@
           each_value = Object.keys(ctx2[0].raceBonus).sort();
           let i;
           for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context21(ctx2, each_value, i);
+            const child_ctx = get_each_context20(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
               transition_in(each_blocks[i], 1);
             } else {
-              each_blocks[i] = create_each_block21(child_ctx);
+              each_blocks[i] = create_each_block20(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
               each_blocks[i].m(tr0, null);
@@ -22175,7 +22211,7 @@
       }
     };
   }
-  function create_each_block21(ctx) {
+  function create_each_block20(ctx) {
     let tr2;
     let td0;
     let t0_value = rul.tr(ctx[1]) + "";
@@ -22410,7 +22446,7 @@
   var Ufo_default = Ufo;
 
   // src/FacilitySprite.svelte
-  function get_each_context22(ctx, list, i) {
+  function get_each_context21(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[3] = list[i];
     child_ctx[5] = i;
@@ -22501,7 +22537,7 @@
       }
     };
   }
-  function create_each_block22(ctx) {
+  function create_each_block21(ctx) {
     let each_1_anchor;
     let each_value_1 = { length: ctx[0] };
     let each_blocks = [];
@@ -22553,7 +22589,7 @@
     let each_value = { length: ctx[0] };
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block22(get_each_context22(ctx, each_value, i));
+      each_blocks[i] = create_each_block21(get_each_context21(ctx, each_value, i));
     }
     return {
       c() {
@@ -22577,11 +22613,11 @@
           each_value = { length: ctx2[0] };
           let i;
           for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context22(ctx2, each_value, i);
+            const child_ctx = get_each_context21(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
             } else {
-              each_blocks[i] = create_each_block22(child_ctx);
+              each_blocks[i] = create_each_block21(child_ctx);
               each_blocks[i].c();
               each_blocks[i].m(div, null);
             }
@@ -22631,7 +22667,7 @@
   var FacilitySprite_default = FacilitySprite;
 
   // src/Facility.svelte
-  function get_each_context23(ctx, list, i) {
+  function get_each_context22(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[4] = list[i][0];
     child_ctx[5] = list[i][1];
@@ -22902,7 +22938,7 @@
     let current;
     let mounted;
     let dispose;
-    let if_block = ctx[2] && create_if_block_46(ctx);
+    let if_block = ctx[1] && create_if_block_46(ctx);
     return {
       c() {
         div2 = element("div");
@@ -22930,10 +22966,10 @@
         }
       },
       p(ctx2, dirty) {
-        if (ctx2[2]) {
+        if (ctx2[1]) {
           if (if_block) {
             if_block.p(ctx2, dirty);
-            if (dirty & 4) {
+            if (dirty & 2) {
               transition_in(if_block, 1);
             }
           } else {
@@ -23045,7 +23081,7 @@
     let current;
     facilitysprite = new FacilitySprite_default({
       props: {
-        size: ctx[1],
+        size: ctx[2],
         prop: ctx[5]
       }
     });
@@ -23059,8 +23095,8 @@
       },
       p(ctx2, dirty) {
         const facilitysprite_changes = {};
-        if (dirty & 2)
-          facilitysprite_changes.size = ctx2[1];
+        if (dirty & 4)
+          facilitysprite_changes.size = ctx2[2];
         if (dirty & 1)
           facilitysprite_changes.prop = ctx2[5];
         facilitysprite.$set(facilitysprite_changes);
@@ -23087,14 +23123,14 @@
     let current;
     facilitysprite0 = new FacilitySprite_default({
       props: {
-        size: ctx[1],
+        size: ctx[2],
         prop: ctx[5],
         bottom: true
       }
     });
     facilitysprite1 = new FacilitySprite_default({
       props: {
-        size: ctx[1],
+        size: ctx[2],
         prop: ctx[0].spriteFacility
       }
     });
@@ -23112,14 +23148,14 @@
       },
       p(ctx2, dirty) {
         const facilitysprite0_changes = {};
-        if (dirty & 2)
-          facilitysprite0_changes.size = ctx2[1];
+        if (dirty & 4)
+          facilitysprite0_changes.size = ctx2[2];
         if (dirty & 1)
           facilitysprite0_changes.prop = ctx2[5];
         facilitysprite0.$set(facilitysprite0_changes);
         const facilitysprite1_changes = {};
-        if (dirty & 2)
-          facilitysprite1_changes.size = ctx2[1];
+        if (dirty & 4)
+          facilitysprite1_changes.size = ctx2[2];
         if (dirty & 1)
           facilitysprite1_changes.prop = ctx2[0].spriteFacility;
         facilitysprite1.$set(facilitysprite1_changes);
@@ -23271,7 +23307,7 @@
       }
     };
   }
-  function create_each_block23(ctx) {
+  function create_each_block22(ctx) {
     let show_if = !["type", "battlescapeTerrainData", "craftInventoryTile", "deployment"].includes(ctx[4]);
     let if_block_anchor;
     let current;
@@ -23341,7 +23377,7 @@
     }).all;
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block23(get_each_context23(ctx, each_value, i));
+      each_blocks[i] = create_each_block22(get_each_context22(ctx, each_value, i));
     }
     const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
       each_blocks[i] = null;
@@ -23378,12 +23414,12 @@
           }).all;
           let i;
           for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context23(ctx2, each_value, i);
+            const child_ctx = get_each_context22(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
               transition_in(each_blocks[i], 1);
             } else {
-              each_blocks[i] = create_each_block23(child_ctx);
+              each_blocks[i] = create_each_block22(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
               each_blocks[i].m(table, null);
@@ -23422,21 +23458,19 @@
     let { entry } = $$props;
     let seeStorageTiles = false;
     let size = 1;
-    const click_handler = (e) => $$invalidate(2, seeStorageTiles = !seeStorageTiles);
+    const click_handler = (e) => $$invalidate(1, seeStorageTiles = !seeStorageTiles);
     $$self.$$set = ($$props2) => {
       if ("entry" in $$props2)
         $$invalidate(0, entry = $$props2.entry);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & 3) {
+      if ($$self.$$.dirty & 1) {
         $: {
-          $$invalidate(1, size = entry.size || 1);
-          console.log(size);
-          console.info(entry);
+          $$invalidate(2, size = entry.size || 1);
         }
       }
     };
-    return [entry, size, seeStorageTiles, click_handler];
+    return [entry, seeStorageTiles, size, click_handler];
   }
   var Facility2 = class extends SvelteComponent {
     constructor(options) {
@@ -23447,7 +23481,7 @@
   var Facility_default = Facility2;
 
   // src/BaseService.svelte
-  function get_each_context24(ctx, list, i) {
+  function get_each_context23(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[1] = list[i];
     return child_ctx;
@@ -23510,7 +23544,7 @@
       }
     };
   }
-  function create_each_block24(ctx) {
+  function create_each_block23(ctx) {
     let show_if = !["id"].includes(ctx[1][0]);
     let if_block_anchor;
     let current;
@@ -23571,10 +23605,10 @@
   function create_fragment33(ctx) {
     let table;
     let current;
-    let each_value = Object.entries(ctx[0]).sort(func3);
+    let each_value = Object.entries(ctx[0]).sort(func4);
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block24(get_each_context24(ctx, each_value, i));
+      each_blocks[i] = create_each_block23(get_each_context23(ctx, each_value, i));
     }
     const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
       each_blocks[i] = null;
@@ -23596,15 +23630,15 @@
       },
       p(ctx2, [dirty]) {
         if (dirty & 1) {
-          each_value = Object.entries(ctx2[0]).sort(func3);
+          each_value = Object.entries(ctx2[0]).sort(func4);
           let i;
           for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context24(ctx2, each_value, i);
+            const child_ctx = get_each_context23(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
               transition_in(each_blocks[i], 1);
             } else {
-              each_blocks[i] = create_each_block24(child_ctx);
+              each_blocks[i] = create_each_block23(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
               each_blocks[i].m(table, null);
@@ -23639,7 +23673,7 @@
       }
     };
   }
-  var func3 = (a, b) => (a[0] == "providedBy" ? -10 : 10) + (a[0] > b[0] ? 1 : -1);
+  var func4 = (a, b) => (a[0] == "providedBy" ? -10 : 10) + (a[0] > b[0] ? 1 : -1);
   function instance33($$self, $$props, $$invalidate) {
     let { entry } = $$props;
     $$self.$$set = ($$props2) => {
@@ -23773,7 +23807,7 @@
   var SoldierBonuses_default = SoldierBonuses;
 
   // src/Commendation.svelte
-  function get_each_context25(ctx, list, i) {
+  function get_each_context24(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[3] = list[i];
     child_ctx[5] = i;
@@ -24123,7 +24157,7 @@
       }
     };
   }
-  function create_each_block25(key_1, ctx) {
+  function create_each_block24(key_1, ctx) {
     let first;
     let soldierbonuses;
     let current;
@@ -24210,9 +24244,9 @@
     let each_value = ctx[1];
     const get_key = (ctx2) => ctx2[5];
     for (let i = 0; i < each_value.length; i += 1) {
-      let child_ctx = get_each_context25(ctx, each_value, i);
+      let child_ctx = get_each_context24(ctx, each_value, i);
       let key = get_key(child_ctx);
-      each_1_lookup.set(key, each_blocks[i] = create_each_block25(key, child_ctx));
+      each_1_lookup.set(key, each_blocks[i] = create_each_block24(key, child_ctx));
     }
     return {
       c() {
@@ -24244,7 +24278,7 @@
         if (dirty & 2) {
           each_value = ctx2[1];
           group_outros();
-          each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx2, each_value, each_1_lookup, div, outro_and_destroy_block, create_each_block25, null, get_each_context25);
+          each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx2, each_value, each_1_lookup, div, outro_and_destroy_block, create_each_block24, null, get_each_context24);
           check_outros();
         }
       },
@@ -24279,7 +24313,7 @@
   function instance35($$self, $$props, $$invalidate) {
     let { entry } = $$props;
     let bonuses;
-    const func5 = (deeds) => deeds.map((deed) => deedDescription(deed)).join(` ${rul.tr("and")} `);
+    const func6 = (deeds) => deeds.map((deed) => deedDescription(deed)).join(` ${rul.tr("and")} `);
     $$self.$$set = ($$props2) => {
       if ("entry" in $$props2)
         $$invalidate(0, entry = $$props2.entry);
@@ -24304,7 +24338,7 @@
         }
       }
     };
-    return [entry, bonuses, func5];
+    return [entry, bonuses, func6];
   }
   var Commendation2 = class extends SvelteComponent {
     constructor(options) {
@@ -24315,118 +24349,11 @@
   var Commendation_default = Commendation2;
 
   // src/ArticleBody.svelte
-  function get_each_context26(ctx, list, i) {
+  function get_each_context25(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[5] = list[i][0];
     child_ctx[6] = list[i][1];
     return child_ctx;
-  }
-  function create_if_block_119(ctx) {
-    let div1;
-    let t;
-    let div0;
-    let current;
-    let if_block = rul.items[ctx[1]]?.sprite && ctx[0] && rul.items[ctx[1]].battleType != 2 && create_if_block_212(ctx);
-    return {
-      c() {
-        div1 = element("div");
-        if (if_block)
-          if_block.c();
-        t = space();
-        div0 = element("div");
-        attr(div1, "class", "main-table main-text");
-      },
-      m(target, anchor) {
-        insert(target, div1, anchor);
-        if (if_block)
-          if_block.m(div1, null);
-        append(div1, t);
-        append(div1, div0);
-        div0.innerHTML = ctx[0];
-        current = true;
-      },
-      p(ctx2, dirty) {
-        if (rul.items[ctx2[1]]?.sprite && ctx2[0] && rul.items[ctx2[1]].battleType != 2) {
-          if (if_block) {
-            if_block.p(ctx2, dirty);
-            if (dirty & 3) {
-              transition_in(if_block, 1);
-            }
-          } else {
-            if_block = create_if_block_212(ctx2);
-            if_block.c();
-            transition_in(if_block, 1);
-            if_block.m(div1, t);
-          }
-        } else if (if_block) {
-          group_outros();
-          transition_out(if_block, 1, 1, () => {
-            if_block = null;
-          });
-          check_outros();
-        }
-        if (!current || dirty & 1)
-          div0.innerHTML = ctx2[0];
-        ;
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(if_block);
-        current = true;
-      },
-      o(local) {
-        transition_out(if_block);
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(div1);
-        if (if_block)
-          if_block.d();
-      }
-    };
-  }
-  function create_if_block_212(ctx) {
-    let div;
-    let canvasimage;
-    let current;
-    canvasimage = new CanvasImage_default({
-      props: { item: rul.items[ctx[1]], zoom: 2 }
-    });
-    return {
-      c() {
-        div = element("div");
-        create_component(canvasimage.$$.fragment);
-        attr(div, "class", "article-text-image");
-      },
-      m(target, anchor) {
-        insert(target, div, anchor);
-        mount_component(canvasimage, div, null);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        const canvasimage_changes = {};
-        if (dirty & 2)
-          canvasimage_changes.item = rul.items[ctx2[1]];
-        canvasimage.$set(canvasimage_changes);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(canvasimage.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(canvasimage.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(div);
-        destroy_component(canvasimage);
-      }
-    };
   }
   function create_else_block16(ctx) {
     let maintable;
@@ -24547,7 +24474,7 @@
       }
     };
   }
-  function create_each_block26(ctx) {
+  function create_each_block25(ctx) {
     let current_block_type_index;
     let if_block;
     let if_block_anchor;
@@ -24611,32 +24538,24 @@
     };
   }
   function create_fragment36(ctx) {
-    let t;
     let each_1_anchor;
     let current;
-    let if_block = !ctx[2] && ctx[0] && create_if_block_119(ctx);
-    let each_value = Object.entries(ctx[3]).filter(ctx[4]);
+    let each_value = Object.entries(ctx[2]).filter(ctx[3]);
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block26(get_each_context26(ctx, each_value, i));
+      each_blocks[i] = create_each_block25(get_each_context25(ctx, each_value, i));
     }
     const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
       each_blocks[i] = null;
     });
     return {
       c() {
-        if (if_block)
-          if_block.c();
-        t = space();
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
         each_1_anchor = empty();
       },
       m(target, anchor) {
-        if (if_block)
-          if_block.m(target, anchor);
-        insert(target, t, anchor);
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].m(target, anchor);
         }
@@ -24644,35 +24563,16 @@
         current = true;
       },
       p(ctx2, [dirty]) {
-        if (!ctx2[2] && ctx2[0]) {
-          if (if_block) {
-            if_block.p(ctx2, dirty);
-            if (dirty & 5) {
-              transition_in(if_block, 1);
-            }
-          } else {
-            if_block = create_if_block_119(ctx2);
-            if_block.c();
-            transition_in(if_block, 1);
-            if_block.m(t.parentNode, t);
-          }
-        } else if (if_block) {
-          group_outros();
-          transition_out(if_block, 1, 1, () => {
-            if_block = null;
-          });
-          check_outros();
-        }
-        if (dirty & 11) {
-          each_value = Object.entries(ctx2[3]).filter(ctx2[4]);
+        if (dirty & 7) {
+          each_value = Object.entries(ctx2[2]).filter(ctx2[3]);
           let i;
           for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context26(ctx2, each_value, i);
+            const child_ctx = get_each_context25(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
               transition_in(each_blocks[i], 1);
             } else {
-              each_blocks[i] = create_each_block26(child_ctx);
+              each_blocks[i] = create_each_block25(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
               each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
@@ -24688,14 +24588,12 @@
       i(local) {
         if (current)
           return;
-        transition_in(if_block);
         for (let i = 0; i < each_value.length; i += 1) {
           transition_in(each_blocks[i]);
         }
         current = true;
       },
       o(local) {
-        transition_out(if_block);
         each_blocks = each_blocks.filter(Boolean);
         for (let i = 0; i < each_blocks.length; i += 1) {
           transition_out(each_blocks[i]);
@@ -24703,10 +24601,6 @@
         current = false;
       },
       d(detaching) {
-        if (if_block)
-          if_block.d(detaching);
-        if (detaching)
-          detach(t);
         destroy_each(each_blocks, detaching);
         if (detaching)
           detach(each_1_anchor);
@@ -24718,11 +24612,11 @@
     let { id } = $$props;
     let armor;
     const renderers = {
+      units: Unit_default,
+      armors: Armor_default,
       items: Item_default,
       battleTypes: {},
-      armors: Armor_default,
       research: Research_default,
-      units: Unit_default,
       stats: {},
       damageTypes: {},
       commendations: Commendation_default,
@@ -24757,7 +24651,7 @@
       eventScripts: { title: "Event Script" },
       inventorySections: {}
     };
-    const func5 = ([key]) => rul[key][id];
+    const func6 = ([key]) => rul[key][id];
     $$self.$$set = ($$props2) => {
       if ("text" in $$props2)
         $$invalidate(0, text2 = $$props2.text);
@@ -24767,11 +24661,11 @@
     $$self.$$.update = () => {
       if ($$self.$$.dirty & 2) {
         $: {
-          $$invalidate(2, armor = id in rul.armors ? rul.armors[id] : id in rul.units && rul.units[id].armor ? rul.armors[rul.units[id].armor] : null);
+          armor = id in rul.armors ? rul.armors[id] : id in rul.units && rul.units[id].armor ? rul.armors[rul.units[id].armor] : null;
         }
       }
     };
-    return [text2, id, armor, renderers, func5];
+    return [text2, id, renderers, func6];
   }
   var ArticleBody = class extends SvelteComponent {
     constructor(options) {
@@ -24782,12 +24676,12 @@
   var ArticleBody_default = ArticleBody;
 
   // src/Article.svelte
-  function get_each_context27(ctx, list, i) {
+  function get_each_context26(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[9] = list[i];
     return child_ctx;
   }
-  function create_if_block_153(ctx) {
+  function create_if_block_173(ctx) {
     let linkspage;
     let current;
     linkspage = new LinksPage_default({
@@ -24824,7 +24718,7 @@
       }
     };
   }
-  function create_if_block_144(ctx) {
+  function create_if_block_163(ctx) {
     let conditions;
     let current;
     conditions = new Conditions_default({
@@ -24861,7 +24755,7 @@
       }
     };
   }
-  function create_if_block_134(ctx) {
+  function create_if_block_153(ctx) {
     let sectiontable;
     let current;
     sectiontable = new SectionTable_default({
@@ -24919,7 +24813,7 @@
       }
     };
   }
-  function create_if_block_124(ctx) {
+  function create_if_block_143(ctx) {
     let sectiontable;
     let current;
     sectiontable = new SectionTable_default({
@@ -24968,7 +24862,7 @@
       }
     };
   }
-  function create_if_block_1110(ctx) {
+  function create_if_block_134(ctx) {
     let sectiontable;
     let current;
     sectiontable = new SectionTable_default({
@@ -24979,7 +24873,8 @@
         extraFields: [...rul.itemFields].filter(func_4).sort(),
         filters: {
           internalBattleType: ["any", ...internalBattleTypes],
-          damageTypes: ["any", ...damageTypes]
+          damageTypes: ["any", ...damageTypes],
+          category: ["any", ...rul.sortStrings(Object.keys(rul.categories))]
         }
       }
     });
@@ -25012,7 +24907,7 @@
       }
     };
   }
-  function create_if_block_103(ctx) {
+  function create_if_block_124(ctx) {
     let sectiontable;
     let current;
     sectiontable = new SectionTable_default({
@@ -25068,7 +24963,7 @@
       }
     };
   }
-  function create_if_block_93(ctx) {
+  function create_if_block_119(ctx) {
     let sectiontable;
     let current;
     sectiontable = new SectionTable_default({
@@ -25107,7 +25002,7 @@
       }
     };
   }
-  function create_if_block_85(ctx) {
+  function create_if_block_103(ctx) {
     let sectiontable;
     let current;
     sectiontable = new SectionTable_default({
@@ -25149,7 +25044,7 @@
       }
     };
   }
-  function create_if_block_76(ctx) {
+  function create_if_block_93(ctx) {
     let sectiontable;
     let current;
     sectiontable = new SectionTable_default({
@@ -25196,7 +25091,7 @@
       }
     };
   }
-  function create_if_block_66(ctx) {
+  function create_if_block_85(ctx) {
     let sectiontable;
     let current;
     sectiontable = new SectionTable_default({
@@ -25246,7 +25141,7 @@
       }
     };
   }
-  function create_if_block_56(ctx) {
+  function create_if_block_76(ctx) {
     let sectiontable;
     let current;
     sectiontable = new SectionTable_default({
@@ -25302,7 +25197,7 @@
       }
     };
   }
-  function create_if_block_47(ctx) {
+  function create_if_block_66(ctx) {
     let switch_instance;
     let switch_instance_anchor;
     let current;
@@ -25367,7 +25262,7 @@
       }
     };
   }
-  function create_if_block_311(ctx) {
+  function create_if_block_56(ctx) {
     let linkspage;
     let current;
     linkspage = new LinksPage_default({
@@ -25404,7 +25299,7 @@
       }
     };
   }
-  function create_if_block_213(ctx) {
+  function create_if_block_47(ctx) {
     let linkspage;
     let current;
     linkspage = new LinksPage_default({
@@ -25442,31 +25337,181 @@
     };
   }
   function create_if_block_120(ctx) {
+    let div1;
+    let t0;
+    let div0;
+    let html_tag;
+    let raw_value = ctx[0].text + "";
+    let t1;
+    let current;
+    let if_block0 = rul.items[ctx[0].id]?.sprite && ctx[0].text && rul.items[ctx[0].id].battleType != 2 && create_if_block_311(ctx);
+    let if_block1 = ctx[0].requires && ctx[0].requires != ctx[0].id && create_if_block_212(ctx);
+    return {
+      c() {
+        div1 = element("div");
+        if (if_block0)
+          if_block0.c();
+        t0 = space();
+        div0 = element("div");
+        html_tag = new HtmlTag(false);
+        t1 = space();
+        if (if_block1)
+          if_block1.c();
+        html_tag.a = t1;
+        attr(div1, "class", "main-table main-text");
+      },
+      m(target, anchor) {
+        insert(target, div1, anchor);
+        if (if_block0)
+          if_block0.m(div1, null);
+        append(div1, t0);
+        append(div1, div0);
+        html_tag.m(raw_value, div0);
+        append(div0, t1);
+        if (if_block1)
+          if_block1.m(div0, null);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        if (rul.items[ctx2[0].id]?.sprite && ctx2[0].text && rul.items[ctx2[0].id].battleType != 2) {
+          if (if_block0) {
+            if_block0.p(ctx2, dirty);
+            if (dirty & 1) {
+              transition_in(if_block0, 1);
+            }
+          } else {
+            if_block0 = create_if_block_311(ctx2);
+            if_block0.c();
+            transition_in(if_block0, 1);
+            if_block0.m(div1, t0);
+          }
+        } else if (if_block0) {
+          group_outros();
+          transition_out(if_block0, 1, 1, () => {
+            if_block0 = null;
+          });
+          check_outros();
+        }
+        if ((!current || dirty & 1) && raw_value !== (raw_value = ctx2[0].text + ""))
+          html_tag.p(raw_value);
+        if (ctx2[0].requires && ctx2[0].requires != ctx2[0].id) {
+          if (if_block1) {
+            if_block1.p(ctx2, dirty);
+            if (dirty & 1) {
+              transition_in(if_block1, 1);
+            }
+          } else {
+            if_block1 = create_if_block_212(ctx2);
+            if_block1.c();
+            transition_in(if_block1, 1);
+            if_block1.m(div0, null);
+          }
+        } else if (if_block1) {
+          group_outros();
+          transition_out(if_block1, 1, 1, () => {
+            if_block1 = null;
+          });
+          check_outros();
+        }
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(if_block0);
+        transition_in(if_block1);
+        current = true;
+      },
+      o(local) {
+        transition_out(if_block0);
+        transition_out(if_block1);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div1);
+        if (if_block0)
+          if_block0.d();
+        if (if_block1)
+          if_block1.d();
+      }
+    };
+  }
+  function create_if_block_311(ctx) {
+    let div;
+    let canvasimage;
+    let current;
+    canvasimage = new CanvasImage_default({
+      props: {
+        item: rul.items[ctx[0].id],
+        zoom: 2
+      }
+    });
+    return {
+      c() {
+        div = element("div");
+        create_component(canvasimage.$$.fragment);
+        attr(div, "class", "article-text-image");
+      },
+      m(target, anchor) {
+        insert(target, div, anchor);
+        mount_component(canvasimage, div, null);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        const canvasimage_changes = {};
+        if (dirty & 1)
+          canvasimage_changes.item = rul.items[ctx2[0].id];
+        canvasimage.$set(canvasimage_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(canvasimage.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(canvasimage.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(div);
+        destroy_component(canvasimage);
+      }
+    };
+  }
+  function create_if_block_212(ctx) {
+    let br;
+    let t0;
     let tr2;
-    let t;
+    let t1;
     let each_1_anchor;
     let current;
     tr2 = new Tr_default({ props: { s: "Research required:" } });
     let each_value = ctx[0].requires || [];
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block27(get_each_context27(ctx, each_value, i));
+      each_blocks[i] = create_each_block26(get_each_context26(ctx, each_value, i));
     }
     const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
       each_blocks[i] = null;
     });
     return {
       c() {
+        br = element("br");
+        t0 = space();
         create_component(tr2.$$.fragment);
-        t = space();
+        t1 = space();
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
         each_1_anchor = empty();
       },
       m(target, anchor) {
+        insert(target, br, anchor);
+        insert(target, t0, anchor);
         mount_component(tr2, target, anchor);
-        insert(target, t, anchor);
+        insert(target, t1, anchor);
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].m(target, anchor);
         }
@@ -25478,12 +25523,12 @@
           each_value = ctx2[0].requires || [];
           let i;
           for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context27(ctx2, each_value, i);
+            const child_ctx = get_each_context26(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
               transition_in(each_blocks[i], 1);
             } else {
-              each_blocks[i] = create_each_block27(child_ctx);
+              each_blocks[i] = create_each_block26(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
               each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
@@ -25514,16 +25559,20 @@
         current = false;
       },
       d(detaching) {
+        if (detaching)
+          detach(br);
+        if (detaching)
+          detach(t0);
         destroy_component(tr2, detaching);
         if (detaching)
-          detach(t);
+          detach(t1);
         destroy_each(each_blocks, detaching);
         if (detaching)
           detach(each_1_anchor);
       }
     };
   }
-  function create_each_block27(ctx) {
+  function create_each_block26(ctx) {
     let value;
     let current;
     value = new Value_default({ props: { val: ctx[9] } });
@@ -25613,10 +25662,10 @@
     let t9;
     let t10;
     let t11;
+    let t12;
     let div3;
     let div2;
     let switch_instance;
-    let t12;
     let t13;
     let articlebody;
     let t14;
@@ -25629,22 +25678,22 @@
     tr2 = new Tr_default({ props: { s: ctx[0].id } });
     value = new Value_default({
       props: {
-        val: ctx[0].sections.map(func4).filter(ctx[7])
+        val: ctx[0].sections.map(func5).filter(ctx[7])
       }
     });
     const if_block_creators = [
-      create_if_block_47,
-      create_if_block_56,
       create_if_block_66,
       create_if_block_76,
       create_if_block_85,
       create_if_block_93,
       create_if_block_103,
-      create_if_block_1110,
+      create_if_block_119,
       create_if_block_124,
       create_if_block_134,
-      create_if_block_144,
-      create_if_block_153
+      create_if_block_143,
+      create_if_block_153,
+      create_if_block_163,
+      create_if_block_173
     ];
     const if_blocks = [];
     function select_block_type(ctx2, dirty) {
@@ -25677,8 +25726,9 @@
     if (~(current_block_type_index = select_block_type(ctx, -1))) {
       if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
     }
-    let if_block1 = ctx[0].section == "CATEGORIES" && ctx[0].id != "CATEGORIES" && create_if_block_311(ctx);
-    let if_block2 = ctx[0].section == "MANUFACTURE_CATEGORIES" && ctx[0].id != "MANUFACTURE_CATEGORIES" && create_if_block_213(ctx);
+    let if_block1 = ctx[0].section == "CATEGORIES" && ctx[0].id != "CATEGORIES" && create_if_block_56(ctx);
+    let if_block2 = ctx[0].section == "MANUFACTURE_CATEGORIES" && ctx[0].id != "MANUFACTURE_CATEGORIES" && create_if_block_47(ctx);
+    let if_block3 = ctx[0].text && create_if_block_120(ctx);
     var switch_value = ctx[2];
     function switch_props(ctx2) {
       return { props: { query: ctx2[1] } };
@@ -25686,13 +25736,7 @@
     if (switch_value) {
       switch_instance = new switch_value(switch_props(ctx));
     }
-    let if_block3 = ctx[0].requires && ctx[0].requires != ctx[0].id && create_if_block_120(ctx);
-    articlebody = new ArticleBody_default({
-      props: {
-        id: ctx[0].id,
-        text: ctx[0].text
-      }
-    });
+    articlebody = new ArticleBody_default({ props: { id: ctx[0].id } });
     let if_block4 = !(ctx[0].id in rul.units) && create_if_block24(ctx);
     return {
       c() {
@@ -25722,13 +25766,13 @@
         if (if_block2)
           if_block2.c();
         t11 = space();
+        if (if_block3)
+          if_block3.c();
+        t12 = space();
         div3 = element("div");
         div2 = element("div");
         if (switch_instance)
           create_component(switch_instance.$$.fragment);
-        t12 = space();
-        if (if_block3)
-          if_block3.c();
         t13 = space();
         create_component(articlebody.$$.fragment);
         t14 = space();
@@ -25771,14 +25815,14 @@
         if (if_block2)
           if_block2.m(target, anchor);
         insert(target, t11, anchor);
+        if (if_block3)
+          if_block3.m(target, anchor);
+        insert(target, t12, anchor);
         insert(target, div3, anchor);
         append(div3, div2);
         if (switch_instance) {
           mount_component(switch_instance, div2, null);
         }
-        append(div2, t12);
-        if (if_block3)
-          if_block3.m(div2, null);
         append(div2, t13);
         mount_component(articlebody, div2, null);
         append(div2, t14);
@@ -25805,7 +25849,7 @@
         tr2.$set(tr_changes);
         const value_changes = {};
         if (dirty & 1)
-          value_changes.val = ctx2[0].sections.map(func4).filter(ctx2[7]);
+          value_changes.val = ctx2[0].sections.map(func5).filter(ctx2[7]);
         value.$set(value_changes);
         let previous_block_index = current_block_type_index;
         current_block_type_index = select_block_type(ctx2, dirty);
@@ -25842,7 +25886,7 @@
               transition_in(if_block1, 1);
             }
           } else {
-            if_block1 = create_if_block_311(ctx2);
+            if_block1 = create_if_block_56(ctx2);
             if_block1.c();
             transition_in(if_block1, 1);
             if_block1.m(t10.parentNode, t10);
@@ -25861,7 +25905,7 @@
               transition_in(if_block2, 1);
             }
           } else {
-            if_block2 = create_if_block_213(ctx2);
+            if_block2 = create_if_block_47(ctx2);
             if_block2.c();
             transition_in(if_block2, 1);
             if_block2.m(t11.parentNode, t11);
@@ -25870,6 +25914,25 @@
           group_outros();
           transition_out(if_block2, 1, 1, () => {
             if_block2 = null;
+          });
+          check_outros();
+        }
+        if (ctx2[0].text) {
+          if (if_block3) {
+            if_block3.p(ctx2, dirty);
+            if (dirty & 1) {
+              transition_in(if_block3, 1);
+            }
+          } else {
+            if_block3 = create_if_block_120(ctx2);
+            if_block3.c();
+            transition_in(if_block3, 1);
+            if_block3.m(t12.parentNode, t12);
+          }
+        } else if (if_block3) {
+          group_outros();
+          transition_out(if_block3, 1, 1, () => {
+            if_block3 = null;
           });
           check_outros();
         }
@@ -25889,37 +25952,16 @@
             switch_instance = new switch_value(switch_props(ctx2));
             create_component(switch_instance.$$.fragment);
             transition_in(switch_instance.$$.fragment, 1);
-            mount_component(switch_instance, div2, t12);
+            mount_component(switch_instance, div2, t13);
           } else {
             switch_instance = null;
           }
         } else if (switch_value) {
           switch_instance.$set(switch_instance_changes);
         }
-        if (ctx2[0].requires && ctx2[0].requires != ctx2[0].id) {
-          if (if_block3) {
-            if_block3.p(ctx2, dirty);
-            if (dirty & 1) {
-              transition_in(if_block3, 1);
-            }
-          } else {
-            if_block3 = create_if_block_120(ctx2);
-            if_block3.c();
-            transition_in(if_block3, 1);
-            if_block3.m(div2, t13);
-          }
-        } else if (if_block3) {
-          group_outros();
-          transition_out(if_block3, 1, 1, () => {
-            if_block3 = null;
-          });
-          check_outros();
-        }
         const articlebody_changes = {};
         if (dirty & 1)
           articlebody_changes.id = ctx2[0].id;
-        if (dirty & 1)
-          articlebody_changes.text = ctx2[0].text;
         articlebody.$set(articlebody_changes);
         if (!(ctx2[0].id in rul.units)) {
           if (if_block4) {
@@ -25949,9 +25991,9 @@
         transition_in(if_block0);
         transition_in(if_block1);
         transition_in(if_block2);
+        transition_in(if_block3);
         if (switch_instance)
           transition_in(switch_instance.$$.fragment, local);
-        transition_in(if_block3);
         transition_in(articlebody.$$.fragment, local);
         transition_in(if_block4);
         current = true;
@@ -25962,9 +26004,9 @@
         transition_out(if_block0);
         transition_out(if_block1);
         transition_out(if_block2);
+        transition_out(if_block3);
         if (switch_instance)
           transition_out(switch_instance.$$.fragment, local);
-        transition_out(if_block3);
         transition_out(articlebody.$$.fragment, local);
         transition_out(if_block4);
         current = false;
@@ -25995,12 +26037,14 @@
           if_block2.d(detaching);
         if (detaching)
           detach(t11);
+        if (if_block3)
+          if_block3.d(detaching);
+        if (detaching)
+          detach(t12);
         if (detaching)
           detach(div3);
         if (switch_instance)
           destroy_component(switch_instance);
-        if (if_block3)
-          if_block3.d();
         destroy_component(articlebody);
         if (if_block4)
           if_block4.d();
@@ -26009,7 +26053,7 @@
       }
     };
   }
-  var func4 = (s) => s.id;
+  var func5 = (s) => s.id;
   var func_2 = (s) => "recovery." + s;
   var func_3 = (v) => "acc*" + v;
   var func_4 = (f) => !["costSell", "costBuy", "size", "weight", "power"].includes(f);
@@ -26072,17 +26116,14 @@
         attr(animateTransform, "dur", "3s");
         attr(animateTransform, "repeatCount", "indefinite");
         attr(path, "d", "M37.43995192304605 -6.5 L47.43995192304605 -6.5 L47.43995192304605 6.5 L37.43995192304605 6.5 A38 38 0 0 1 35.67394948182593 13.090810836924174 L35.67394948182593 13.090810836924174 L44.33420351967032 18.090810836924174 L37.83420351967032 29.34914108612188 L29.17394948182593 24.34914108612188 A38 38 0 0 1 24.34914108612188 29.17394948182593 L24.34914108612188 29.17394948182593 L29.34914108612188 37.83420351967032 L18.090810836924184 44.33420351967032 L13.090810836924183 35.67394948182593 A38 38 0 0 1 6.5 37.43995192304605 L6.5 37.43995192304605 L6.500000000000001 47.43995192304605 L-6.499999999999995 47.43995192304606 L-6.499999999999996 37.43995192304606 A38 38 0 0 1 -13.09081083692417 35.67394948182593 L-13.09081083692417 35.67394948182593 L-18.09081083692417 44.33420351967032 L-29.34914108612187 37.834203519670325 L-24.349141086121872 29.173949481825936 A38 38 0 0 1 -29.17394948182592 24.34914108612189 L-29.17394948182592 24.34914108612189 L-37.83420351967031 29.349141086121893 L-44.33420351967031 18.0908108369242 L-35.67394948182592 13.090810836924193 A38 38 0 0 1 -37.43995192304605 6.5000000000000036 L-37.43995192304605 6.5000000000000036 L-47.43995192304605 6.500000000000004 L-47.43995192304606 -6.499999999999993 L-37.43995192304606 -6.499999999999994 A38 38 0 0 1 -35.67394948182593 -13.090810836924167 L-35.67394948182593 -13.090810836924167 L-44.33420351967032 -18.090810836924163 L-37.834203519670325 -29.34914108612187 L-29.173949481825936 -24.34914108612187 A38 38 0 0 1 -24.349141086121893 -29.17394948182592 L-24.349141086121893 -29.17394948182592 L-29.349141086121897 -37.834203519670304 L-18.0908108369242 -44.334203519670304 L-13.090810836924195 -35.67394948182592 A38 38 0 0 1 -6.500000000000005 -37.43995192304605 L-6.500000000000005 -37.43995192304605 L-6.500000000000007 -47.43995192304605 L6.49999999999999 -47.43995192304606 L6.499999999999992 -37.43995192304606 A38 38 0 0 1 13.090810836924149 -35.67394948182594 L13.090810836924149 -35.67394948182594 L18.090810836924142 -44.33420351967033 L29.349141086121847 -37.83420351967034 L24.349141086121854 -29.17394948182595 A38 38 0 0 1 29.17394948182592 -24.349141086121893 L29.17394948182592 -24.349141086121893 L37.834203519670304 -29.349141086121897 L44.334203519670304 -18.0908108369242 L35.67394948182592 -13.090810836924197 A38 38 0 0 1 37.43995192304605 -6.500000000000007 M0 -20A20 20 0 1 0 0 20 A20 20 0 1 0 0 -20");
-        attr(path, "fill", "#c5523f");
         attr(path, "id", "path8");
-        set_style(path, "fill", "#64ccbc");
+        set_style(path, "fill", "var(--lighter)");
         set_style(path, "fill-opacity", "1");
         attr(g0, "id", "g6");
         set_style(g0, "fill", "#64ccbc");
         set_style(g0, "fill-opacity", "1");
         attr(g1, "transform", g1_transform_value = "scale(" + ctx[0] / 200 + ") translate(50 50)");
         attr(g1, "id", "g4");
-        set_style(g1, "fill", "#64ccbc");
-        set_style(g1, "fill-opacity", "1");
         set_style(svg, "width", ctx[0] + "px");
         set_style(svg, "height", ctx[0] + "px");
       },
@@ -26229,7 +26270,7 @@
 
   // src/App.svelte
   var { document: document_1 } = globals;
-  function get_each_context28(ctx, list, i) {
+  function get_each_context27(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[58] = list[i];
     return child_ctx;
@@ -26442,7 +26483,7 @@
       }
     };
   }
-  function create_if_block_1111(ctx) {
+  function create_if_block_1110(ctx) {
     let button;
     let mounted;
     let dispose;
@@ -26933,7 +26974,7 @@
       }
     };
   }
-  function create_else_block_23(ctx) {
+  function create_else_block_22(ctx) {
     let h20;
     let tr0;
     let t0;
@@ -26971,7 +27012,7 @@
     let each_value = rul.mods;
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block28(get_each_context28(ctx, each_value, i));
+      each_blocks[i] = create_each_block27(get_each_context27(ctx, each_value, i));
     }
     let if_block = !packedData && create_if_block_67(ctx);
     tr3 = new Tr_default({ props: { s: "About XPedia" } });
@@ -27085,11 +27126,11 @@
           each_value = rul.mods;
           let i;
           for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context28(ctx2, each_value, i);
+            const child_ctx = get_each_context27(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
             } else {
-              each_blocks[i] = create_each_block28(child_ctx);
+              each_blocks[i] = create_each_block27(child_ctx);
               each_blocks[i].c();
               each_blocks[i].m(ul, null);
             }
@@ -27351,7 +27392,7 @@
       }
     };
   }
-  function create_each_block28(ctx) {
+  function create_each_block27(ctx) {
     let li;
     let t0_value = ctx[58].name + "";
     let t0;
@@ -27566,7 +27607,7 @@
       }
     };
   }
-  function create_if_block_214(ctx) {
+  function create_if_block_213(ctx) {
     let linkspage0;
     let br;
     let t;
@@ -27634,7 +27675,7 @@
     let if_block;
     let if_block_anchor;
     let current;
-    const if_block_creators = [create_if_block_214, create_if_block_312, create_if_block_48, create_else_block_15];
+    const if_block_creators = [create_if_block_213, create_if_block_312, create_if_block_48, create_else_block_15];
     const if_blocks = [];
     function select_block_type_3(ctx2, dirty) {
       if (ctx2[3] && ctx2[3].length > 0)
@@ -27769,11 +27810,11 @@
     const out_1 = (i) => transition_out(each_blocks[i], 1, 1, () => {
       each_blocks[i] = null;
     });
-    let if_block0 = !packedData && create_if_block_1111(ctx);
+    let if_block0 = !packedData && create_if_block_1110(ctx);
     let if_block1 = allowHugeFont && create_if_block_104(ctx);
     let if_block2 = rul.langNames?.length > 1 && create_if_block_94(ctx);
     let if_block3 = ctx[9] && create_if_block_77(ctx);
-    const if_block_creators = [create_if_block_121, create_if_block_57, create_else_block_23];
+    const if_block_creators = [create_if_block_121, create_if_block_57, create_else_block_22];
     const if_blocks = [];
     function select_block_type_2(ctx2, dirty) {
       if (ctx2[4] && ctx2[13])
@@ -27869,7 +27910,7 @@
         attr(div7, "class", div7_class_value = "navbar-button " + (ctx[19] ? "reveal-lock" : ""));
         attr(div7, "id", "reveal");
         attr(div7, "tooltip", "tip_reveal");
-        attr(div8, "class", "stretcher");
+        attr(div8, "class", "stretcher on-wide");
         attr(input, "class", "input");
         attr(input, "type", "text");
         attr(input, "id", "search-string");
@@ -28255,6 +28296,7 @@
     component_subscribe($$self, loaded, ($$value) => $$invalidate(17, $loaded = $$value));
     component_subscribe($$self, loadingFile, ($$value) => $$invalidate(18, $loadingFile = $$value));
     component_subscribe($$self, revealed, ($$value) => $$invalidate(19, $revealed = $$value));
+    "use strict";
     let article = null;
     let found = null;
     let query = "";
@@ -28354,8 +28396,8 @@
           if (!article || article.id != id)
             $$invalidate(0, article = rul.article(id));
         }
-        console.log(id);
-        console.log(article);
+        clog(id);
+        clog(article);
       }
       if (article) {
         if (article.sections) {
@@ -28502,7 +28544,7 @@
         $$invalidate(9, seeSide = !seeSide);
       saveState();
     };
-    const func5 = (a) => contains(rul.tr(a).toLowerCase(), query);
+    const func6 = (a) => contains(rul.tr(a).toLowerCase(), query);
     const func_13 = (a) => !contains(rul.tr(a).toLowerCase(), query);
     const prev_handler = (e) => nextArticle(-1);
     const next_handler = (e) => nextArticle(1);
@@ -28516,7 +28558,7 @@
       if ($$self.$$.dirty[0] & 3) {
         $: {
           if (article)
-            console.info(article);
+            clog(article);
           document.documentElement.style.fontSize = hugeFont ? "24pt" : "12pt";
         }
       }
@@ -28573,7 +28615,7 @@
       a_binding,
       click_handler_5,
       click_handler_6,
-      func5,
+      func6,
       func_13,
       prev_handler,
       next_handler,

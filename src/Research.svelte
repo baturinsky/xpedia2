@@ -25,9 +25,6 @@
 
   //let sorted = sortFirstLast(research, {last:[]});
 
-  $: {
-    console.log(entry);
-  }
 </script>
 
 <table class="main-table">

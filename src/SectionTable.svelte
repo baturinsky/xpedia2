@@ -1,4 +1,5 @@
 <script>
+  "use strict";
   import {
     Link,
     LinksPage,
@@ -11,6 +12,7 @@
   } from "./Components";
   import { onMount } from "svelte";
   import PaginatedList from "./PaginatedList.svelte";
+  import { allFieldValuesOf } from "./util";
 
   /**@type {any[]}*/ export let entries;
   /**@type {any[]}*/ export let fields;
@@ -29,7 +31,7 @@
 
   onMount(() => {});
 
-  function sortBy(field) {    
+  function sortBy(field) {
     if (field) {
       if (field != sortField) {
         sortField = field;
@@ -45,23 +47,29 @@
 
   function resort() {
     sorted = [...entries];
-    for(let k in filtersSelected){
-      if (filtersSelected[k] != null) 
+    for (let k in filtersSelected) {
+      if (filtersSelected[k] != null)
         sorted = sorted.filter((a) => {
-          if(filtersSelected[k] == "any")
-            return true;
-          let v = a.sortField(k, filtersSelected[k])
-          return v === true || v == filtersSelected[k] || Array.isArray(v) && v.includes(filtersSelected[k]);
+          if (filtersSelected[k] == "any") return true;
+          let v = a.sortField(k, filtersSelected[k]);
+          return (
+            v === true ||
+            v == filtersSelected[k] ||
+            (Array.isArray(v) && v.includes(filtersSelected[k]))
+          );
         });
     }
-    if(filterId?.length>0){
-      sorted = sorted.filter(a=>a.sortField("id").toLowerCase().match(filterId))
+    if (filterId?.length > 0) {
+      sorted = sorted.filter((a) =>
+        a.sortField("id").toLowerCase().match(filterId)
+      );
     }
-    
-    let nullValue = sortDescending?Number.MIN_VALUE:Number.MAX_VALUE
+
+    let nullValue = sortDescending ? Number.MIN_VALUE : Number.MAX_VALUE;
 
     sorted = sorted.sort((a, b) =>
-      (a.sortField(sortField) ?? nullValue) > (b.sortField(sortField) ?? nullValue) ==
+      (a.sortField(sortField) ?? nullValue) >
+        (b.sortField(sortField) ?? nullValue) ==
       sortDescending
         ? -1
         : 1
@@ -98,19 +106,31 @@
   }
 
   $: {
+    extraFields = extraFields.filter((item) => !fields.includes(item));
     sorted = sorted || [...entries];
     if (aIdLoaded == null || aIdLoaded != aId) loadFields();
-    localStorage["xpediaColumnOrder" + aId] = JSON.stringify({allFields: shownFields, filtersSelected, sortField, sortDescending});
+    localStorage["xpediaColumnOrder" + aId] = JSON.stringify({
+      allFields: shownFields,
+      filtersSelected,
+      sortField,
+      sortDescending,
+    });
+    for (let i in filters) {
+      if (filters[i].length <= 1) {
+        let s = allFieldValuesOf(entries, i);
+        filters[i] = [...filters[i], ...s.sort()];
+      }
+    }
   }
 
   function loadFields() {
     shownFields = ["id", ...fields];
     let saved = localStorage["xpediaColumnOrder" + aId];
-    if(saved){
-      try{
+    if (saved) {
+      try {
         let parsed = JSON.parse(saved);
-        if(parsed.allFields){
-          shownFields = parsed.allFields
+        if (parsed.allFields) {
+          shownFields = parsed.allFields;
           filtersSelected = parsed.filtersSelected;
           sortField = parsed.sortField;
           sortDescending = parsed.sortDescending;
@@ -133,18 +153,27 @@
 </p>
 
 <p>
-{#each Object.entries(filters) as [filter, options]}
-  <Tr s={filter}/>:
-  <select on:change={event=>{
-    filtersSelected[filter] = event.target.value;
-    resort();
-  }}>
-    {#each options as option,i}
-      <option selected={filtersSelected[filter]==option} value={option}><Tr s={option}/></option>
-    {/each}
-  </select>
-{/each}
-<input bind:value={filterId} on:keyup={resort} type="text" placeholder={tr("Filter...")}/>
+  {#each Object.entries(filters) as [filter, options]}
+    <Tr s={filter} />:
+    <select
+      on:change={(event) => {
+        filtersSelected[filter] = event.target.value;
+        resort();
+      }}
+    >
+      {#each options as option, i}
+        <option selected={filtersSelected[filter] == option} value={option}
+          ><Tr s={option} /></option
+        >
+      {/each}
+    </select>
+  {/each}
+  <input
+    bind:value={filterId}
+    on:keyup={resort}
+    type="text"
+    placeholder={tr("Filter...")}
+  />
 </p>
 
 <PaginatedList items={sorted} let:paginatedItems>
