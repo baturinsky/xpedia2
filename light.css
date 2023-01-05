@@ -1,0 +1,32 @@
+:root {
+  --saturation: 10%;
+  --hue: 25;
+
+  --text: #000;
+  --background: hsl(var(--hue), var(--saturation), 90%);
+  --border: hsl(var(--hue), var(--saturation), 60%);
+  --lighter: hsl(var(--hue), var(--saturation), 70%);
+  --hover: hsl(var(--hue), var(--saturation), 70%);
+  --scrollbar: hsl(var(--hue), var(--saturation), 80%);
+  --table-subheader: hsl(var(--hue), var(--saturation), 75%);
+  --table-header: hsl(var(--hue), var(--saturation), 75%);
+  --table-secondary: hsl(var(--hue), var(--saturation), 93%);
+  --table-main: hsl(var(--hue), var(--saturation), 95%);
+  --dead-link: #000;
+  --link: #332;
+  --title: #000;
+  --em: #444;
+  --shadow: "none";  
+  font-weight: 600;
+}
+
+a {
+  text-decoration: underline;
+  text-decoration-color: rgba(0,0,0,0.05);
+}
+
+body {
+  font-family: Calibri, Georgia, Helvetica, Ubuntu, Roboto,
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen-Sans, Cantarell,
+    "Helvetica Neue", sans-serif;
+}

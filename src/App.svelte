@@ -68,6 +68,19 @@
     lrcs = v;
   });
 
+  let theme = "light";
+
+  function toggleTheme() {    
+    theme = theme == "light"?"dark":"light";
+    applyTheme();
+    saveState();
+  }
+
+  function applyTheme() {    
+    let lightCSS = document.getElementById("light-css");
+    lightCSS.setAttribute("media", theme == "light" ? "" : "none");
+  }
+
   function saveState() {
     if (!saveLoaded) return;
     localStorage.xpediaSettings = JSON.stringify({
@@ -75,21 +88,24 @@
       seeSide,
       lang,
       sortArticles,
+      theme,
       linksPageSorted: _linksPageSorted,
     });
-    console.log("ss", localStorage.xpediaSettings);
+    clog("ss", localStorage.xpediaSettings);
   }
 
   export function loadState() {
     try {
-      console.log("ls", localStorage.xpediaSettings);
+      clog("ls", localStorage.xpediaSettings);
       let data = JSON.parse(localStorage.xpediaSettings);
       if (data && typeof data == "object") {
         hugeFont = data.hugeFont;
         seeSide = data.seeSide;
         sortArticles = data.sortArticles;
+        theme = data.theme;
         linksPageSorted.set(data.linksPageSorted);
         selectLang(data.lang);
+        applyTheme();
       }
     } catch (e) {
       console.log(e);
@@ -292,7 +308,7 @@
     <title>{tr("XPedia")}</title>
   {/if}
   <meta charset="utf8" />
-  <meta name="keywords" content="OpenXCom" />  
+  <meta name="keywords" content="OpenXCom" />
   <link rel="icon" type="image/png" href={favicon} />
 </svelte:head>
 
@@ -382,7 +398,7 @@
       >
         👁
       </div>
-      
+
       <div class="stretcher on-wide" />
 
       {#if !packedData}
@@ -397,6 +413,10 @@
           ⭯
         </button>
       {/if}
+
+      <button class="navbar-button" on:click={() => toggleTheme()}>
+        ▀▄
+      </button>
 
       {#if allowHugeFont}
         <button class="navbar-button" on:click={(e) => (hugeFont = !hugeFont)}>

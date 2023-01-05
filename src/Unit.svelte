@@ -10,7 +10,7 @@
 <MainTable
   let:key
   let:prop
-  title={rul.tr("Unit")}
+  title="Unit"
   {entry}
   sort={{
     first: ["stats", "armor", "canSurrender"],

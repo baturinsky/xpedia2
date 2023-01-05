@@ -196,7 +196,7 @@ export function withoutKeys(o:Object, keys:string[]){
 }
 
 export function clog(...args){
-  //console.log(...args);
+  console.log(...args);
 }
 
 export function allFieldValuesOf(objects:Object[], field:string){

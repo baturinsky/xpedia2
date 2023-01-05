@@ -14,7 +14,7 @@
   let sorted;
 
   $: {
-    //clog("MT", entry, sort, wide);
+    clog("MT", entry, sort, wide);
     sorted = sortFirstLast(entry, sort);
   }
 </script>

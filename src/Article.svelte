@@ -78,8 +78,8 @@
       "storage",
       "personnel",
       "workshops",
-      "kennel",
-      "prison",
+      "prisonType",
+      "aliens",      
     ]}
     extraFields={[
       "buildCost",

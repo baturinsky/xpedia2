@@ -323,12 +323,18 @@ export async function loadData(path:string){
   }
 }
 
+async function readStyle(id:string){
+  let css = document.getElementById(id) as HTMLLinkElement;
+  return css.href?(await (await fetch(css.href)).text()):css.innerHTML;    
+}
+
 export async function exportPedia(onlyCurrentLanguage = false) {
   document.body.style.cursor = "wait";
   let jsPath = (document.getElementById("xpedia-js") as HTMLScriptElement)?.src;
   let js = await (await fetch(jsPath)).text();
-  let mainCSS = document.getElementById("main-css") as HTMLLinkElement;
-  let style = mainCSS.href?(await (await fetch(mainCSS.href)).text()):mainCSS.innerHTML;  
+  let style = await readStyle("main-css");
+  let lightStyle = await readStyle("light-css");
+  debugger;
 
   let src = rul.src;
   
@@ -351,7 +357,8 @@ export async function exportPedia(onlyCurrentLanguage = false) {
   let html = `
 <head>
   <meta name="description" content="Online reference for OpenXCom games" />
-  <style>${style}</style>
+  <style id="main-css">${style}</style>
+  <style id="light-css" media="none">${lightStyle}</style>
   <script>
   window.gameDir = ".";
   window.xpediaDir = "xpedia2/";

@@ -493,6 +493,8 @@ export class Facility extends Entry {
     if (this.aliens) {
       Service.add("providedBy", this.type, [`prisonType${this.prisonType || 1}`]);
     }
+    if(!this.prisonType && this.aliens)
+      this.prisonType = 1;
   }
 
   get kennel() {
