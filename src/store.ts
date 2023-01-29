@@ -3,6 +3,8 @@ import { get, writable } from 'svelte/store';
 export const revealed = writable(false);
 let revealedLock = false;
 
+export const markersLoaded = writable(false);
+
 export const linksPageSorted = writable(false);
 export const loadingFile = writable("");
 export const leftRightClickSwipe = writable(null);

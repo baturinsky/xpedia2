@@ -1,4 +1,8 @@
 <script>
+/**
+ * UI root. Left and top bar. Switches between search results, article and the front page.
+*/
+
   "use strict";
   import { rul, Article as ArticleRul } from "./Ruleset";
   import {
@@ -11,14 +15,15 @@
   } from "./Components";
   import Article from "./Article.svelte";
   import CogAnimation from "./CogAnimation.svelte";
-  import { afterUpdate, setContext } from "svelte";
+  import { afterUpdate, onMount, setContext } from "svelte";  
   import {
     revealed,
-    reveal,
+    reveal, 
     revealLock,
     loaded,
     linksPageSorted,
     loadingFile,
+    markersLoaded,
     leftRightClickSwipe,
   } from "./store";
   import { isAncestorOf, clog } from "./util";
@@ -47,6 +52,7 @@
 
   let isTouch = "ontouchstart" in window;
   let lang;
+  let markers;
 
   setContext("main", { revealed: () => revealed });
 
@@ -63,6 +69,7 @@
     saveState();
   });
 
+  
   let lrcs;
   leftRightClickSwipe.subscribe((v) => {
     lrcs = v;
@@ -170,8 +177,8 @@
         if (!article || article.id != id) article = rul.article(id);
       }
 
-      clog(id);
-      clog(article);
+      //clog(id);
+      //clog(article);
     }
 
     if (article) {
@@ -318,7 +325,7 @@
     <CogAnimation size={200} />
   </div>
 {:else}
-  {#key [lang, article]}
+  {#key [lang, article, markersLoaded]}
     <nav class="navbar flex-horisontal">
       <!-- svelte-ignore a11y-mouse-events-have-key-events -->
       <div

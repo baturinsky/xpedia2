@@ -115,12 +115,16 @@
       sortField,
       sortDescending,
     });
+    
     for (let i in filters) {
-      if (filters[i].length <= 1) {
+      let autoAt = filters[i].indexOf("auto");
+      if (autoAt != -1) {
         let s = allFieldValuesOf(entries, i);
-        filters[i] = [...filters[i], ...s.sort()];
+        if(s.length>0)
+          filters[i].splice(autoAt, 1, ...s.sort());
       }
     }
+
   }
 
   function loadFields() {
@@ -211,7 +215,7 @@
         <tr>
           {#each shownFields as field}
             <td class="st-{field}"
-              ><Value nobr={20} val={entry.sortField(field, true)} /></td
+              ><Value nobr={20} key={field} val={entry.sortField(field, true)} /></td
             >
           {/each}
         </tr>

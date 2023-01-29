@@ -43,7 +43,7 @@
         {#if prop != null && !(prop.length == 0)}
           <tr>
             <td><Value val={key} capital={true}/></td><td>
-              <Value val={prop} />
+              <Value val={prop} key={key}/>
             </td>
           </tr>
         {/if}

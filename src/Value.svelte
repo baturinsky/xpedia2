@@ -1,19 +1,21 @@
 <script>
   import { rul } from "./Ruleset";
   import { Link, LinksList, Tr, Img  } from "./Components";
-
+  
   export let val;
   export let obs = null;
   export let depth = 2;
   export let simple = false;
   export let nobr = 30;
   export let icon = null;
+  export let key = null;
   export let capital = false;
 
   $:{
     if(obs){
       console.log(rul.obsSprite(obs,val))
     }
+    //if(key) console.log({key});    
   }
 </script>
 
@@ -25,6 +27,12 @@
   {#await rul.obsSprite(obs,val) then data}
     <img src={data} alt={val} style="max-width:320px"/>
   {/await}
+{:else if ["marker", "markerCrash", "markerLand"].includes(key)}          
+    {#if rul.globeMarkers}
+      <Img src={rul.globeMarkers[val]} style="transform: scale(2  );"/>
+    {:else}
+      {val}
+    {/if}    
 {:else if Array.isArray(val)}
   <LinksList items={val} vertical={false} />
 {:else if val instanceof Object}

@@ -1,5 +1,5 @@
 <script>
-  import { rul, Article } from "./Ruleset";
+  import { rul } from "./Ruleset";
   import Item from "./Item.svelte";
   import Armor from "./Armor.svelte";
   import Craft from "./Craft.svelte";

@@ -1,3 +1,6 @@
+/**
+ * Collection of the basic components to be used by other UI classes
+ */
 import { defaultLanguage, rul } from "./Ruleset";
 import Link from "./Link.svelte";
 import Img from "./Img.svelte";
@@ -30,7 +33,9 @@ export const tableSections = [
   "SOLDIERS",
   "ARMORS",
   "MANUFACTURE",
-  "ITEMS"
+  "ITEMS",
+  "ATTACKS",
+  "UFO"
 ];
 
 export function invisible(t){

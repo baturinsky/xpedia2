@@ -1,8 +1,9 @@
 import SearchApi from 'js-worker-search';
 import { emptyImg } from "./Components";
 import { loadData } from './load';
-import { addAllIfNew, addIfNew, camelToUnderscore, capital, cullDoubles, delay, getFlagEmoji, removeByValue, unique } from './util';
+import { addAllIfNew, addIfNew, camelToUnderscore, capital, cullDoubles, delay, getFlagEmoji, imageToCanvas, loadImage, removeByValue, unique } from './util';
 import * as util from "./util"
+import { markersLoaded } from './store';
 
 export let rul!: Ruleset;
 export type SortFirstLastOptions = { first?: string[], last?: string[], exclude?: string[], sortBy?: Function }
@@ -578,6 +579,7 @@ export class Attack {
   range: number;
   pellets: number = 1;
   name: string;
+  tuPercent: number;
 
   constructor(public item: Item, public mode: string) {
     let capMode = mode.charAt(0).toUpperCase() + mode.substr(1);
@@ -704,6 +706,10 @@ export class Attack {
 
     this.possible = true;
 
+    if(!this.flatTime && this.cost?.time){
+      this.tuPercent = this.cost.time;
+    }
+
     rul.attacks.push(this);
   }
 
@@ -731,7 +737,7 @@ export class Attack {
       return this.damageBonus[n];
     }
 
-    if (n.substring(0, 4) == "acc*" && this.accuracyMultiplier) {
+    if (n?.substring(0, 4) == "acc*" && this.accuracyMultiplier) {
       return this.accuracyMultiplier[n.substring(4)]
     }
 
@@ -869,10 +875,10 @@ export class Sprite {
 
   get path() {
     let path = this.modDir + this._path;
-    if (window["gameDir"] && path[0] == "/") {
-      path = window["gameDir"] + path;
-    } else if (window["xpediaDir"] && path[0] != "/") {
-      path = window["xpediaDir"] + path;
+    if (globalThis["gameDir"] && path[0] == "/") {
+      path = globalThis["gameDir"] + path;
+    } else if (globalThis["xpediaDir"] && path[0] != "/") {
+      path = globalThis["xpediaDir"] + path;
     }
     return path;
 
@@ -990,6 +996,10 @@ export class Armor extends Entry {
       if (rul.soldiers[v]) {
         return this.units?.includes(v);
       }
+    }
+
+    if(n == "allowedIn"){      
+      return this.allowedIn?.includes(v);
     }
 
     return this[n];
@@ -1213,6 +1223,7 @@ export default class Ruleset {
   baseServices: { [key: string]: Service } = {};
   redirect: { [key: string]: string } = {};
   attacks: Attack[] = [];
+  globeMarkers: string[];
 
   itemFields = new Set<string>();
 
@@ -1590,11 +1601,29 @@ export default class Ruleset {
         Article.create(cat, "MANUFACTURE_CATEGORIES");
     }
 
-
-    //this.typeSectionsOrder = this.sortStrings(this.typeSectionsOrder.map(v=));
+    this.loadMarkers()
 
     console.log("parse done");
+  }
 
+  async loadMarkers(){
+    if(rul.globeMarkers)
+      return rul.globeMarkers;
+    if(!window["GlobeMarkers"]){
+      let markers = this.sprites["GlobeMarkers"];
+      let path = markers?.path;
+      /*let image = await util.loadImage(path);
+      console.log(util.canvasToBase64(util.imageToCanvas(image)));*/
+      let dataUrl = await util.pathToDataUrl(path);
+      window["GlobeMarkers"] = dataUrl;
+    }
+    let dataURL = window["GlobeMarkers"];
+    
+    let canvas = imageToCanvas(await loadImage(dataURL));
+    let parts = util.splitCanvas(canvas)
+    rul.globeMarkers = parts.map(p=>p.toDataURL());
+    markersLoaded.set(true);
+    return rul.globeMarkers;
   }
 
   sortedTypeSections() {

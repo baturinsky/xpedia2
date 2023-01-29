@@ -12,6 +12,7 @@
   import UseCost from "./UseCost.svelte";
   import SecondaryTable from "./SecondaryTable.svelte";
   import Damage from "./Damage.svelte";
+  import { clog } from "./util";
 
   /**@type {typeof import("./Ruleset").Item}*/
   export let entry;
@@ -29,7 +30,7 @@
   }
 
   $: {
-    //console.log(entry);
+    clog(entry);
     attacks = entry.attacks().slice();
     let ohpen = entry.oneHandedPenalty || entry.battleType == 3 ? 67 : 50;
 
@@ -241,8 +242,8 @@
             <tr>
               <td style="text-align: right;">
                 <Value val={m?.requiredItems || ""} />
-                {#if m?.cost}$<Value val={m?.cost}/>{/if}
-                ⌛<em><Value val={m?.time}/></em>
+                {#if m?.cost}$<Value val={m?.cost} />{/if}
+                ⌛<em><Value val={m?.time} /></em>
               </td>
               <td>➔</td>
               <td style="text-align: left;">

@@ -1,4 +1,7 @@
 <script lang="ts">
+/**
+ * Article OR section-articel with a list or a table of articles.
+ * */  
   import {
     rul,
     sortFirstLast,
@@ -8,19 +11,15 @@
     battleStats,
     internalBattleTypes,
   } from "./Ruleset";
-  import Illustration from "./Illustration.svelte";
   import Conditions from "./Conditions.svelte";
   import BaseServices from "./BaseServices.svelte";
-  import TableSort from "./TableSort.svelte";
   import SectionTable from "./SectionTable.svelte";
   import { Link, LinksPage, Value, LinksList, Tr } from "./Components";
 
   import { createEventDispatcher } from "svelte";
   import ArticleBody from "./ArticleBody.svelte";
-  import Research from "./Research.svelte";
   import CanvasImage from "./CanvasImage.svelte";
-  import Manufacture from "./Manufacture.svelte";
-
+  
   const dispatch = createEventDispatcher();
 
   /**@type {Article}*/
@@ -137,6 +136,12 @@
     entries={Object.values(rul.soldiers)}
     fields={[...statsList, "manufacture", "events"]}
   />
+{:else if article.id == "UFOS"}
+  <SectionTable
+    {aId}
+    entries={Object.values(rul.ufos)}
+    fields={["modSprite", "marker", "markerCrash", "markerLand", "speedMax", "armor", "damageMax", "power", "huntBehavior", "huntMode", "hunterKillerPercentage", "radarRange", "accel"]}
+  />
 {:else if article.id == "ATTACKS"}
   <SectionTable
     {aId}
@@ -170,7 +175,7 @@
       internalBattleType: ["any", ...internalBattleTypes],
       damageTypes: ["any", ...damageTypes],
       category: ["any", ...rul.sortStrings(Object.keys(rul.categories))],      
-      invSize: ["any"]
+      invSize: ["any", "auto"]
     }}
   />
 {:else if article.id == "MANUFACTURE"}
@@ -211,8 +216,8 @@
     ]}
     filters={{
       armorUsers: ["any", "allies", "enemies", ...Object.keys(rul.soldiers)],
-      size: ["any", "1", "2"],
-      /*startingConditions: ["any", ...Object.keys(rul.startingConditions)]*/
+      size: ["any", "auto"],
+      allowedIn: ["any", ...Object.keys(rul.startingConditions)]
     }}
   />
 {:else if article.id == "CONDITIONS"}

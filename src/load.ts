@@ -2,8 +2,7 @@ import JSZip from "jszip";
 //import lzs from "lz-string";
 import { readYaml, listDir, parseYaml, delay, readTextFile } from "./util";
 import { inform, loadingFile, warn } from "./store";
-import { download, fetchText } from "./util";
-import { defaultLanguage, rul } from "./Ruleset";
+import { fetchText } from "./util";
 
 declare const
   fsData: (path:string)=>string
@@ -323,50 +322,8 @@ export async function loadData(path:string){
   }
 }
 
-async function readStyle(id:string){
+export async function readStyle(id:string){
   let css = document.getElementById(id) as HTMLLinkElement;
   return css.href?(await (await fetch(css.href)).text()):css.innerHTML;    
 }
 
-export async function exportPedia(onlyCurrentLanguage = false) {
-  document.body.style.cursor = "wait";
-  let jsPath = (document.getElementById("xpedia-js") as HTMLScriptElement)?.src;
-  let js = await (await fetch(jsPath)).text();
-  let style = await readStyle("main-css");
-  let lightStyle = await readStyle("light-css");
-  debugger;
-
-  let src = rul.src;
-  
-  if(onlyCurrentLanguage){
-    let langs = {} as any;
-    langs[defaultLanguage] = src.langs[defaultLanguage];
-    langs.icon = src.langs.icon;
-    let langName = rul.langName;
-    if(langName != defaultLanguage){
-      langs[langName] = src.langs[langName];
-    }
-    src = {...src,langs};
-  }
-
-  //let packed = lzs.compressToBase64(JSON.stringify(rul.src))
-  let packed = await packZip(JSON.stringify(src));
-
-  //debugger;
-
-  let html = `
-<head>
-  <meta name="description" content="Online reference for OpenXCom games" />
-  <style id="main-css">${style}</style>
-  <style id="light-css" media="none">${lightStyle}</style>
-  <script>
-  window.gameDir = ".";
-  window.xpediaDir = "xpedia2/";
-  window.xpedia = "${packed}";
-  </script>
-  <script>${js}</script>
-</head>`;
-    
-  download("xpedia.html", html);
-  document.body.style.cursor = "default";
-}
