@@ -142,6 +142,12 @@
     entries={Object.values(rul.ufos)}
     fields={["modSprite", "marker", "markerCrash", "markerLand", "speedMax", "armor", "damageMax", "power", "huntBehavior", "huntMode", "hunterKillerPercentage", "radarRange", "accel"]}
   />
+{:else if article.id == "COUNTRIES"}
+  <SectionTable
+    {aId}
+    entries={Object.values(rul.countries)}
+    fields={["fundingBase", "fundingCap", "events"]}
+ />
 {:else if article.id == "ATTACKS"}
   <SectionTable
     {aId}

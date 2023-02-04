@@ -1,0 +1,9 @@
+ufopaedia:
+  - id: STR_RULESET_REFERENCE
+    type_id: 7
+    section: STR_OPENXCOM_EXTENDED
+    text: STR_RULESET_REFERENCE_HTML
+  - id: STR_PALETTE_CONVERTER
+    type_id: 7
+    section: STR_OPENXCOM_EXTENDED
+    text: STR_PALETTE_CONVERTER_HTML

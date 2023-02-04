@@ -1,10 +1,27 @@
 (() => {
   var __create = Object.create;
   var __defProp = Object.defineProperty;
+  var __defProps = Object.defineProperties;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
   var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __getOwnPropSymbols = Object.getOwnPropertySymbols;
   var __getProtoOf = Object.getPrototypeOf;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __propIsEnum = Object.prototype.propertyIsEnumerable;
+  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+  var __spreadValues = (a, b) => {
+    for (var prop in b || (b = {}))
+      if (__hasOwnProp.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    if (__getOwnPropSymbols)
+      for (var prop of __getOwnPropSymbols(b)) {
+        if (__propIsEnum.call(b, prop))
+          __defNormalProp(a, prop, b[prop]);
+      }
+    return a;
+  };
+  var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
     get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
   }) : x)(function(x) {
@@ -24,6 +41,26 @@
     return to;
   };
   var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target, mod));
+  var __async = (__this, __arguments, generator) => {
+    return new Promise((resolve, reject) => {
+      var fulfilled = (value) => {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var rejected = (value) => {
+        try {
+          step(generator.throw(value));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
+      step((generator = generator.apply(__this, __arguments)).next());
+    });
+  };
 
   // node_modules/js-worker-search/dist/js-worker-search.js
   var require_js_worker_search = __commonJS({
@@ -257,8 +294,8 @@
                 try {
                   for (var i = 0, length = token.length; i < length; ++i) {
                     var substring = "";
-                    for (var j = i; j < length; ++j) {
-                      substring += token.charAt(j);
+                    for (var j2 = i; j2 < length; ++j2) {
+                      substring += token.charAt(j2);
                       expandedTokens.push(substring);
                     }
                   }
@@ -591,11 +628,11 @@
             var clockseq = options.clockseq !== void 0 ? options.clockseq : _clockseq;
             var msecs = options.msecs !== void 0 ? options.msecs : new Date().getTime();
             var nsecs = options.nsecs !== void 0 ? options.nsecs : _lastNSecs + 1;
-            var dt = msecs - _lastMSecs + (nsecs - _lastNSecs) / 1e4;
-            if (dt < 0 && options.clockseq === void 0) {
+            var dt2 = msecs - _lastMSecs + (nsecs - _lastNSecs) / 1e4;
+            if (dt2 < 0 && options.clockseq === void 0) {
               clockseq = clockseq + 1 & 16383;
             }
-            if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === void 0) {
+            if ((dt2 < 0 || msecs > _lastMSecs) && options.nsecs === void 0) {
               nsecs = 0;
             }
             if (nsecs >= 1e4) {
@@ -1242,7 +1279,7 @@
           };
         },
         function(module2, exports2) {
-          var URL = window.URL || window.webkitURL;
+          var URL2 = window.URL || window.webkitURL;
           module2.exports = function(content, url) {
             try {
               try {
@@ -1255,7 +1292,7 @@
                 } catch (e) {
                   blob = new Blob([content]);
                 }
-                return new Worker(URL.createObjectURL(blob));
+                return new Worker(URL2.createObjectURL(blob));
               } catch (e) {
                 return new Worker("data:application/javascript," + encodeURIComponent(content));
               }
@@ -1415,10 +1452,10 @@
             return n2;
           }
           function n(e2, t2, r2, n2, i2, s2) {
-            var a, o, h = e2.file, u = e2.compression, l = s2 !== O.utf8encode, f = I.transformTo("string", s2(h.name)), c = I.transformTo("string", O.utf8encode(h.name)), d = h.comment, p = I.transformTo("string", s2(d)), m = I.transformTo("string", O.utf8encode(d)), _ = c.length !== h.name.length, g = m.length !== d.length, b = "", v = "", y = "", w = h.dir, k = h.date, x = { crc32: 0, compressedSize: 0, uncompressedSize: 0 };
+            var a, o, h = e2.file, u = e2.compression, l = s2 !== O2.utf8encode, f = I.transformTo("string", s2(h.name)), c = I.transformTo("string", O2.utf8encode(h.name)), d = h.comment, p = I.transformTo("string", s2(d)), m = I.transformTo("string", O2.utf8encode(d)), _ = c.length !== h.name.length, g = m.length !== d.length, b = "", v = "", y = "", w = h.dir, k = h.date, x = { crc32: 0, compressedSize: 0, uncompressedSize: 0 };
             t2 && !r2 || (x.crc32 = e2.crc32, x.compressedSize = e2.compressedSize, x.uncompressedSize = e2.uncompressedSize);
-            var S = 0;
-            t2 && (S |= 8), l || !_ && !g || (S |= 2048);
+            var S2 = 0;
+            t2 && (S2 |= 8), l || !_ && !g || (S2 |= 2048);
             var z = 0, C = 0;
             w && (z |= 16), "UNIX" === i2 ? (C = 798, z |= function(e3, t3) {
               var r3 = e3;
@@ -1427,9 +1464,9 @@
               return 63 & (e3 || 0);
             }(h.dosPermissions)), a = k.getUTCHours(), a <<= 6, a |= k.getUTCMinutes(), a <<= 5, a |= k.getUTCSeconds() / 2, o = k.getUTCFullYear() - 1980, o <<= 4, o |= k.getUTCMonth() + 1, o <<= 5, o |= k.getUTCDate(), _ && (v = A(1, 1) + A(B(f), 4) + c, b += "up" + A(v.length, 2) + v), g && (y = A(1, 1) + A(B(p), 4) + m, b += "uc" + A(y.length, 2) + y);
             var E = "";
-            return E += "\n\0", E += A(S, 2), E += u.magic, E += A(a, 2), E += A(o, 2), E += A(x.crc32, 4), E += A(x.compressedSize, 4), E += A(x.uncompressedSize, 4), E += A(f.length, 2), E += A(b.length, 2), { fileRecord: R.LOCAL_FILE_HEADER + E + f + b, dirRecord: R.CENTRAL_FILE_HEADER + A(C, 2) + E + A(p.length, 2) + "\0\0\0\0" + A(z, 4) + A(n2, 4) + f + b + p };
+            return E += "\n\0", E += A(S2, 2), E += u.magic, E += A(a, 2), E += A(o, 2), E += A(x.crc32, 4), E += A(x.compressedSize, 4), E += A(x.uncompressedSize, 4), E += A(f.length, 2), E += A(b.length, 2), { fileRecord: R2.LOCAL_FILE_HEADER + E + f + b, dirRecord: R2.CENTRAL_FILE_HEADER + A(C, 2) + E + A(p.length, 2) + "\0\0\0\0" + A(z, 4) + A(n2, 4) + f + b + p };
           }
-          var I = e("../utils"), i = e("../stream/GenericWorker"), O = e("../utf8"), B = e("../crc32"), R = e("../signature");
+          var I = e("../utils"), i = e("../stream/GenericWorker"), O2 = e("../utf8"), B = e("../crc32"), R2 = e("../signature");
           function s(e2, t2, r2, n2) {
             i.call(this, "ZipFileWorker"), this.bytesWritten = 0, this.zipComment = t2, this.zipPlatform = r2, this.encodeFileName = n2, this.streamFiles = e2, this.accumulate = false, this.contentBuffer = [], this.dirRecords = [], this.currentSourceOffset = 0, this.entriesCount = 0, this.currentFile = null, this._sources = [];
           }
@@ -1449,7 +1486,7 @@
             var t2 = this.streamFiles && !e2.file.dir, r2 = n(e2, t2, true, this.currentSourceOffset, this.zipPlatform, this.encodeFileName);
             if (this.dirRecords.push(r2.dirRecord), t2)
               this.push({ data: function(e3) {
-                return R.DATA_DESCRIPTOR + A(e3.crc32, 4) + A(e3.compressedSize, 4) + A(e3.uncompressedSize, 4);
+                return R2.DATA_DESCRIPTOR + A(e3.crc32, 4) + A(e3.compressedSize, 4) + A(e3.uncompressedSize, 4);
               }(e2), meta: { percent: 100 } });
             else
               for (this.push({ data: r2.fileRecord, meta: { percent: 0 } }); this.contentBuffer.length; )
@@ -1460,7 +1497,7 @@
               this.push({ data: this.dirRecords[t2], meta: { percent: 100 } });
             var r2 = this.bytesWritten - e2, n2 = function(e3, t3, r3, n3, i2) {
               var s2 = I.transformTo("string", i2(n3));
-              return R.CENTRAL_DIRECTORY_END + "\0\0\0\0" + A(e3, 2) + A(e3, 2) + A(t3, 4) + A(r3, 4) + A(s2.length, 2) + s2;
+              return R2.CENTRAL_DIRECTORY_END + "\0\0\0\0" + A(e3, 2) + A(e3, 2) + A(t3, 4) + A(r3, 4) + A(s2.length, 2) + s2;
             }(this.dirRecords.length, r2, e2, this.zipComment, this.encodeFileName);
             this.push({ data: n2, meta: { percent: 100 } });
           }, s.prototype.prepareNextSource = function() {
@@ -2831,23 +2868,23 @@
           };
         }, {}], 46: [function(e, t, r) {
           "use strict";
-          var h, c = e("../utils/common"), u = e("./trees"), d = e("./adler32"), p = e("./crc32"), n = e("./messages"), l = 0, f = 4, m = 0, _ = -2, g = -1, b = 4, i = 2, v = 8, y = 9, s = 286, a = 30, o = 19, w = 2 * s + 1, k = 15, x = 3, S = 258, z = S + x + 1, C = 42, E = 113, A = 1, I = 2, O = 3, B = 4;
-          function R(e2, t2) {
+          var h, c = e("../utils/common"), u = e("./trees"), d = e("./adler32"), p = e("./crc32"), n = e("./messages"), l = 0, f = 4, m = 0, _ = -2, g = -1, b = 4, i = 2, v = 8, y = 9, s = 286, a = 30, o = 19, w = 2 * s + 1, k = 15, x = 3, S2 = 258, z = S2 + x + 1, C = 42, E = 113, A = 1, I = 2, O2 = 3, B = 4;
+          function R2(e2, t2) {
             return e2.msg = n[t2], t2;
           }
-          function T(e2) {
+          function T2(e2) {
             return (e2 << 1) - (4 < e2 ? 9 : 0);
           }
-          function D(e2) {
+          function D2(e2) {
             for (var t2 = e2.length; 0 <= --t2; )
               e2[t2] = 0;
           }
-          function F(e2) {
+          function F2(e2) {
             var t2 = e2.state, r2 = t2.pending;
             r2 > e2.avail_out && (r2 = e2.avail_out), 0 !== r2 && (c.arraySet(e2.output, t2.pending_buf, t2.pending_out, r2, e2.next_out), e2.next_out += r2, t2.pending_out += r2, e2.total_out += r2, e2.avail_out -= r2, t2.pending -= r2, 0 === t2.pending && (t2.pending_out = 0));
           }
           function N(e2, t2) {
-            u._tr_flush_block(e2, 0 <= e2.block_start ? e2.block_start : -1, e2.strstart - e2.block_start, t2), e2.block_start = e2.strstart, F(e2.strm);
+            u._tr_flush_block(e2, 0 <= e2.block_start ? e2.block_start : -1, e2.strstart - e2.block_start, t2), e2.block_start = e2.strstart, F2(e2.strm);
           }
           function U(e2, t2) {
             e2.pending_buf[e2.pending++] = t2;
@@ -2856,14 +2893,14 @@
             e2.pending_buf[e2.pending++] = t2 >>> 8 & 255, e2.pending_buf[e2.pending++] = 255 & t2;
           }
           function L(e2, t2) {
-            var r2, n2, i2 = e2.max_chain_length, s2 = e2.strstart, a2 = e2.prev_length, o2 = e2.nice_match, h2 = e2.strstart > e2.w_size - z ? e2.strstart - (e2.w_size - z) : 0, u2 = e2.window, l2 = e2.w_mask, f2 = e2.prev, c2 = e2.strstart + S, d2 = u2[s2 + a2 - 1], p2 = u2[s2 + a2];
+            var r2, n2, i2 = e2.max_chain_length, s2 = e2.strstart, a2 = e2.prev_length, o2 = e2.nice_match, h2 = e2.strstart > e2.w_size - z ? e2.strstart - (e2.w_size - z) : 0, u2 = e2.window, l2 = e2.w_mask, f2 = e2.prev, c2 = e2.strstart + S2, d2 = u2[s2 + a2 - 1], p2 = u2[s2 + a2];
             e2.prev_length >= e2.good_match && (i2 >>= 2), o2 > e2.lookahead && (o2 = e2.lookahead);
             do {
               if (u2[(r2 = t2) + a2] === p2 && u2[r2 + a2 - 1] === d2 && u2[r2] === u2[s2] && u2[++r2] === u2[s2 + 1]) {
                 s2 += 2, r2++;
                 do {
                 } while (u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && u2[++s2] === u2[++r2] && s2 < c2);
-                if (n2 = S - (c2 - s2), s2 = c2 - S, a2 < n2) {
+                if (n2 = S2 - (c2 - s2), s2 = c2 - S2, a2 < n2) {
                   if (e2.match_start = t2, o2 <= (a2 = n2))
                     break;
                   d2 = u2[s2 + a2 - 1], p2 = u2[s2 + a2];
@@ -2872,7 +2909,7 @@
             } while ((t2 = f2[t2 & l2]) > h2 && 0 != --i2);
             return a2 <= e2.lookahead ? a2 : e2.lookahead;
           }
-          function j(e2) {
+          function j2(e2) {
             var t2, r2, n2, i2, s2, a2, o2, h2, u2, l2, f2 = e2.w_size;
             do {
               if (i2 = e2.window_size - e2.lookahead - e2.strstart, e2.strstart >= f2 + (f2 - z)) {
@@ -2889,10 +2926,10 @@
                   ;
             } while (e2.lookahead < z && 0 !== e2.strm.avail_in);
           }
-          function Z(e2, t2) {
+          function Z2(e2, t2) {
             for (var r2, n2; ; ) {
               if (e2.lookahead < z) {
-                if (j(e2), e2.lookahead < z && t2 === l)
+                if (j2(e2), e2.lookahead < z && t2 === l)
                   return A;
                 if (0 === e2.lookahead)
                   break;
@@ -2909,12 +2946,12 @@
               if (n2 && (N(e2, false), 0 === e2.strm.avail_out))
                 return A;
             }
-            return e2.insert = e2.strstart < x - 1 ? e2.strstart : x - 1, t2 === f ? (N(e2, true), 0 === e2.strm.avail_out ? O : B) : e2.last_lit && (N(e2, false), 0 === e2.strm.avail_out) ? A : I;
+            return e2.insert = e2.strstart < x - 1 ? e2.strstart : x - 1, t2 === f ? (N(e2, true), 0 === e2.strm.avail_out ? O2 : B) : e2.last_lit && (N(e2, false), 0 === e2.strm.avail_out) ? A : I;
           }
           function W(e2, t2) {
             for (var r2, n2, i2; ; ) {
               if (e2.lookahead < z) {
-                if (j(e2), e2.lookahead < z && t2 === l)
+                if (j2(e2), e2.lookahead < z && t2 === l)
                   return A;
                 if (0 === e2.lookahead)
                   break;
@@ -2930,22 +2967,22 @@
               } else
                 e2.match_available = 1, e2.strstart++, e2.lookahead--;
             }
-            return e2.match_available && (n2 = u._tr_tally(e2, 0, e2.window[e2.strstart - 1]), e2.match_available = 0), e2.insert = e2.strstart < x - 1 ? e2.strstart : x - 1, t2 === f ? (N(e2, true), 0 === e2.strm.avail_out ? O : B) : e2.last_lit && (N(e2, false), 0 === e2.strm.avail_out) ? A : I;
+            return e2.match_available && (n2 = u._tr_tally(e2, 0, e2.window[e2.strstart - 1]), e2.match_available = 0), e2.insert = e2.strstart < x - 1 ? e2.strstart : x - 1, t2 === f ? (N(e2, true), 0 === e2.strm.avail_out ? O2 : B) : e2.last_lit && (N(e2, false), 0 === e2.strm.avail_out) ? A : I;
           }
           function M(e2, t2, r2, n2, i2) {
             this.good_length = e2, this.max_lazy = t2, this.nice_length = r2, this.max_chain = n2, this.func = i2;
           }
-          function H() {
-            this.strm = null, this.status = 0, this.pending_buf = null, this.pending_buf_size = 0, this.pending_out = 0, this.pending = 0, this.wrap = 0, this.gzhead = null, this.gzindex = 0, this.method = v, this.last_flush = -1, this.w_size = 0, this.w_bits = 0, this.w_mask = 0, this.window = null, this.window_size = 0, this.prev = null, this.head = null, this.ins_h = 0, this.hash_size = 0, this.hash_bits = 0, this.hash_mask = 0, this.hash_shift = 0, this.block_start = 0, this.match_length = 0, this.prev_match = 0, this.match_available = 0, this.strstart = 0, this.match_start = 0, this.lookahead = 0, this.prev_length = 0, this.max_chain_length = 0, this.max_lazy_match = 0, this.level = 0, this.strategy = 0, this.good_match = 0, this.nice_match = 0, this.dyn_ltree = new c.Buf16(2 * w), this.dyn_dtree = new c.Buf16(2 * (2 * a + 1)), this.bl_tree = new c.Buf16(2 * (2 * o + 1)), D(this.dyn_ltree), D(this.dyn_dtree), D(this.bl_tree), this.l_desc = null, this.d_desc = null, this.bl_desc = null, this.bl_count = new c.Buf16(k + 1), this.heap = new c.Buf16(2 * s + 1), D(this.heap), this.heap_len = 0, this.heap_max = 0, this.depth = new c.Buf16(2 * s + 1), D(this.depth), this.l_buf = 0, this.lit_bufsize = 0, this.last_lit = 0, this.d_buf = 0, this.opt_len = 0, this.static_len = 0, this.matches = 0, this.insert = 0, this.bi_buf = 0, this.bi_valid = 0;
+          function H2() {
+            this.strm = null, this.status = 0, this.pending_buf = null, this.pending_buf_size = 0, this.pending_out = 0, this.pending = 0, this.wrap = 0, this.gzhead = null, this.gzindex = 0, this.method = v, this.last_flush = -1, this.w_size = 0, this.w_bits = 0, this.w_mask = 0, this.window = null, this.window_size = 0, this.prev = null, this.head = null, this.ins_h = 0, this.hash_size = 0, this.hash_bits = 0, this.hash_mask = 0, this.hash_shift = 0, this.block_start = 0, this.match_length = 0, this.prev_match = 0, this.match_available = 0, this.strstart = 0, this.match_start = 0, this.lookahead = 0, this.prev_length = 0, this.max_chain_length = 0, this.max_lazy_match = 0, this.level = 0, this.strategy = 0, this.good_match = 0, this.nice_match = 0, this.dyn_ltree = new c.Buf16(2 * w), this.dyn_dtree = new c.Buf16(2 * (2 * a + 1)), this.bl_tree = new c.Buf16(2 * (2 * o + 1)), D2(this.dyn_ltree), D2(this.dyn_dtree), D2(this.bl_tree), this.l_desc = null, this.d_desc = null, this.bl_desc = null, this.bl_count = new c.Buf16(k + 1), this.heap = new c.Buf16(2 * s + 1), D2(this.heap), this.heap_len = 0, this.heap_max = 0, this.depth = new c.Buf16(2 * s + 1), D2(this.depth), this.l_buf = 0, this.lit_bufsize = 0, this.last_lit = 0, this.d_buf = 0, this.opt_len = 0, this.static_len = 0, this.matches = 0, this.insert = 0, this.bi_buf = 0, this.bi_valid = 0;
           }
-          function G(e2) {
+          function G2(e2) {
             var t2;
-            return e2 && e2.state ? (e2.total_in = e2.total_out = 0, e2.data_type = i, (t2 = e2.state).pending = 0, t2.pending_out = 0, t2.wrap < 0 && (t2.wrap = -t2.wrap), t2.status = t2.wrap ? C : E, e2.adler = 2 === t2.wrap ? 0 : 1, t2.last_flush = l, u._tr_init(t2), m) : R(e2, _);
+            return e2 && e2.state ? (e2.total_in = e2.total_out = 0, e2.data_type = i, (t2 = e2.state).pending = 0, t2.pending_out = 0, t2.wrap < 0 && (t2.wrap = -t2.wrap), t2.status = t2.wrap ? C : E, e2.adler = 2 === t2.wrap ? 0 : 1, t2.last_flush = l, u._tr_init(t2), m) : R2(e2, _);
           }
           function K(e2) {
-            var t2 = G(e2);
+            var t2 = G2(e2);
             return t2 === m && function(e3) {
-              e3.window_size = 2 * e3.w_size, D(e3.head), e3.max_lazy_match = h[e3.level].max_lazy, e3.good_match = h[e3.level].good_length, e3.nice_match = h[e3.level].nice_length, e3.max_chain_length = h[e3.level].max_chain, e3.strstart = 0, e3.block_start = 0, e3.lookahead = 0, e3.insert = 0, e3.match_length = e3.prev_length = x - 1, e3.match_available = 0, e3.ins_h = 0;
+              e3.window_size = 2 * e3.w_size, D2(e3.head), e3.max_lazy_match = h[e3.level].max_lazy, e3.good_match = h[e3.level].good_length, e3.nice_match = h[e3.level].nice_length, e3.max_chain_length = h[e3.level].max_chain, e3.strstart = 0, e3.block_start = 0, e3.lookahead = 0, e3.insert = 0, e3.match_length = e3.prev_length = x - 1, e3.match_available = 0, e3.ins_h = 0;
             }(e2.state), t2;
           }
           function Y(e2, t2, r2, n2, i2, s2) {
@@ -2953,16 +2990,16 @@
               return _;
             var a2 = 1;
             if (t2 === g && (t2 = 6), n2 < 0 ? (a2 = 0, n2 = -n2) : 15 < n2 && (a2 = 2, n2 -= 16), i2 < 1 || y < i2 || r2 !== v || n2 < 8 || 15 < n2 || t2 < 0 || 9 < t2 || s2 < 0 || b < s2)
-              return R(e2, _);
+              return R2(e2, _);
             8 === n2 && (n2 = 9);
-            var o2 = new H();
+            var o2 = new H2();
             return (e2.state = o2).strm = e2, o2.wrap = a2, o2.gzhead = null, o2.w_bits = n2, o2.w_size = 1 << o2.w_bits, o2.w_mask = o2.w_size - 1, o2.hash_bits = i2 + 7, o2.hash_size = 1 << o2.hash_bits, o2.hash_mask = o2.hash_size - 1, o2.hash_shift = ~~((o2.hash_bits + x - 1) / x), o2.window = new c.Buf8(2 * o2.w_size), o2.head = new c.Buf16(o2.hash_size), o2.prev = new c.Buf16(o2.w_size), o2.lit_bufsize = 1 << i2 + 6, o2.pending_buf_size = 4 * o2.lit_bufsize, o2.pending_buf = new c.Buf8(o2.pending_buf_size), o2.d_buf = 1 * o2.lit_bufsize, o2.l_buf = 3 * o2.lit_bufsize, o2.level = t2, o2.strategy = s2, o2.method = r2, K(e2);
           }
           h = [new M(0, 0, 0, 0, function(e2, t2) {
             var r2 = 65535;
             for (r2 > e2.pending_buf_size - 5 && (r2 = e2.pending_buf_size - 5); ; ) {
               if (e2.lookahead <= 1) {
-                if (j(e2), 0 === e2.lookahead && t2 === l)
+                if (j2(e2), 0 === e2.lookahead && t2 === l)
                   return A;
                 if (0 === e2.lookahead)
                   break;
@@ -2974,17 +3011,17 @@
               if (e2.strstart - e2.block_start >= e2.w_size - z && (N(e2, false), 0 === e2.strm.avail_out))
                 return A;
             }
-            return e2.insert = 0, t2 === f ? (N(e2, true), 0 === e2.strm.avail_out ? O : B) : (e2.strstart > e2.block_start && (N(e2, false), e2.strm.avail_out), A);
-          }), new M(4, 4, 8, 4, Z), new M(4, 5, 16, 8, Z), new M(4, 6, 32, 32, Z), new M(4, 4, 16, 16, W), new M(8, 16, 32, 32, W), new M(8, 16, 128, 128, W), new M(8, 32, 128, 256, W), new M(32, 128, 258, 1024, W), new M(32, 258, 258, 4096, W)], r.deflateInit = function(e2, t2) {
+            return e2.insert = 0, t2 === f ? (N(e2, true), 0 === e2.strm.avail_out ? O2 : B) : (e2.strstart > e2.block_start && (N(e2, false), e2.strm.avail_out), A);
+          }), new M(4, 4, 8, 4, Z2), new M(4, 5, 16, 8, Z2), new M(4, 6, 32, 32, Z2), new M(4, 4, 16, 16, W), new M(8, 16, 32, 32, W), new M(8, 16, 128, 128, W), new M(8, 32, 128, 256, W), new M(32, 128, 258, 1024, W), new M(32, 258, 258, 4096, W)], r.deflateInit = function(e2, t2) {
             return Y(e2, t2, v, 15, 8, 0);
-          }, r.deflateInit2 = Y, r.deflateReset = K, r.deflateResetKeep = G, r.deflateSetHeader = function(e2, t2) {
+          }, r.deflateInit2 = Y, r.deflateReset = K, r.deflateResetKeep = G2, r.deflateSetHeader = function(e2, t2) {
             return e2 && e2.state ? 2 !== e2.state.wrap ? _ : (e2.state.gzhead = t2, m) : _;
           }, r.deflate = function(e2, t2) {
             var r2, n2, i2, s2;
             if (!e2 || !e2.state || 5 < t2 || t2 < 0)
-              return e2 ? R(e2, _) : _;
+              return e2 ? R2(e2, _) : _;
             if (n2 = e2.state, !e2.output || !e2.input && 0 !== e2.avail_in || 666 === n2.status && t2 !== f)
-              return R(e2, 0 === e2.avail_out ? -5 : _);
+              return R2(e2, 0 === e2.avail_out ? -5 : _);
             if (n2.strm = e2, r2 = n2.last_flush, n2.last_flush = t2, n2.status === C)
               if (2 === n2.wrap)
                 e2.adler = 0, U(n2, 31), U(n2, 139), U(n2, 8), n2.gzhead ? (U(n2, (n2.gzhead.text ? 1 : 0) + (n2.gzhead.hcrc ? 2 : 0) + (n2.gzhead.extra ? 4 : 0) + (n2.gzhead.name ? 8 : 0) + (n2.gzhead.comment ? 16 : 0)), U(n2, 255 & n2.gzhead.time), U(n2, n2.gzhead.time >> 8 & 255), U(n2, n2.gzhead.time >> 16 & 255), U(n2, n2.gzhead.time >> 24 & 255), U(n2, 9 === n2.level ? 2 : 2 <= n2.strategy || n2.level < 2 ? 4 : 0), U(n2, 255 & n2.gzhead.os), n2.gzhead.extra && n2.gzhead.extra.length && (U(n2, 255 & n2.gzhead.extra.length), U(n2, n2.gzhead.extra.length >> 8 & 255)), n2.gzhead.hcrc && (e2.adler = p(e2.adler, n2.pending_buf, n2.pending, 0)), n2.gzindex = 0, n2.status = 69) : (U(n2, 0), U(n2, 0), U(n2, 0), U(n2, 0), U(n2, 0), U(n2, 9 === n2.level ? 2 : 2 <= n2.strategy || n2.level < 2 ? 4 : 0), U(n2, 3), n2.status = E);
@@ -2994,7 +3031,7 @@
               }
             if (69 === n2.status)
               if (n2.gzhead.extra) {
-                for (i2 = n2.pending; n2.gzindex < (65535 & n2.gzhead.extra.length) && (n2.pending !== n2.pending_buf_size || (n2.gzhead.hcrc && n2.pending > i2 && (e2.adler = p(e2.adler, n2.pending_buf, n2.pending - i2, i2)), F(e2), i2 = n2.pending, n2.pending !== n2.pending_buf_size)); )
+                for (i2 = n2.pending; n2.gzindex < (65535 & n2.gzhead.extra.length) && (n2.pending !== n2.pending_buf_size || (n2.gzhead.hcrc && n2.pending > i2 && (e2.adler = p(e2.adler, n2.pending_buf, n2.pending - i2, i2)), F2(e2), i2 = n2.pending, n2.pending !== n2.pending_buf_size)); )
                   U(n2, 255 & n2.gzhead.extra[n2.gzindex]), n2.gzindex++;
                 n2.gzhead.hcrc && n2.pending > i2 && (e2.adler = p(e2.adler, n2.pending_buf, n2.pending - i2, i2)), n2.gzindex === n2.gzhead.extra.length && (n2.gzindex = 0, n2.status = 73);
               } else
@@ -3003,7 +3040,7 @@
               if (n2.gzhead.name) {
                 i2 = n2.pending;
                 do {
-                  if (n2.pending === n2.pending_buf_size && (n2.gzhead.hcrc && n2.pending > i2 && (e2.adler = p(e2.adler, n2.pending_buf, n2.pending - i2, i2)), F(e2), i2 = n2.pending, n2.pending === n2.pending_buf_size)) {
+                  if (n2.pending === n2.pending_buf_size && (n2.gzhead.hcrc && n2.pending > i2 && (e2.adler = p(e2.adler, n2.pending_buf, n2.pending - i2, i2)), F2(e2), i2 = n2.pending, n2.pending === n2.pending_buf_size)) {
                     s2 = 1;
                     break;
                   }
@@ -3016,7 +3053,7 @@
               if (n2.gzhead.comment) {
                 i2 = n2.pending;
                 do {
-                  if (n2.pending === n2.pending_buf_size && (n2.gzhead.hcrc && n2.pending > i2 && (e2.adler = p(e2.adler, n2.pending_buf, n2.pending - i2, i2)), F(e2), i2 = n2.pending, n2.pending === n2.pending_buf_size)) {
+                  if (n2.pending === n2.pending_buf_size && (n2.gzhead.hcrc && n2.pending > i2 && (e2.adler = p(e2.adler, n2.pending_buf, n2.pending - i2, i2)), F2(e2), i2 = n2.pending, n2.pending === n2.pending_buf_size)) {
                     s2 = 1;
                     break;
                   }
@@ -3025,17 +3062,17 @@
                 n2.gzhead.hcrc && n2.pending > i2 && (e2.adler = p(e2.adler, n2.pending_buf, n2.pending - i2, i2)), 0 === s2 && (n2.status = 103);
               } else
                 n2.status = 103;
-            if (103 === n2.status && (n2.gzhead.hcrc ? (n2.pending + 2 > n2.pending_buf_size && F(e2), n2.pending + 2 <= n2.pending_buf_size && (U(n2, 255 & e2.adler), U(n2, e2.adler >> 8 & 255), e2.adler = 0, n2.status = E)) : n2.status = E), 0 !== n2.pending) {
-              if (F(e2), 0 === e2.avail_out)
+            if (103 === n2.status && (n2.gzhead.hcrc ? (n2.pending + 2 > n2.pending_buf_size && F2(e2), n2.pending + 2 <= n2.pending_buf_size && (U(n2, 255 & e2.adler), U(n2, e2.adler >> 8 & 255), e2.adler = 0, n2.status = E)) : n2.status = E), 0 !== n2.pending) {
+              if (F2(e2), 0 === e2.avail_out)
                 return n2.last_flush = -1, m;
-            } else if (0 === e2.avail_in && T(t2) <= T(r2) && t2 !== f)
-              return R(e2, -5);
+            } else if (0 === e2.avail_in && T2(t2) <= T2(r2) && t2 !== f)
+              return R2(e2, -5);
             if (666 === n2.status && 0 !== e2.avail_in)
-              return R(e2, -5);
+              return R2(e2, -5);
             if (0 !== e2.avail_in || 0 !== n2.lookahead || t2 !== l && 666 !== n2.status) {
               var o2 = 2 === n2.strategy ? function(e3, t3) {
                 for (var r3; ; ) {
-                  if (0 === e3.lookahead && (j(e3), 0 === e3.lookahead)) {
+                  if (0 === e3.lookahead && (j2(e3), 0 === e3.lookahead)) {
                     if (t3 === l)
                       return A;
                     break;
@@ -3043,45 +3080,45 @@
                   if (e3.match_length = 0, r3 = u._tr_tally(e3, 0, e3.window[e3.strstart]), e3.lookahead--, e3.strstart++, r3 && (N(e3, false), 0 === e3.strm.avail_out))
                     return A;
                 }
-                return e3.insert = 0, t3 === f ? (N(e3, true), 0 === e3.strm.avail_out ? O : B) : e3.last_lit && (N(e3, false), 0 === e3.strm.avail_out) ? A : I;
+                return e3.insert = 0, t3 === f ? (N(e3, true), 0 === e3.strm.avail_out ? O2 : B) : e3.last_lit && (N(e3, false), 0 === e3.strm.avail_out) ? A : I;
               }(n2, t2) : 3 === n2.strategy ? function(e3, t3) {
                 for (var r3, n3, i3, s3, a3 = e3.window; ; ) {
-                  if (e3.lookahead <= S) {
-                    if (j(e3), e3.lookahead <= S && t3 === l)
+                  if (e3.lookahead <= S2) {
+                    if (j2(e3), e3.lookahead <= S2 && t3 === l)
                       return A;
                     if (0 === e3.lookahead)
                       break;
                   }
                   if (e3.match_length = 0, e3.lookahead >= x && 0 < e3.strstart && (n3 = a3[i3 = e3.strstart - 1]) === a3[++i3] && n3 === a3[++i3] && n3 === a3[++i3]) {
-                    s3 = e3.strstart + S;
+                    s3 = e3.strstart + S2;
                     do {
                     } while (n3 === a3[++i3] && n3 === a3[++i3] && n3 === a3[++i3] && n3 === a3[++i3] && n3 === a3[++i3] && n3 === a3[++i3] && n3 === a3[++i3] && n3 === a3[++i3] && i3 < s3);
-                    e3.match_length = S - (s3 - i3), e3.match_length > e3.lookahead && (e3.match_length = e3.lookahead);
+                    e3.match_length = S2 - (s3 - i3), e3.match_length > e3.lookahead && (e3.match_length = e3.lookahead);
                   }
                   if (e3.match_length >= x ? (r3 = u._tr_tally(e3, 1, e3.match_length - x), e3.lookahead -= e3.match_length, e3.strstart += e3.match_length, e3.match_length = 0) : (r3 = u._tr_tally(e3, 0, e3.window[e3.strstart]), e3.lookahead--, e3.strstart++), r3 && (N(e3, false), 0 === e3.strm.avail_out))
                     return A;
                 }
-                return e3.insert = 0, t3 === f ? (N(e3, true), 0 === e3.strm.avail_out ? O : B) : e3.last_lit && (N(e3, false), 0 === e3.strm.avail_out) ? A : I;
+                return e3.insert = 0, t3 === f ? (N(e3, true), 0 === e3.strm.avail_out ? O2 : B) : e3.last_lit && (N(e3, false), 0 === e3.strm.avail_out) ? A : I;
               }(n2, t2) : h[n2.level].func(n2, t2);
-              if (o2 !== O && o2 !== B || (n2.status = 666), o2 === A || o2 === O)
+              if (o2 !== O2 && o2 !== B || (n2.status = 666), o2 === A || o2 === O2)
                 return 0 === e2.avail_out && (n2.last_flush = -1), m;
-              if (o2 === I && (1 === t2 ? u._tr_align(n2) : 5 !== t2 && (u._tr_stored_block(n2, 0, 0, false), 3 === t2 && (D(n2.head), 0 === n2.lookahead && (n2.strstart = 0, n2.block_start = 0, n2.insert = 0))), F(e2), 0 === e2.avail_out))
+              if (o2 === I && (1 === t2 ? u._tr_align(n2) : 5 !== t2 && (u._tr_stored_block(n2, 0, 0, false), 3 === t2 && (D2(n2.head), 0 === n2.lookahead && (n2.strstart = 0, n2.block_start = 0, n2.insert = 0))), F2(e2), 0 === e2.avail_out))
                 return n2.last_flush = -1, m;
             }
-            return t2 !== f ? m : n2.wrap <= 0 ? 1 : (2 === n2.wrap ? (U(n2, 255 & e2.adler), U(n2, e2.adler >> 8 & 255), U(n2, e2.adler >> 16 & 255), U(n2, e2.adler >> 24 & 255), U(n2, 255 & e2.total_in), U(n2, e2.total_in >> 8 & 255), U(n2, e2.total_in >> 16 & 255), U(n2, e2.total_in >> 24 & 255)) : (P(n2, e2.adler >>> 16), P(n2, 65535 & e2.adler)), F(e2), 0 < n2.wrap && (n2.wrap = -n2.wrap), 0 !== n2.pending ? m : 1);
+            return t2 !== f ? m : n2.wrap <= 0 ? 1 : (2 === n2.wrap ? (U(n2, 255 & e2.adler), U(n2, e2.adler >> 8 & 255), U(n2, e2.adler >> 16 & 255), U(n2, e2.adler >> 24 & 255), U(n2, 255 & e2.total_in), U(n2, e2.total_in >> 8 & 255), U(n2, e2.total_in >> 16 & 255), U(n2, e2.total_in >> 24 & 255)) : (P(n2, e2.adler >>> 16), P(n2, 65535 & e2.adler)), F2(e2), 0 < n2.wrap && (n2.wrap = -n2.wrap), 0 !== n2.pending ? m : 1);
           }, r.deflateEnd = function(e2) {
             var t2;
-            return e2 && e2.state ? (t2 = e2.state.status) !== C && 69 !== t2 && 73 !== t2 && 91 !== t2 && 103 !== t2 && t2 !== E && 666 !== t2 ? R(e2, _) : (e2.state = null, t2 === E ? R(e2, -3) : m) : _;
+            return e2 && e2.state ? (t2 = e2.state.status) !== C && 69 !== t2 && 73 !== t2 && 91 !== t2 && 103 !== t2 && t2 !== E && 666 !== t2 ? R2(e2, _) : (e2.state = null, t2 === E ? R2(e2, -3) : m) : _;
           }, r.deflateSetDictionary = function(e2, t2) {
             var r2, n2, i2, s2, a2, o2, h2, u2, l2 = t2.length;
             if (!e2 || !e2.state)
               return _;
             if (2 === (s2 = (r2 = e2.state).wrap) || 1 === s2 && r2.status !== C || r2.lookahead)
               return _;
-            for (1 === s2 && (e2.adler = d(e2.adler, t2, l2, 0)), r2.wrap = 0, l2 >= r2.w_size && (0 === s2 && (D(r2.head), r2.strstart = 0, r2.block_start = 0, r2.insert = 0), u2 = new c.Buf8(r2.w_size), c.arraySet(u2, t2, l2 - r2.w_size, r2.w_size, 0), t2 = u2, l2 = r2.w_size), a2 = e2.avail_in, o2 = e2.next_in, h2 = e2.input, e2.avail_in = l2, e2.next_in = 0, e2.input = t2, j(r2); r2.lookahead >= x; ) {
+            for (1 === s2 && (e2.adler = d(e2.adler, t2, l2, 0)), r2.wrap = 0, l2 >= r2.w_size && (0 === s2 && (D2(r2.head), r2.strstart = 0, r2.block_start = 0, r2.insert = 0), u2 = new c.Buf8(r2.w_size), c.arraySet(u2, t2, l2 - r2.w_size, r2.w_size, 0), t2 = u2, l2 = r2.w_size), a2 = e2.avail_in, o2 = e2.next_in, h2 = e2.input, e2.avail_in = l2, e2.next_in = 0, e2.input = t2, j2(r2); r2.lookahead >= x; ) {
               for (n2 = r2.strstart, i2 = r2.lookahead - (x - 1); r2.ins_h = (r2.ins_h << r2.hash_shift ^ r2.window[n2 + x - 1]) & r2.hash_mask, r2.prev[n2 & r2.w_mask] = r2.head[r2.ins_h], r2.head[r2.ins_h] = n2, n2++, --i2; )
                 ;
-              r2.strstart = n2, r2.lookahead = x - 1, j(r2);
+              r2.strstart = n2, r2.lookahead = x - 1, j2(r2);
             }
             return r2.strstart += r2.lookahead, r2.block_start = r2.strstart, r2.insert = r2.lookahead, r2.lookahead = 0, r2.match_length = r2.prev_length = x - 1, r2.match_available = 0, e2.next_in = o2, e2.input = h2, e2.avail_in = a2, r2.wrap = s2, m;
           }, r.deflateInfo = "pako deflate (from Nodeca project)";
@@ -3093,7 +3130,7 @@
         }, {}], 48: [function(e, t, r) {
           "use strict";
           t.exports = function(e2, t2) {
-            var r2, n, i, s, a, o, h, u, l, f, c, d, p, m, _, g, b, v, y, w, k, x, S, z, C;
+            var r2, n, i, s, a, o, h, u, l, f, c, d, p, m, _, g, b, v, y, w, k, x, S2, z, C;
             r2 = e2.state, n = e2.next_in, z = e2.input, i = n + (e2.avail_in - 5), s = e2.next_out, C = e2.output, a = s - (t2 - e2.avail_out), o = s + (e2.avail_out - 257), h = r2.dmax, u = r2.wsize, l = r2.whave, f = r2.wnext, c = r2.window, d = r2.hold, p = r2.bits, m = r2.lencode, _ = r2.distcode, g = (1 << r2.lenbits) - 1, b = (1 << r2.distbits) - 1;
             e:
               do {
@@ -3135,11 +3172,11 @@
                               e2.msg = "invalid distance too far back", r2.mode = 30;
                               break e;
                             }
-                            if (S = c, (x = 0) === f) {
+                            if (S2 = c, (x = 0) === f) {
                               if (x += u - y, y < w) {
                                 for (w -= y; C[s++] = c[x++], --y; )
                                   ;
-                                x = s - k, S = C;
+                                x = s - k, S2 = C;
                               }
                             } else if (f < y) {
                               if (x += u + f - y, (y -= f) < w) {
@@ -3148,17 +3185,17 @@
                                 if (x = 0, f < w) {
                                   for (w -= y = f; C[s++] = c[x++], --y; )
                                     ;
-                                  x = s - k, S = C;
+                                  x = s - k, S2 = C;
                                 }
                               }
                             } else if (x += f - y, y < w) {
                               for (w -= y; C[s++] = c[x++], --y; )
                                 ;
-                              x = s - k, S = C;
+                              x = s - k, S2 = C;
                             }
                             for (; 2 < w; )
-                              C[s++] = S[x++], C[s++] = S[x++], C[s++] = S[x++], w -= 3;
-                            w && (C[s++] = S[x++], 1 < w && (C[s++] = S[x++]));
+                              C[s++] = S2[x++], C[s++] = S2[x++], C[s++] = S2[x++], w -= 3;
+                            w && (C[s++] = S2[x++], 1 < w && (C[s++] = S2[x++]));
                           } else {
                             for (x = s - k; C[s++] = C[x++], C[s++] = C[x++], C[s++] = C[x++], 2 < (w -= 3); )
                               ;
@@ -3174,7 +3211,7 @@
           };
         }, {}], 49: [function(e, t, r) {
           "use strict";
-          var I = e("../utils/common"), O = e("./adler32"), B = e("./crc32"), R = e("./inffast"), T = e("./inftrees"), D = 1, F = 2, N = 0, U = -2, P = 1, n = 852, i = 592;
+          var I = e("../utils/common"), O2 = e("./adler32"), B = e("./crc32"), R2 = e("./inffast"), T2 = e("./inftrees"), D2 = 1, F2 = 2, N = 0, U = -2, P = 1, n = 852, i = 592;
           function L(e2) {
             return (e2 >>> 24 & 255) + (e2 >>> 8 & 65280) + ((65280 & e2) << 8) + ((255 & e2) << 24);
           }
@@ -3198,7 +3235,7 @@
             return e2 ? (n2 = new s(), (e2.state = n2).window = null, (r2 = h(e2, t2)) !== N && (e2.state = null), r2) : U;
           }
           var l, f, c = true;
-          function j(e2) {
+          function j2(e2) {
             if (c) {
               var t2;
               for (l = new I.Buf32(512), f = new I.Buf32(32), t2 = 0; t2 < 144; )
@@ -3209,20 +3246,20 @@
                 e2.lens[t2++] = 7;
               for (; t2 < 288; )
                 e2.lens[t2++] = 8;
-              for (T(D, e2.lens, 0, 288, l, 0, e2.work, { bits: 9 }), t2 = 0; t2 < 32; )
+              for (T2(D2, e2.lens, 0, 288, l, 0, e2.work, { bits: 9 }), t2 = 0; t2 < 32; )
                 e2.lens[t2++] = 5;
-              T(F, e2.lens, 0, 32, f, 0, e2.work, { bits: 5 }), c = false;
+              T2(F2, e2.lens, 0, 32, f, 0, e2.work, { bits: 5 }), c = false;
             }
             e2.lencode = l, e2.lenbits = 9, e2.distcode = f, e2.distbits = 5;
           }
-          function Z(e2, t2, r2, n2) {
+          function Z2(e2, t2, r2, n2) {
             var i2, s2 = e2.state;
             return null === s2.window && (s2.wsize = 1 << s2.wbits, s2.wnext = 0, s2.whave = 0, s2.window = new I.Buf8(s2.wsize)), n2 >= s2.wsize ? (I.arraySet(s2.window, t2, r2 - s2.wsize, s2.wsize, 0), s2.wnext = 0, s2.whave = s2.wsize) : (n2 < (i2 = s2.wsize - s2.wnext) && (i2 = n2), I.arraySet(s2.window, t2, r2 - n2, i2, s2.wnext), (n2 -= i2) ? (I.arraySet(s2.window, t2, r2 - n2, n2, 0), s2.wnext = n2, s2.whave = s2.wsize) : (s2.wnext += i2, s2.wnext === s2.wsize && (s2.wnext = 0), s2.whave < s2.wsize && (s2.whave += i2))), 0;
           }
           r.inflateReset = o, r.inflateReset2 = h, r.inflateResetKeep = a, r.inflateInit = function(e2) {
             return u(e2, 15);
           }, r.inflateInit2 = u, r.inflate = function(e2, t2) {
-            var r2, n2, i2, s2, a2, o2, h2, u2, l2, f2, c2, d, p, m, _, g, b, v, y, w, k, x, S, z, C = 0, E = new I.Buf8(4), A = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
+            var r2, n2, i2, s2, a2, o2, h2, u2, l2, f2, c2, d, p, m, _, g, b, v, y, w, k, x, S2, z, C = 0, E = new I.Buf8(4), A = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
             if (!e2 || !e2.state || !e2.output || !e2.input && 0 !== e2.avail_in)
               return U;
             12 === (r2 = e2.state).mode && (r2.mode = 13), a2 = e2.next_out, i2 = e2.output, h2 = e2.avail_out, s2 = e2.next_in, n2 = e2.input, o2 = e2.avail_in, u2 = r2.hold, l2 = r2.bits, f2 = o2, c2 = h2, x = N;
@@ -3369,7 +3406,7 @@
                         r2.mode = 14;
                         break;
                       case 1:
-                        if (j(r2), r2.mode = 20, 6 !== t2)
+                        if (j2(r2), r2.mode = 20, 6 !== t2)
                           break;
                         u2 >>>= 2, l2 -= 2;
                         break e;
@@ -3426,7 +3463,7 @@
                     }
                     for (; r2.have < 19; )
                       r2.lens[A[r2.have++]] = 0;
-                    if (r2.lencode = r2.lendyn, r2.lenbits = 7, S = { bits: r2.lenbits }, x = T(0, r2.lens, 0, 19, r2.lencode, 0, r2.work, S), r2.lenbits = S.bits, x) {
+                    if (r2.lencode = r2.lendyn, r2.lenbits = 7, S2 = { bits: r2.lenbits }, x = T2(0, r2.lens, 0, 19, r2.lencode, 0, r2.work, S2), r2.lenbits = S2.bits, x) {
                       e2.msg = "invalid code lengths set", r2.mode = 30;
                       break;
                     }
@@ -3481,11 +3518,11 @@
                       e2.msg = "invalid code -- missing end-of-block", r2.mode = 30;
                       break;
                     }
-                    if (r2.lenbits = 9, S = { bits: r2.lenbits }, x = T(D, r2.lens, 0, r2.nlen, r2.lencode, 0, r2.work, S), r2.lenbits = S.bits, x) {
+                    if (r2.lenbits = 9, S2 = { bits: r2.lenbits }, x = T2(D2, r2.lens, 0, r2.nlen, r2.lencode, 0, r2.work, S2), r2.lenbits = S2.bits, x) {
                       e2.msg = "invalid literal/lengths set", r2.mode = 30;
                       break;
                     }
-                    if (r2.distbits = 6, r2.distcode = r2.distdyn, S = { bits: r2.distbits }, x = T(F, r2.lens, r2.nlen, r2.ndist, r2.distcode, 0, r2.work, S), r2.distbits = S.bits, x) {
+                    if (r2.distbits = 6, r2.distcode = r2.distdyn, S2 = { bits: r2.distbits }, x = T2(F2, r2.lens, r2.nlen, r2.ndist, r2.distcode, 0, r2.work, S2), r2.distbits = S2.bits, x) {
                       e2.msg = "invalid distances set", r2.mode = 30;
                       break;
                     }
@@ -3495,7 +3532,7 @@
                     r2.mode = 21;
                   case 21:
                     if (6 <= o2 && 258 <= h2) {
-                      e2.next_out = a2, e2.avail_out = h2, e2.next_in = s2, e2.avail_in = o2, r2.hold = u2, r2.bits = l2, R(e2, c2), a2 = e2.next_out, i2 = e2.output, h2 = e2.avail_out, s2 = e2.next_in, n2 = e2.input, o2 = e2.avail_in, u2 = r2.hold, l2 = r2.bits, 12 === r2.mode && (r2.back = -1);
+                      e2.next_out = a2, e2.avail_out = h2, e2.next_in = s2, e2.avail_in = o2, r2.hold = u2, r2.bits = l2, R2(e2, c2), a2 = e2.next_out, i2 = e2.output, h2 = e2.avail_out, s2 = e2.next_in, n2 = e2.input, o2 = e2.avail_in, u2 = r2.hold, l2 = r2.bits, 12 === r2.mode && (r2.back = -1);
                       break;
                     }
                     for (r2.back = 0; g = (C = r2.lencode[u2 & (1 << r2.lenbits) - 1]) >>> 16 & 255, b = 65535 & C, !((_ = C >>> 24) <= l2); ) {
@@ -3594,7 +3631,7 @@
                           break e;
                         o2--, u2 |= n2[s2++] << l2, l2 += 8;
                       }
-                      if (c2 -= h2, e2.total_out += c2, r2.total += c2, c2 && (e2.adler = r2.check = r2.flags ? B(r2.check, i2, c2, a2 - c2) : O(r2.check, i2, c2, a2 - c2)), c2 = h2, (r2.flags ? u2 : L(u2)) !== r2.check) {
+                      if (c2 -= h2, e2.total_out += c2, r2.total += c2, c2 && (e2.adler = r2.check = r2.flags ? B(r2.check, i2, c2, a2 - c2) : O2(r2.check, i2, c2, a2 - c2)), c2 = h2, (r2.flags ? u2 : L(u2)) !== r2.check) {
                         e2.msg = "incorrect data check", r2.mode = 30;
                         break;
                       }
@@ -3627,7 +3664,7 @@
                   default:
                     return U;
                 }
-            return e2.next_out = a2, e2.avail_out = h2, e2.next_in = s2, e2.avail_in = o2, r2.hold = u2, r2.bits = l2, (r2.wsize || c2 !== e2.avail_out && r2.mode < 30 && (r2.mode < 27 || 4 !== t2)) && Z(e2, e2.output, e2.next_out, c2 - e2.avail_out) ? (r2.mode = 31, -4) : (f2 -= e2.avail_in, c2 -= e2.avail_out, e2.total_in += f2, e2.total_out += c2, r2.total += c2, r2.wrap && c2 && (e2.adler = r2.check = r2.flags ? B(r2.check, i2, c2, e2.next_out - c2) : O(r2.check, i2, c2, e2.next_out - c2)), e2.data_type = r2.bits + (r2.last ? 64 : 0) + (12 === r2.mode ? 128 : 0) + (20 === r2.mode || 15 === r2.mode ? 256 : 0), (0 == f2 && 0 === c2 || 4 === t2) && x === N && (x = -5), x);
+            return e2.next_out = a2, e2.avail_out = h2, e2.next_in = s2, e2.avail_in = o2, r2.hold = u2, r2.bits = l2, (r2.wsize || c2 !== e2.avail_out && r2.mode < 30 && (r2.mode < 27 || 4 !== t2)) && Z2(e2, e2.output, e2.next_out, c2 - e2.avail_out) ? (r2.mode = 31, -4) : (f2 -= e2.avail_in, c2 -= e2.avail_out, e2.total_in += f2, e2.total_out += c2, r2.total += c2, r2.wrap && c2 && (e2.adler = r2.check = r2.flags ? B(r2.check, i2, c2, e2.next_out - c2) : O2(r2.check, i2, c2, e2.next_out - c2)), e2.data_type = r2.bits + (r2.last ? 64 : 0) + (12 === r2.mode ? 128 : 0) + (20 === r2.mode || 15 === r2.mode ? 256 : 0), (0 == f2 && 0 === c2 || 4 === t2) && x === N && (x = -5), x);
           }, r.inflateEnd = function(e2) {
             if (!e2 || !e2.state)
               return U;
@@ -3638,53 +3675,53 @@
             return e2 && e2.state ? 0 == (2 & (r2 = e2.state).wrap) ? U : ((r2.head = t2).done = false, N) : U;
           }, r.inflateSetDictionary = function(e2, t2) {
             var r2, n2 = t2.length;
-            return e2 && e2.state ? 0 !== (r2 = e2.state).wrap && 11 !== r2.mode ? U : 11 === r2.mode && O(1, t2, n2, 0) !== r2.check ? -3 : Z(e2, t2, n2, n2) ? (r2.mode = 31, -4) : (r2.havedict = 1, N) : U;
+            return e2 && e2.state ? 0 !== (r2 = e2.state).wrap && 11 !== r2.mode ? U : 11 === r2.mode && O2(1, t2, n2, 0) !== r2.check ? -3 : Z2(e2, t2, n2, n2) ? (r2.mode = 31, -4) : (r2.havedict = 1, N) : U;
           }, r.inflateInfo = "pako inflate (from Nodeca project)";
         }, { "../utils/common": 41, "./adler32": 43, "./crc32": 45, "./inffast": 48, "./inftrees": 50 }], 50: [function(e, t, r) {
           "use strict";
-          var D = e("../utils/common"), F = [3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0], N = [16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 16, 72, 78], U = [1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577, 0, 0], P = [16, 16, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 64, 64];
+          var D2 = e("../utils/common"), F2 = [3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0], N = [16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 20, 20, 21, 21, 21, 21, 16, 72, 78], U = [1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577, 0, 0], P = [16, 16, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 64, 64];
           t.exports = function(e2, t2, r2, n, i, s, a, o) {
-            var h, u, l, f, c, d, p, m, _, g = o.bits, b = 0, v = 0, y = 0, w = 0, k = 0, x = 0, S = 0, z = 0, C = 0, E = 0, A = null, I = 0, O = new D.Buf16(16), B = new D.Buf16(16), R = null, T = 0;
+            var h, u, l, f, c, d, p, m, _, g = o.bits, b = 0, v = 0, y = 0, w = 0, k = 0, x = 0, S2 = 0, z = 0, C = 0, E = 0, A = null, I = 0, O2 = new D2.Buf16(16), B = new D2.Buf16(16), R2 = null, T2 = 0;
             for (b = 0; b <= 15; b++)
-              O[b] = 0;
+              O2[b] = 0;
             for (v = 0; v < n; v++)
-              O[t2[r2 + v]]++;
-            for (k = g, w = 15; 1 <= w && 0 === O[w]; w--)
+              O2[t2[r2 + v]]++;
+            for (k = g, w = 15; 1 <= w && 0 === O2[w]; w--)
               ;
             if (w < k && (k = w), 0 === w)
               return i[s++] = 20971520, i[s++] = 20971520, o.bits = 1, 0;
-            for (y = 1; y < w && 0 === O[y]; y++)
+            for (y = 1; y < w && 0 === O2[y]; y++)
               ;
             for (k < y && (k = y), b = z = 1; b <= 15; b++)
-              if (z <<= 1, (z -= O[b]) < 0)
+              if (z <<= 1, (z -= O2[b]) < 0)
                 return -1;
             if (0 < z && (0 === e2 || 1 !== w))
               return -1;
             for (B[1] = 0, b = 1; b < 15; b++)
-              B[b + 1] = B[b] + O[b];
+              B[b + 1] = B[b] + O2[b];
             for (v = 0; v < n; v++)
               0 !== t2[r2 + v] && (a[B[t2[r2 + v]]++] = v);
-            if (d = 0 === e2 ? (A = R = a, 19) : 1 === e2 ? (A = F, I -= 257, R = N, T -= 257, 256) : (A = U, R = P, -1), b = y, c = s, S = v = E = 0, l = -1, f = (C = 1 << (x = k)) - 1, 1 === e2 && 852 < C || 2 === e2 && 592 < C)
+            if (d = 0 === e2 ? (A = R2 = a, 19) : 1 === e2 ? (A = F2, I -= 257, R2 = N, T2 -= 257, 256) : (A = U, R2 = P, -1), b = y, c = s, S2 = v = E = 0, l = -1, f = (C = 1 << (x = k)) - 1, 1 === e2 && 852 < C || 2 === e2 && 592 < C)
               return 1;
             for (; ; ) {
-              for (p = b - S, _ = a[v] < d ? (m = 0, a[v]) : a[v] > d ? (m = R[T + a[v]], A[I + a[v]]) : (m = 96, 0), h = 1 << b - S, y = u = 1 << x; i[c + (E >> S) + (u -= h)] = p << 24 | m << 16 | _ | 0, 0 !== u; )
+              for (p = b - S2, _ = a[v] < d ? (m = 0, a[v]) : a[v] > d ? (m = R2[T2 + a[v]], A[I + a[v]]) : (m = 96, 0), h = 1 << b - S2, y = u = 1 << x; i[c + (E >> S2) + (u -= h)] = p << 24 | m << 16 | _ | 0, 0 !== u; )
                 ;
               for (h = 1 << b - 1; E & h; )
                 h >>= 1;
-              if (0 !== h ? (E &= h - 1, E += h) : E = 0, v++, 0 == --O[b]) {
+              if (0 !== h ? (E &= h - 1, E += h) : E = 0, v++, 0 == --O2[b]) {
                 if (b === w)
                   break;
                 b = t2[r2 + a[v]];
               }
               if (k < b && (E & f) !== l) {
-                for (0 === S && (S = k), c += y, z = 1 << (x = b - S); x + S < w && !((z -= O[x + S]) <= 0); )
+                for (0 === S2 && (S2 = k), c += y, z = 1 << (x = b - S2); x + S2 < w && !((z -= O2[x + S2]) <= 0); )
                   x++, z <<= 1;
                 if (C += 1 << x, 1 === e2 && 852 < C || 2 === e2 && 592 < C)
                   return 1;
                 i[l = E & f] = k << 24 | x << 16 | c - s | 0;
               }
             }
-            return 0 !== E && (i[c + E] = b - S << 24 | 64 << 16 | 0), o.bits = k, 0;
+            return 0 !== E && (i[c + E] = b - S2 << 24 | 64 << 16 | 0), o.bits = k, 0;
           };
         }, { "../utils/common": 41 }], 51: [function(e, t, r) {
           "use strict";
@@ -3696,7 +3733,7 @@
             for (var t2 = e2.length; 0 <= --t2; )
               e2[t2] = 0;
           }
-          var s = 0, a = 29, u = 256, l = u + 1 + a, f = 30, c = 19, _ = 2 * l + 1, g = 15, d = 16, p = 7, m = 256, b = 16, v = 17, y = 18, w = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0], k = [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13], x = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 7], S = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15], z = new Array(2 * (l + 2));
+          var s = 0, a = 29, u = 256, l = u + 1 + a, f = 30, c = 19, _ = 2 * l + 1, g = 15, d = 16, p = 7, m = 256, b = 16, v = 17, y = 18, w = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0], k = [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13], x = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 7], S2 = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15], z = new Array(2 * (l + 2));
           n(z);
           var C = new Array(2 * f);
           n(C);
@@ -3706,11 +3743,11 @@
           n(A);
           var I = new Array(a);
           n(I);
-          var O, B, R, T = new Array(f);
-          function D(e2, t2, r2, n2, i2) {
+          var O2, B, R2, T2 = new Array(f);
+          function D2(e2, t2, r2, n2, i2) {
             this.static_tree = e2, this.extra_bits = t2, this.extra_base = r2, this.elems = n2, this.max_length = i2, this.has_stree = e2 && e2.length;
           }
-          function F(e2, t2) {
+          function F2(e2, t2) {
             this.dyn_tree = e2, this.max_code = 0, this.stat_desc = t2;
           }
           function N(e2) {
@@ -3725,18 +3762,18 @@
           function L(e2, t2, r2) {
             P(e2, r2[2 * t2], r2[2 * t2 + 1]);
           }
-          function j(e2, t2) {
+          function j2(e2, t2) {
             for (var r2 = 0; r2 |= 1 & e2, e2 >>>= 1, r2 <<= 1, 0 < --t2; )
               ;
             return r2 >>> 1;
           }
-          function Z(e2, t2, r2) {
+          function Z2(e2, t2, r2) {
             var n2, i2, s2 = new Array(g + 1), a2 = 0;
             for (n2 = 1; n2 <= g; n2++)
               s2[n2] = a2 = a2 + r2[n2 - 1] << 1;
             for (i2 = 0; i2 <= t2; i2++) {
               var o2 = e2[2 * i2 + 1];
-              0 !== o2 && (e2[2 * i2] = j(s2[o2]++, o2));
+              0 !== o2 && (e2[2 * i2] = j2(s2[o2]++, o2));
             }
           }
           function W(e2) {
@@ -3752,19 +3789,19 @@
           function M(e2) {
             8 < e2.bi_valid ? U(e2, e2.bi_buf) : 0 < e2.bi_valid && (e2.pending_buf[e2.pending++] = e2.bi_buf), e2.bi_buf = 0, e2.bi_valid = 0;
           }
-          function H(e2, t2, r2, n2) {
+          function H2(e2, t2, r2, n2) {
             var i2 = 2 * t2, s2 = 2 * r2;
             return e2[i2] < e2[s2] || e2[i2] === e2[s2] && n2[t2] <= n2[r2];
           }
-          function G(e2, t2, r2) {
-            for (var n2 = e2.heap[r2], i2 = r2 << 1; i2 <= e2.heap_len && (i2 < e2.heap_len && H(t2, e2.heap[i2 + 1], e2.heap[i2], e2.depth) && i2++, !H(t2, n2, e2.heap[i2], e2.depth)); )
+          function G2(e2, t2, r2) {
+            for (var n2 = e2.heap[r2], i2 = r2 << 1; i2 <= e2.heap_len && (i2 < e2.heap_len && H2(t2, e2.heap[i2 + 1], e2.heap[i2], e2.depth) && i2++, !H2(t2, n2, e2.heap[i2], e2.depth)); )
               e2.heap[r2] = e2.heap[i2], r2 = i2, i2 <<= 1;
             e2.heap[r2] = n2;
           }
           function K(e2, t2, r2) {
             var n2, i2, s2, a2, o2 = 0;
             if (0 !== e2.last_lit)
-              for (; n2 = e2.pending_buf[e2.d_buf + 2 * o2] << 8 | e2.pending_buf[e2.d_buf + 2 * o2 + 1], i2 = e2.pending_buf[e2.l_buf + o2], o2++, 0 === n2 ? L(e2, i2, t2) : (L(e2, (s2 = A[i2]) + u + 1, t2), 0 !== (a2 = w[s2]) && P(e2, i2 -= I[s2], a2), L(e2, s2 = N(--n2), r2), 0 !== (a2 = k[s2]) && P(e2, n2 -= T[s2], a2)), o2 < e2.last_lit; )
+              for (; n2 = e2.pending_buf[e2.d_buf + 2 * o2] << 8 | e2.pending_buf[e2.d_buf + 2 * o2 + 1], i2 = e2.pending_buf[e2.l_buf + o2], o2++, 0 === n2 ? L(e2, i2, t2) : (L(e2, (s2 = A[i2]) + u + 1, t2), 0 !== (a2 = w[s2]) && P(e2, i2 -= I[s2], a2), L(e2, s2 = N(--n2), r2), 0 !== (a2 = k[s2]) && P(e2, n2 -= T2[s2], a2)), o2 < e2.last_lit; )
                 ;
             L(e2, m, t2);
           }
@@ -3775,8 +3812,8 @@
             for (; e2.heap_len < 2; )
               s2[2 * (i2 = e2.heap[++e2.heap_len] = u2 < 2 ? ++u2 : 0)] = 1, e2.depth[i2] = 0, e2.opt_len--, o2 && (e2.static_len -= a2[2 * i2 + 1]);
             for (t2.max_code = u2, r2 = e2.heap_len >> 1; 1 <= r2; r2--)
-              G(e2, s2, r2);
-            for (i2 = h2; r2 = e2.heap[1], e2.heap[1] = e2.heap[e2.heap_len--], G(e2, s2, 1), n2 = e2.heap[1], e2.heap[--e2.heap_max] = r2, e2.heap[--e2.heap_max] = n2, s2[2 * i2] = s2[2 * r2] + s2[2 * n2], e2.depth[i2] = (e2.depth[r2] >= e2.depth[n2] ? e2.depth[r2] : e2.depth[n2]) + 1, s2[2 * r2 + 1] = s2[2 * n2 + 1] = i2, e2.heap[1] = i2++, G(e2, s2, 1), 2 <= e2.heap_len; )
+              G2(e2, s2, r2);
+            for (i2 = h2; r2 = e2.heap[1], e2.heap[1] = e2.heap[e2.heap_len--], G2(e2, s2, 1), n2 = e2.heap[1], e2.heap[--e2.heap_max] = r2, e2.heap[--e2.heap_max] = n2, s2[2 * i2] = s2[2 * r2] + s2[2 * n2], e2.depth[i2] = (e2.depth[r2] >= e2.depth[n2] ? e2.depth[r2] : e2.depth[n2]) + 1, s2[2 * r2 + 1] = s2[2 * n2 + 1] = i2, e2.heap[1] = i2++, G2(e2, s2, 1), 2 <= e2.heap_len; )
               ;
             e2.heap[--e2.heap_max] = e2.heap[1], function(e3, t3) {
               var r3, n3, i3, s3, a3, o3, h3 = t3.dyn_tree, u3 = t3.max_code, l2 = t3.stat_desc.static_tree, f2 = t3.stat_desc.has_stree, c2 = t3.stat_desc.extra_bits, d2 = t3.stat_desc.extra_base, p2 = t3.stat_desc.max_length, m2 = 0;
@@ -3794,9 +3831,9 @@
                   for (n3 = e3.bl_count[s3]; 0 !== n3; )
                     u3 < (i3 = e3.heap[--r3]) || (h3[2 * i3 + 1] !== s3 && (e3.opt_len += (s3 - h3[2 * i3 + 1]) * h3[2 * i3], h3[2 * i3 + 1] = s3), n3--);
               }
-            }(e2, t2), Z(s2, u2, e2.bl_count);
+            }(e2, t2), Z2(s2, u2, e2.bl_count);
           }
-          function X(e2, t2, r2) {
+          function X2(e2, t2, r2) {
             var n2, i2, s2 = -1, a2 = t2[1], o2 = 0, h2 = 7, u2 = 4;
             for (0 === a2 && (h2 = 138, u2 = 3), t2[2 * (r2 + 1) + 1] = 65535, n2 = 0; n2 <= r2; n2++)
               i2 = a2, a2 = t2[2 * (n2 + 1) + 1], ++o2 < h2 && i2 === a2 || (o2 < u2 ? e2.bl_tree[2 * i2] += o2 : 0 !== i2 ? (i2 !== s2 && e2.bl_tree[2 * i2]++, e2.bl_tree[2 * b]++) : o2 <= 10 ? e2.bl_tree[2 * v]++ : e2.bl_tree[2 * y]++, s2 = i2, u2 = (o2 = 0) === a2 ? (h2 = 138, 3) : i2 === a2 ? (h2 = 6, 3) : (h2 = 7, 4));
@@ -3813,24 +3850,24 @@
                 s2 = i2, u2 = (o2 = 0) === a2 ? (h2 = 138, 3) : i2 === a2 ? (h2 = 6, 3) : (h2 = 7, 4);
               }
           }
-          n(T);
-          var q = false;
-          function J(e2, t2, r2, n2) {
+          n(T2);
+          var q2 = false;
+          function J2(e2, t2, r2, n2) {
             P(e2, (s << 1) + (n2 ? 1 : 0), 3), function(e3, t3, r3, n3) {
               M(e3), n3 && (U(e3, r3), U(e3, ~r3)), i.arraySet(e3.pending_buf, e3.window, t3, r3, e3.pending), e3.pending += r3;
             }(e2, t2, r2, true);
           }
           r._tr_init = function(e2) {
-            q || (function() {
+            q2 || (function() {
               var e3, t2, r2, n2, i2, s2 = new Array(g + 1);
               for (n2 = r2 = 0; n2 < a - 1; n2++)
                 for (I[n2] = r2, e3 = 0; e3 < 1 << w[n2]; e3++)
                   A[r2++] = n2;
               for (A[r2 - 1] = n2, n2 = i2 = 0; n2 < 16; n2++)
-                for (T[n2] = i2, e3 = 0; e3 < 1 << k[n2]; e3++)
+                for (T2[n2] = i2, e3 = 0; e3 < 1 << k[n2]; e3++)
                   E[i2++] = n2;
               for (i2 >>= 7; n2 < f; n2++)
-                for (T[n2] = i2 << 7, e3 = 0; e3 < 1 << k[n2] - 7; e3++)
+                for (T2[n2] = i2 << 7, e3 = 0; e3 < 1 << k[n2] - 7; e3++)
                   E[256 + i2++] = n2;
               for (t2 = 0; t2 <= g; t2++)
                 s2[t2] = 0;
@@ -3842,11 +3879,11 @@
                 z[2 * e3 + 1] = 7, e3++, s2[7]++;
               for (; e3 <= 287; )
                 z[2 * e3 + 1] = 8, e3++, s2[8]++;
-              for (Z(z, l + 1, s2), e3 = 0; e3 < f; e3++)
-                C[2 * e3 + 1] = 5, C[2 * e3] = j(e3, 5);
-              O = new D(z, w, u + 1, l, g), B = new D(C, k, 0, f, g), R = new D(new Array(0), x, 0, c, p);
-            }(), q = true), e2.l_desc = new F(e2.dyn_ltree, O), e2.d_desc = new F(e2.dyn_dtree, B), e2.bl_desc = new F(e2.bl_tree, R), e2.bi_buf = 0, e2.bi_valid = 0, W(e2);
-          }, r._tr_stored_block = J, r._tr_flush_block = function(e2, t2, r2, n2) {
+              for (Z2(z, l + 1, s2), e3 = 0; e3 < f; e3++)
+                C[2 * e3 + 1] = 5, C[2 * e3] = j2(e3, 5);
+              O2 = new D2(z, w, u + 1, l, g), B = new D2(C, k, 0, f, g), R2 = new D2(new Array(0), x, 0, c, p);
+            }(), q2 = true), e2.l_desc = new F2(e2.dyn_ltree, O2), e2.d_desc = new F2(e2.dyn_dtree, B), e2.bl_desc = new F2(e2.bl_tree, R2), e2.bi_buf = 0, e2.bi_valid = 0, W(e2);
+          }, r._tr_stored_block = J2, r._tr_flush_block = function(e2, t2, r2, n2) {
             var i2, s2, a2 = 0;
             0 < e2.level ? (2 === e2.strm.data_type && (e2.strm.data_type = function(e3) {
               var t3, r3 = 4093624447;
@@ -3861,13 +3898,13 @@
               return o;
             }(e2)), Y(e2, e2.l_desc), Y(e2, e2.d_desc), a2 = function(e3) {
               var t3;
-              for (X(e3, e3.dyn_ltree, e3.l_desc.max_code), X(e3, e3.dyn_dtree, e3.d_desc.max_code), Y(e3, e3.bl_desc), t3 = c - 1; 3 <= t3 && 0 === e3.bl_tree[2 * S[t3] + 1]; t3--)
+              for (X2(e3, e3.dyn_ltree, e3.l_desc.max_code), X2(e3, e3.dyn_dtree, e3.d_desc.max_code), Y(e3, e3.bl_desc), t3 = c - 1; 3 <= t3 && 0 === e3.bl_tree[2 * S2[t3] + 1]; t3--)
                 ;
               return e3.opt_len += 3 * (t3 + 1) + 5 + 5 + 4, t3;
-            }(e2), i2 = e2.opt_len + 3 + 7 >>> 3, (s2 = e2.static_len + 3 + 7 >>> 3) <= i2 && (i2 = s2)) : i2 = s2 = r2 + 5, r2 + 4 <= i2 && -1 !== t2 ? J(e2, t2, r2, n2) : 4 === e2.strategy || s2 === i2 ? (P(e2, 2 + (n2 ? 1 : 0), 3), K(e2, z, C)) : (P(e2, 4 + (n2 ? 1 : 0), 3), function(e3, t3, r3, n3) {
+            }(e2), i2 = e2.opt_len + 3 + 7 >>> 3, (s2 = e2.static_len + 3 + 7 >>> 3) <= i2 && (i2 = s2)) : i2 = s2 = r2 + 5, r2 + 4 <= i2 && -1 !== t2 ? J2(e2, t2, r2, n2) : 4 === e2.strategy || s2 === i2 ? (P(e2, 2 + (n2 ? 1 : 0), 3), K(e2, z, C)) : (P(e2, 4 + (n2 ? 1 : 0), 3), function(e3, t3, r3, n3) {
               var i3;
               for (P(e3, t3 - 257, 5), P(e3, r3 - 1, 5), P(e3, n3 - 4, 4), i3 = 0; i3 < n3; i3++)
-                P(e3, e3.bl_tree[2 * S[i3] + 1], 3);
+                P(e3, e3.bl_tree[2 * S2[i3] + 1], 3);
               V(e3, e3.dyn_ltree, t3 - 1), V(e3, e3.dyn_dtree, r3 - 1);
             }(e2, e2.l_desc.max_code + 1, e2.d_desc.max_code + 1, a2 + 1), K(e2, e2.dyn_ltree, e2.dyn_dtree)), W(e2), n2 && M(e2);
           }, r._tr_tally = function(e2, t2, r2) {
@@ -3963,43 +4000,6 @@
           }).call(this, "undefined" != typeof global ? global : "undefined" != typeof self ? self : "undefined" != typeof window ? window : {});
         }, {}] }, {}, [10])(10);
       });
-    }
-  });
-
-  // node_modules/generator-sort/build/index.js
-  var require_build = __commonJS({
-    "node_modules/generator-sort/build/index.js"(exports) {
-      "use strict";
-      Object.defineProperty(exports, "__esModule", { value: true });
-      function compareStrings2(sA, sB) {
-        return sA > sB ? 1 : sA < sB ? -1 : 0;
-      }
-      exports.compareStrings = compareStrings2;
-      function compareNumbers2(sA, sB) {
-        return sA - sB;
-      }
-      exports.compareNumbers = compareNumbers2;
-      function reverse(r) {
-        return -r;
-      }
-      exports.reverse = reverse;
-      function compareStringsCaseInsensitive(sA, sB) {
-        return sA.localeCompare(sB, void 0, {
-          sensitivity: "base"
-        });
-      }
-      exports.compareStringsCaseInsensitive = compareStringsCaseInsensitive;
-      function sortFunction2(gen) {
-        return (a, b) => {
-          for (let comp of gen(a, b)) {
-            if (comp) {
-              return comp;
-            }
-          }
-          return 0;
-        };
-      }
-      exports.sortFunction = sortFunction2;
     }
   });
 
@@ -4421,7 +4421,7 @@
       lookup.delete(block.key);
     });
   }
-  function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, lookup, node, destroy, create_each_block28, next, get_context) {
+  function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, lookup, node, destroy, create_each_block27, next, get_context) {
     let o = old_blocks.length;
     let n = list.length;
     let i = o;
@@ -4437,7 +4437,7 @@
       const key = get_key(child_ctx);
       let block = lookup.get(key);
       if (!block) {
-        block = create_each_block28(key, child_ctx);
+        block = create_each_block27(key, child_ctx);
         block.c();
       } else if (dynamic) {
         block.p(child_ctx, dirty);
@@ -5149,6 +5149,7 @@
   // src/store.ts
   var revealed = writable(false);
   var revealedLock = false;
+  var markersLoaded = writable(false);
   var linksPageSorted = writable(false);
   var loadingFile = writable("");
   var leftRightClickSwipe = writable(null);
@@ -8591,46 +8592,53 @@
   var js_yaml_default = jsYaml;
 
   // src/util.ts
-  async function readTextFile(path) {
-    let text2;
-    try {
-      text2 = await fetchText(path);
-      inform(path);
-    } catch (e) {
-      console.error(e);
-      warn(e);
-      return null;
-    }
-    return text2;
+  function readTextFile(path) {
+    return __async(this, null, function* () {
+      let text2;
+      try {
+        text2 = yield fetchText(path);
+        inform(path);
+      } catch (e) {
+        console.error(e);
+        warn(e);
+        return null;
+      }
+      return text2;
+    });
   }
-  async function fetchText(path) {
-    if (typeof fsFile != "undefined")
-      return fsFile(path);
-    else
-      return (await fetch(path)).text();
+  function fetchText(path) {
+    return __async(this, null, function* () {
+      if (typeof fsFile != "undefined")
+        return fsFile(path);
+      else
+        return (yield fetch(path)).text();
+    });
   }
   var dirFilesRegex = /<\s*a[^>]*>(.*?)<\s*\/\s*a>/gi;
-  async function listDir(path, full = false) {
-    if (typeof fsDir != "undefined") {
-      let files2 = fsDir(path, full);
-      return files2;
-    }
-    let text2 = await readTextFile(path);
-    let matches, files = [];
-    while (matches = dirFilesRegex.exec(text2)) {
-      let dir = matches[1];
-      if (matches[0].indexOf("href=#") != -1 || dir.indexOf("<") != -1)
-        continue;
-      if (dir != "../" && dir.substring(0, 4) != "http")
-        files.push(full ? path + dir : dir);
-    }
-    console.log("ld", path, files);
-    return files;
+  function listDir(path, full = false) {
+    return __async(this, null, function* () {
+      if (typeof fsDir != "undefined") {
+        let files2 = fsDir(path, full);
+        return files2;
+      }
+      let text2 = yield readTextFile(path);
+      let matches, files = [];
+      while (matches = dirFilesRegex.exec(text2)) {
+        let dir = matches[1];
+        if (matches[0].indexOf("href=#") != -1 || dir.indexOf("<") != -1)
+          continue;
+        if (dir != "../" && dir.substring(0, 4) != "http")
+          files.push(full ? path + dir : dir);
+      }
+      return files;
+    });
   }
-  async function readYaml(path) {
-    let text2 = await readTextFile(path);
-    let parsed = parseYaml(text2, path);
-    return parsed;
+  function readYaml(path) {
+    return __async(this, null, function* () {
+      let text2 = yield readTextFile(path);
+      let parsed = parseYaml(text2, path);
+      return parsed;
+    });
   }
   function parseYaml(file, filename) {
     try {
@@ -8645,19 +8653,6 @@
       console.error(e.message);
       warn(e.message);
     }
-  }
-  function download(filename, text2) {
-    if (typeof fsSave != "undefined") {
-      fsSave(filename, text2);
-      return;
-    }
-    var element2 = document.createElement("a");
-    element2.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(text2));
-    element2.setAttribute("download", filename);
-    element2.style.display = "none";
-    document.body.appendChild(element2);
-    element2.click();
-    document.body.removeChild(element2);
   }
   function delay(n) {
     return new Promise((r) => setTimeout(r, n));
@@ -8680,13 +8675,13 @@
       return;
     }
     if (items.length < 3) {
-      for (let it of items)
-        addIfNew(arr, it);
+      for (let it2 of items)
+        addIfNew(arr, it2);
     } else {
       let set2 = new Set(arr);
-      for (let it of items)
-        if (!set2.has(it))
-          arr.push(it);
+      for (let it2 of items)
+        if (!set2.has(it2))
+          arr.push(it2);
     }
   }
   function isAncestorOf(ancestor, descendant) {
@@ -8712,13 +8707,70 @@
     return [...new Set(a)];
   }
   function withoutKeys(o, keys) {
-    o = { ...o };
+    o = __spreadValues({}, o);
     for (let k of keys) {
       delete o[k];
     }
     return o;
   }
   function clog(...args) {
+    console.log(...args);
+  }
+  function allFieldValuesOf(objects, field) {
+    let s = /* @__PURE__ */ new Set();
+    for (let o of objects) {
+      if (o[field] != void 0)
+        s.add(o[field]);
+    }
+    return [...s];
+  }
+  function exclude(a, b) {
+    let s = new Set(b);
+    return a.filter((v) => !s.has(v));
+  }
+  function loadImage(path) {
+    return new Promise((done, fail) => {
+      const image = new Image();
+      image.src = path;
+      image.onload = () => {
+        done(image);
+      };
+    });
+  }
+  function createCanvas(w, h) {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = w;
+    canvas.height = h;
+    return [canvas, ctx];
+  }
+  function imageToCanvas(image) {
+    let [canvas, context] = createCanvas(image.width, image.height);
+    context.drawImage(image, 0, 0);
+    return canvas;
+  }
+  function pathToDataUrl(path) {
+    return __async(this, null, function* () {
+      let blob = yield (yield fetch(path)).blob();
+      var reader = new FileReader();
+      reader.readAsDataURL(blob);
+      return new Promise((done) => {
+        reader.onloadend = function() {
+          done(reader.result);
+        };
+      });
+    });
+  }
+  function splitCanvas(canvas) {
+    let height = canvas.height;
+    let partsNum = canvas.width / canvas.height;
+    let parts = [];
+    for (let i = 0; i < partsNum; i++) {
+      let [part, ctx] = createCanvas(height, height);
+      ctx.drawImage(canvas, i * height, 0, height, height, 0, 0, height, height);
+      parts.push(part);
+    }
+    return parts;
   }
 
   // src/PaginatedList.svelte
@@ -8992,12 +9044,12 @@
     let pagesNumber = 1;
     let { pageSize = 40 } = $$props;
     let { onePageMax = 200 } = $$props;
-    onMount(async () => {
+    onMount(() => __async(this, null, function* () {
       leftRightClickSwipe.set((delta) => $$invalidate(3, currentPage = clamp(1, currentPage + delta, pagesNumber)));
-    });
-    onDestroy(async () => {
+    }));
+    onDestroy(() => __async(this, null, function* () {
       leftRightClickSwipe.set(null);
-    });
+    }));
     const setPage_handler = (e) => $$invalidate(3, currentPage = e.detail.page);
     $$self.$$set = ($$props2) => {
       if ("items" in $$props2)
@@ -10537,7 +10589,7 @@
     };
   }
   var func = (a) => typeof a == "object";
-  var func_1 = (i) => i?.type || i;
+  var func_1 = (i) => (i == null ? void 0 : i.type) || i;
   function instance9($$self, $$props, $$invalidate) {
     let { items } = $$props;
     let { cols = 0 } = $$props;
@@ -10591,7 +10643,7 @@
   var LinksList_default = LinksList_1;
 
   // src/Value.svelte
-  function create_else_block5(ctx) {
+  function create_else_block_12(ctx) {
     let tr2;
     let current;
     tr2 = new Tr_default({
@@ -10600,7 +10652,7 @@
         simple: ctx[3],
         nobr: ctx[4],
         icon: ctx[5],
-        capital: ctx[6]
+        capital: ctx[7]
       }
     });
     return {
@@ -10621,8 +10673,8 @@
           tr_changes.nobr = ctx2[4];
         if (dirty & 32)
           tr_changes.icon = ctx2[5];
-        if (dirty & 64)
-          tr_changes.capital = ctx2[6];
+        if (dirty & 128)
+          tr_changes.capital = ctx2[7];
         tr2.$set(tr_changes);
       },
       i(local) {
@@ -10640,7 +10692,7 @@
       }
     };
   }
-  function create_if_block_82(ctx) {
+  function create_if_block_10(ctx) {
     let img;
     let current;
     img = new Img_default({
@@ -10678,7 +10730,7 @@
       }
     };
   }
-  function create_if_block_72(ctx) {
+  function create_if_block_9(ctx) {
     let link2;
     let current;
     link2 = new Link_default({
@@ -10718,7 +10770,7 @@
       }
     };
   }
-  function create_if_block_62(ctx) {
+  function create_if_block_82(ctx) {
     let em;
     let t_value = ctx[0].toLocaleString("ru-RU", { maximumFractionDigits: 4 }).replace(",", ".") + "";
     let t;
@@ -10744,7 +10796,7 @@
       }
     };
   }
-  function create_if_block_52(ctx) {
+  function create_if_block_72(ctx) {
     let span;
     let tr2;
     let current;
@@ -10786,7 +10838,7 @@
       }
     };
   }
-  function create_if_block_42(ctx) {
+  function create_if_block_62(ctx) {
     let linkslist;
     let current;
     linkslist = new LinksList_default({ props: { items: ctx[0] } });
@@ -10819,7 +10871,7 @@
       }
     };
   }
-  function create_if_block_34(ctx) {
+  function create_if_block_52(ctx) {
     let linkslist;
     let current;
     linkslist = new LinksList_default({
@@ -10854,6 +10906,50 @@
       }
     };
   }
+  function create_if_block_34(ctx) {
+    let current_block_type_index;
+    let if_block;
+    let if_block_anchor;
+    let current;
+    const if_block_creators = [create_if_block_42, create_else_block5];
+    const if_blocks = [];
+    function select_block_type_1(ctx2, dirty) {
+      if (rul.globeMarkers)
+        return 0;
+      return 1;
+    }
+    current_block_type_index = select_block_type_1(ctx, -1);
+    if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    return {
+      c() {
+        if_block.c();
+        if_block_anchor = empty();
+      },
+      m(target, anchor) {
+        if_blocks[current_block_type_index].m(target, anchor);
+        insert(target, if_block_anchor, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        if_block.p(ctx2, dirty);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(if_block);
+        current = true;
+      },
+      o(local) {
+        transition_out(if_block);
+        current = false;
+      },
+      d(detaching) {
+        if_blocks[current_block_type_index].d(detaching);
+        if (detaching)
+          detach(if_block_anchor);
+      }
+    };
+  }
   function create_if_block_24(ctx) {
     let await_block_anchor;
     let promise;
@@ -10865,7 +10961,7 @@
       pending: create_pending_block2,
       then: create_then_block2,
       catch: create_catch_block2,
-      value: 7
+      value: 8
     };
     handle_promise(promise = rul.obsSprite(ctx[1], ctx[0]), info);
     return {
@@ -10934,6 +11030,65 @@
       }
     };
   }
+  function create_else_block5(ctx) {
+    let t;
+    return {
+      c() {
+        t = text(ctx[0]);
+      },
+      m(target, anchor) {
+        insert(target, t, anchor);
+      },
+      p(ctx2, dirty) {
+        if (dirty & 1)
+          set_data(t, ctx2[0]);
+      },
+      i: noop,
+      o: noop,
+      d(detaching) {
+        if (detaching)
+          detach(t);
+      }
+    };
+  }
+  function create_if_block_42(ctx) {
+    let img;
+    let current;
+    img = new Img_default({
+      props: {
+        src: rul.globeMarkers[ctx[0]],
+        style: "transform: scale(2  );"
+      }
+    });
+    return {
+      c() {
+        create_component(img.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(img, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        const img_changes = {};
+        if (dirty & 1)
+          img_changes.src = rul.globeMarkers[ctx2[0]];
+        img.$set(img_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(img.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(img.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(img, detaching);
+      }
+    };
+  }
   function create_catch_block2(ctx) {
     return { c: noop, m: noop, p: noop, d: noop };
   }
@@ -10943,7 +11098,7 @@
     return {
       c() {
         img = element("img");
-        if (!src_url_equal(img.src, img_src_value = ctx[7]))
+        if (!src_url_equal(img.src, img_src_value = ctx[8]))
           attr(img, "src", img_src_value);
         attr(img, "alt", ctx[0]);
         set_style(img, "max-width", "320px");
@@ -10952,7 +11107,7 @@
         insert(target, img, anchor);
       },
       p(ctx2, dirty) {
-        if (dirty & 3 && !src_url_equal(img.src, img_src_value = ctx2[7])) {
+        if (dirty & 3 && !src_url_equal(img.src, img_src_value = ctx2[8])) {
           attr(img, "src", img_src_value);
         }
         if (dirty & 1) {
@@ -10973,6 +11128,7 @@
     let show_if_1;
     let show_if_2;
     let show_if_3;
+    let show_if_4;
     let current_block_type_index;
     let if_block;
     let if_block_anchor;
@@ -10982,23 +11138,26 @@
       create_if_block_14,
       create_if_block_24,
       create_if_block_34,
-      create_if_block_42,
       create_if_block_52,
       create_if_block_62,
       create_if_block_72,
       create_if_block_82,
-      create_else_block5
+      create_if_block_9,
+      create_if_block_10,
+      create_else_block_12
     ];
     const if_blocks = [];
     function select_block_type(ctx2, dirty) {
-      if (dirty & 1)
+      if (dirty & 64)
         show_if = null;
       if (dirty & 1)
         show_if_1 = null;
-      if (dirty & 9)
-        show_if_2 = null;
       if (dirty & 1)
+        show_if_2 = null;
+      if (dirty & 9)
         show_if_3 = null;
+      if (dirty & 1)
+        show_if_4 = null;
       if (ctx2[2] == 0)
         return 0;
       if (ctx2[0] == null)
@@ -11006,26 +11165,30 @@
       if (ctx2[1])
         return 2;
       if (show_if == null)
-        show_if = !!Array.isArray(ctx2[0]);
+        show_if = !!["marker", "markerCrash", "markerLand"].includes(ctx2[6]);
       if (show_if)
         return 3;
-      if (ctx2[0] instanceof Object)
-        return 4;
-      if (ctx2[0] === true || ctx2[0] === false)
-        return 5;
       if (show_if_1 == null)
-        show_if_1 = !!!isNaN(+ctx2[0]);
+        show_if_1 = !!Array.isArray(ctx2[0]);
       if (show_if_1)
+        return 4;
+      if (ctx2[0] instanceof Object)
+        return 5;
+      if (ctx2[0] === true || ctx2[0] === false)
         return 6;
       if (show_if_2 == null)
-        show_if_2 = !!(rul.article(ctx2[0]) && !ctx2[3]);
+        show_if_2 = !!!isNaN(+ctx2[0]);
       if (show_if_2)
         return 7;
       if (show_if_3 == null)
-        show_if_3 = !!rul.hasSprite(ctx2[0]);
+        show_if_3 = !!(rul.article(ctx2[0]) && !ctx2[3]);
       if (show_if_3)
         return 8;
-      return 9;
+      if (show_if_4 == null)
+        show_if_4 = !!rul.hasSprite(ctx2[0]);
+      if (show_if_4)
+        return 9;
+      return 10;
     }
     current_block_type_index = select_block_type(ctx, -1);
     if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
@@ -11085,6 +11248,7 @@
     let { simple = false } = $$props;
     let { nobr = 30 } = $$props;
     let { icon = null } = $$props;
+    let { key = null } = $$props;
     let { capital: capital2 = false } = $$props;
     $$self.$$set = ($$props2) => {
       if ("val" in $$props2)
@@ -11099,8 +11263,10 @@
         $$invalidate(4, nobr = $$props2.nobr);
       if ("icon" in $$props2)
         $$invalidate(5, icon = $$props2.icon);
+      if ("key" in $$props2)
+        $$invalidate(6, key = $$props2.key);
       if ("capital" in $$props2)
-        $$invalidate(6, capital2 = $$props2.capital);
+        $$invalidate(7, capital2 = $$props2.capital);
     };
     $$self.$$.update = () => {
       if ($$self.$$.dirty & 3) {
@@ -11111,7 +11277,7 @@
         }
       }
     };
-    return [val, obs, depth, simple, nobr, icon, capital2];
+    return [val, obs, depth, simple, nobr, icon, key, capital2];
   }
   var Value = class extends SvelteComponent {
     constructor(options) {
@@ -11123,7 +11289,8 @@
         simple: 3,
         nobr: 4,
         icon: 5,
-        capital: 6
+        key: 6,
+        capital: 7
       });
     }
   };
@@ -11590,13 +11757,13 @@
     let table;
     let thead;
     let td;
-    let html_tag;
-    let raw0_value = rul.tr(ctx[1]) + "";
+    let value0;
     let t0;
-    let html_tag_1;
-    let raw1_value = rul.tr(ctx[2]) + "";
+    let value1;
     let t1;
     let current;
+    value0 = new Value_default({ props: { val: ctx[1] } });
+    value1 = new Value_default({ props: { val: ctx[2] } });
     let each_value = ctx[5].all;
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
@@ -11610,15 +11777,13 @@
         table = element("table");
         thead = element("thead");
         td = element("td");
-        html_tag = new HtmlTag(false);
+        create_component(value0.$$.fragment);
         t0 = space();
-        html_tag_1 = new HtmlTag(false);
+        create_component(value1.$$.fragment);
         t1 = space();
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
-        html_tag.a = t0;
-        html_tag_1.a = null;
         attr(td, "colspan", "2");
         attr(table, "class", "main-table");
       },
@@ -11626,9 +11791,9 @@
         insert(target, table, anchor);
         append(table, thead);
         append(thead, td);
-        html_tag.m(raw0_value, td);
+        mount_component(value0, td, null);
         append(td, t0);
-        html_tag_1.m(raw1_value, td);
+        mount_component(value1, td, null);
         append(table, t1);
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].m(table, null);
@@ -11636,10 +11801,14 @@
         current = true;
       },
       p(ctx2, dirty) {
-        if ((!current || dirty & 2) && raw0_value !== (raw0_value = rul.tr(ctx2[1]) + ""))
-          html_tag.p(raw0_value);
-        if ((!current || dirty & 4) && raw1_value !== (raw1_value = rul.tr(ctx2[2]) + ""))
-          html_tag_1.p(raw1_value);
+        const value0_changes = {};
+        if (dirty & 2)
+          value0_changes.val = ctx2[1];
+        value0.$set(value0_changes);
+        const value1_changes = {};
+        if (dirty & 4)
+          value1_changes.val = ctx2[2];
+        value1.$set(value1_changes);
         if (dirty & 184) {
           each_value = ctx2[5].all;
           let i;
@@ -11665,12 +11834,16 @@
       i(local) {
         if (current)
           return;
+        transition_in(value0.$$.fragment, local);
+        transition_in(value1.$$.fragment, local);
         for (let i = 0; i < each_value.length; i += 1) {
           transition_in(each_blocks[i]);
         }
         current = true;
       },
       o(local) {
+        transition_out(value0.$$.fragment, local);
+        transition_out(value1.$$.fragment, local);
         each_blocks = each_blocks.filter(Boolean);
         for (let i = 0; i < each_blocks.length; i += 1) {
           transition_out(each_blocks[i]);
@@ -11680,6 +11853,8 @@
       d(detaching) {
         if (detaching)
           detach(table);
+        destroy_component(value0);
+        destroy_component(value1);
         destroy_each(each_blocks, detaching);
       }
     };
@@ -11710,8 +11885,15 @@
     let value1;
     let t;
     let current;
-    value0 = new Value_default({ props: { val: ctx[9] } });
-    value1 = new Value_default({ props: { val: ctx[10] } });
+    value0 = new Value_default({
+      props: { val: ctx[9], capital: true }
+    });
+    value1 = new Value_default({
+      props: {
+        val: ctx[10],
+        key: ctx[9]
+      }
+    });
     return {
       c() {
         tr2 = element("tr");
@@ -11738,6 +11920,8 @@
         const value1_changes = {};
         if (dirty & 32)
           value1_changes.val = ctx2[10];
+        if (dirty & 32)
+          value1_changes.key = ctx2[9];
         value1.$set(value1_changes);
       },
       i(local) {
@@ -11805,7 +11989,9 @@
     let td1;
     let t;
     let current;
-    value = new Value_default({ props: { val: ctx[9] } });
+    value = new Value_default({
+      props: { val: ctx[9], capital: true }
+    });
     const default_slot_template = ctx[8].default;
     const default_slot = create_slot(default_slot_template, ctx, ctx[7], get_default_slot_context2);
     return {
@@ -12091,7 +12277,10 @@
     "SOLDIERS",
     "ARMORS",
     "MANUFACTURE",
-    "ITEM"
+    "ITEMS",
+    "ATTACKS",
+    "UFO",
+    "COUNTRIES"
   ];
   function invisible(t) {
     return `<span style="visibility:hidden">${t}</span>`;
@@ -12099,81 +12288,86 @@
 
   // src/load.ts
   var import_jszip = __toESM(require_jszip_min());
-  async function unpackZip(text2) {
-    let jszip = new import_jszip.default();
-    let data = await jszip.loadAsync(text2, { base64: true });
-    let file = data.file("main");
-    text2 = await file.async("string");
-    return text2;
-  }
-  async function packZip(text2) {
-    let jszip = new import_jszip.default();
-    jszip.file("main", text2);
-    let file = jszip.generateAsync({
-      type: "base64",
-      compression: "DEFLATE",
-      compressionOptions: {
-        level: 6
-      }
+  function unpackZip(text2) {
+    return __async(this, null, function* () {
+      let jszip = new import_jszip.default();
+      let data = yield jszip.loadAsync(text2, { base64: true });
+      let file = data.file("main");
+      text2 = yield file.async("string");
+      return text2;
     });
-    return file;
+  }
+  function packZip(text2) {
+    return __async(this, null, function* () {
+      let jszip = new import_jszip.default();
+      jszip.file("main", text2);
+      let file = jszip.generateAsync({
+        type: "base64",
+        compression: "DEFLATE",
+        compressionOptions: {
+          level: 6
+        }
+      });
+      return file;
+    });
   }
   var OXCPath = "/";
   var PediaPath = "";
-  async function loadPacked() {
-    let packed = window["xpedia"];
-    if (packed != null) {
-      let json2 = await unpackZip(packed);
-      let data = JSON.parse(json2);
-      return data;
-    }
+  function loadPacked() {
+    return __async(this, null, function* () {
+      let packed = window["xpedia"];
+      if (packed != null) {
+        let json2 = yield unpackZip(packed);
+        let data = JSON.parse(json2);
+        return data;
+      }
+    });
   }
   function onlyDirs(files) {
     return files.filter((dir) => dir[dir.length - 1] == "/");
   }
-  async function loadFromFiles() {
-    let [options, modDirs, rootDirs, xpediaDirs] = await Promise.all([
-      readYaml(`${OXCPath}user/options.cfg`),
-      listDir(`${OXCPath}user/mods/`, true),
-      listDir(`${OXCPath}`, true),
-      listDir(`${PediaPath}mods/`, true)
-    ]);
-    modDirs = onlyDirs(modDirs);
-    rootDirs = onlyDirs(rootDirs);
-    xpediaDirs = onlyDirs(xpediaDirs);
-    if (modDirs.length == 0) {
-      warn("can't find user/mods dir. Assuming we are in mod dir");
-      modDirs = rootDirs;
-    }
-    if (options == null) {
-      warn("can't find user/options.cfg file. Loading all mods");
-    }
-    modDirs = [`${OXCPath}standard/xcom1/`, ...modDirs];
-    let allModDirs = [...modDirs, ...xpediaDirs];
-    let modMetadataById = {};
-    let modMetadata = await Promise.all(allModDirs.map((dir) => readYaml(`${dir}metadata.yml`)));
-    for (let i in modMetadata) {
-      let data = modMetadata[i];
-      if (data == null)
-        continue;
-      let dir = allModDirs[i];
-      modMetadataById[data.id] = { ...data, dir };
-    }
-    let activeMods;
-    let masterModIds = modMetadata.filter((m) => m.isMaster).map((m) => m.id);
-    masterModIds.push("xpedia");
-    if (options) {
-      activeMods = ["xcom1", ...options.mods.filter((m) => m.active).map((m) => m.id)];
-      modMetadata = modMetadata.filter((m) => activeMods.includes(m.id));
-      modMetadata = modMetadata.filter((m) => m.isMaster || masterModIds.includes(m.master));
-      activeMods = modMetadata.map((m) => m.id);
-      let xpediaMods = Object.keys(modMetadataById).filter((k) => {
-        let data = modMetadataById[k];
-        return (data.master == null || activeMods.includes(data.master)) && xpediaDirs.includes(data.dir);
+  function loadFromFiles() {
+    return __async(this, null, function* () {
+      let [options, modDirs, rootDirs, xpediaDirs] = yield Promise.all([
+        readYaml(`${OXCPath}user/options.cfg`),
+        listDir(`${OXCPath}user/mods/`, true),
+        listDir(`${OXCPath}`, true),
+        listDir(`${PediaPath}mods/`, true)
+      ]);
+      modDirs = onlyDirs(modDirs);
+      rootDirs = onlyDirs(rootDirs);
+      xpediaDirs = onlyDirs(xpediaDirs);
+      if (modDirs.length == 0) {
+        warn("can't find user/mods dir. Assuming we are in mod dir");
+        modDirs = rootDirs;
+      }
+      if (options == null) {
+        warn("can't find user/options.cfg file. Loading all mods");
+      }
+      modDirs = [`${OXCPath}standard/xcom1/`, ...modDirs];
+      let allModDirs = [...modDirs, ...xpediaDirs];
+      let modMetadataById = {};
+      let modMetadata = yield Promise.all(allModDirs.map((dir) => readYaml(`${dir}metadata.yml`)));
+      modMetadata = modMetadata.filter((m) => m);
+      for (let i in modMetadata) {
+        let data = modMetadata[i];
+        if (data == null)
+          continue;
+        let dir = allModDirs[i];
+        modMetadataById[data.id] = __spreadProps(__spreadValues({}, data), { dir });
+      }
+      let activeMods;
+      let masterModIds = modMetadata.filter((m) => m.isMaster).map((m) => m.id);
+      masterModIds.push("xpedia");
+      if (options) {
+        activeMods = ["xcom1", ...[...options.mods.filter((m) => m.active), ...modMetadata.filter((m) => m.active)].map((m) => m.id)];
+      } else {
+        activeMods = ["xcom1", ...modMetadata.map((m) => m.id)];
+      }
+      activeMods = activeMods.filter((id) => {
+        let mod = modMetadataById[id];
+        return mod && (mod.isMaster || masterModIds.includes(mod.master));
       });
-      activeMods = [...activeMods, ...xpediaMods];
-    } else {
-      modMetadata = modMetadata.filter((m) => m.isMaster || masterModIds.includes(m.master));
       const priority = (id) => {
         let mod = modMetadataById[id];
         if (mod.master == "xpedia")
@@ -12184,62 +12378,66 @@
           return 2;
         return 3;
       };
-      activeMods = Object.keys(modMetadataById).sort((a, b) => priority(a) - priority(b));
-    }
-    let activeModsMetadata = activeMods.map((id) => modMetadataById[id]);
-    for (let mod of activeModsMetadata)
-      mod.rulDir = mod.id == "xcom1" ? mod.dir : `${mod.dir}Ruleset/`;
-    let langDirs = activeModsMetadata.map((m) => `${m.dir}Language/`);
-    langDirs.splice(1, 0, "/standard/xcom1/Language/OXCE/");
-    let [ruls, langs] = await Promise.all([
-      loadRulsFromMods(activeModsMetadata),
-      loadLanguagesFromDirs(activeModsMetadata.map((m) => `${m.dir}Language/`))
-    ]);
-    return { ruls, langs, mods: activeModsMetadata };
+      activeMods = activeMods.sort((a, b) => priority(a) - priority(b));
+      let activeModsMetadata = activeMods.map((id) => modMetadataById[id]);
+      for (let mod of activeModsMetadata)
+        mod.rulDir = mod.id == "xcom1" ? mod.dir : `${mod.dir}Ruleset/`;
+      let langDirs = activeModsMetadata.map((m) => `${m.dir}Language/`);
+      langDirs.splice(1, 0, "/standard/xcom1/Language/OXCE/");
+      let [ruls, langs] = yield Promise.all([
+        loadRulsFromMods(activeModsMetadata),
+        loadLanguagesFromDirs(langDirs)
+      ]);
+      return { ruls, langs, mods: activeModsMetadata };
+    });
   }
   var extRegexp = /^(.+)\.([0-9a-z\-]+)?$/i;
   function splitName(name) {
     let m = name.match(extRegexp);
     return m ? { body: m[1], ext: m[2] } : { body: name, ext: "" };
   }
-  async function loadLanguagesFromDirs(dirs) {
-    let langFiles = await Promise.all(dirs.map((path) => listDir(path)));
-    let files = langFiles.map((list, dirInd) => list.filter((file) => ["yml", "html", "txt"].includes(splitName(file).ext)).map((lname) => ({ lname, dir: dirs[dirInd] }))).flat();
-    let lng = {};
-    let data = await Promise.all(files.map((f) => {
-      let path = `${f.dir}${f.lname}`;
-      return splitName(f.lname).ext == "yml" ? readYaml(path) : readTextFile(path);
-    }));
-    for (let i in data) {
-      let text2 = data[i];
-      let fname = files[i].lname;
-      if (typeof text2 == "object") {
-        let lname = Object.keys(text2)[0];
-        lng[lname] = { ...lng[lname] || {}, ...text2[lname] };
-      } else {
-        let split = splitName(fname);
-        if (split.ext != "yml") {
-          let split2 = splitName(split.body);
-          lng[split2.ext] = lng[split2.ext] || {};
-          lng[split2.ext][split2.body] = text2;
+  function loadLanguagesFromDirs(dirs) {
+    return __async(this, null, function* () {
+      let langFiles = yield Promise.all(dirs.map((path) => listDir(path)));
+      let files = langFiles.map((list, dirInd) => list.filter((file) => ["yml", "html", "txt"].includes(splitName(file).ext)).map((lname) => ({ lname, dir: dirs[dirInd] }))).flat();
+      let lng = {};
+      let data = yield Promise.all(files.map((f) => {
+        let path = `${f.dir}${f.lname}`;
+        return splitName(f.lname).ext == "yml" ? readYaml(path) : readTextFile(path);
+      }));
+      for (let i in data) {
+        let text2 = data[i];
+        let fname = files[i].lname;
+        if (typeof text2 == "object") {
+          let lname = Object.keys(text2)[0];
+          lng[lname] = __spreadValues(__spreadValues({}, lng[lname] || {}), text2[lname]);
+        } else {
+          let split = splitName(fname);
+          if (split.ext != "yml") {
+            let split2 = splitName(split.body);
+            lng[split2.ext] = lng[split2.ext] || {};
+            lng[split2.ext][split2.body] = text2;
+          }
         }
       }
-    }
-    return lng;
+      return lng;
+    });
   }
-  async function loadRulsFromMods(mods) {
-    let dirLists = await Promise.all(mods.map((mod) => listDir(mod.rulDir)));
-    dirLists = dirLists.map((files2) => files2.filter((name) => name.substr(-4) == ".rul"));
-    let dirLists2 = [];
-    for (let i in mods) {
-      dirLists2[i] = dirLists[i].map((name) => ({ mod: mods[i].id, path: `${mods[i].rulDir}${name}`, modDir: mods[i].dir }));
-    }
-    let files = dirLists2.flat(1);
-    let ruls = await Promise.all(files.map(async (file) => {
-      let data = await readYaml(file.path);
-      return { ...data, file };
-    }));
-    return ruls;
+  function loadRulsFromMods(mods) {
+    return __async(this, null, function* () {
+      let dirLists = yield Promise.all(mods.map((mod) => listDir(mod.rulDir)));
+      dirLists = dirLists.map((files2) => files2.filter((name) => name.substr(-4) == ".rul"));
+      let dirLists2 = [];
+      for (let i in mods) {
+        dirLists2[i] = dirLists[i].map((name) => ({ mod: mods[i].id, path: `${mods[i].rulDir}${name}`, modDir: mods[i].dir }));
+      }
+      let files = dirLists2.flat(1);
+      let ruls = yield Promise.all(files.map((file) => __async(this, null, function* () {
+        let data = yield readYaml(file.path);
+        return __spreadProps(__spreadValues({}, data), { file });
+      })));
+      return ruls;
+    });
   }
   function useCache(data) {
     return new Promise((done) => {
@@ -12255,7 +12453,8 @@
         if (data == "load") {
           const query = store.get(1);
           query.onsuccess = () => {
-            let data2 = query.result?.data;
+            var _a;
+            let data2 = (_a = query.result) == null ? void 0 : _a.data;
             done(data2 ? JSON.parse(data2) : null);
           };
         } else {
@@ -12272,68 +12471,2615 @@
     });
   }
   var packedData;
-  async function loadRules(rul2) {
-    loadingFile.set("loading from js");
-    let data = await loadPacked();
-    if (data) {
-      packedData = true;
-      loadingFile.set("");
-      await delay(10);
-    } else {
-      loadingFile.set("loading from cache");
-      data = await useCache("load");
-      if (!data) {
-        loadingFile.set("loading from local files");
-        data = await loadFromFiles();
-        useCache(data);
+  function loadRules(rul2) {
+    return __async(this, null, function* () {
+      loadingFile.set("loading from js");
+      let data = yield loadPacked();
+      if (data) {
+        packedData = true;
+        loadingFile.set("");
+        yield delay(10);
+      } else {
+        loadingFile.set("loading from cache");
+        data = yield useCache("load");
+        if (!data) {
+          loadingFile.set("loading from local files");
+          data = yield loadFromFiles();
+          useCache(data);
+        }
+      }
+      if (data == null) {
+        warn("Failed to load rules");
+        return;
+      }
+      inform("parsing");
+      rul2.load(data);
+      yield delay(10);
+    });
+  }
+  function loadData(path) {
+    return __async(this, null, function* () {
+      if (typeof fsData != "undefined") {
+        return fsData(path);
+      } else {
+        return path;
+      }
+    });
+  }
+  function readStyle(id) {
+    return __async(this, null, function* () {
+      let css = document.getElementById(id);
+      return css.href ? yield (yield fetch(css.href)).text() : css.innerHTML;
+    });
+  }
+
+  // src/gifenc.esm.js
+  var X = { signature: "GIF", version: "89a", trailer: 59, extensionIntroducer: 33, applicationExtensionLabel: 255, graphicControlExtensionLabel: 249, imageSeparator: 44, signatureSize: 3, versionSize: 3, globalColorTableFlagMask: 128, colorResolutionMask: 112, sortFlagMask: 8, globalColorTableSizeMask: 7, applicationIdentifierSize: 8, applicationAuthCodeSize: 3, disposalMethodMask: 28, userInputFlagMask: 2, transparentColorFlagMask: 1, localColorTableFlagMask: 128, interlaceFlagMask: 64, idSortFlagMask: 32, localColorTableSizeMask: 7 };
+  function F(t = 256) {
+    let e = 0, s = new Uint8Array(t);
+    return { get buffer() {
+      return s.buffer;
+    }, reset() {
+      e = 0;
+    }, bytesView() {
+      return s.subarray(0, e);
+    }, bytes() {
+      return s.slice(0, e);
+    }, writeByte(r) {
+      n(e + 1), s[e] = r, e++;
+    }, writeBytes(r, o = 0, i = r.length) {
+      n(e + i);
+      for (let c = 0; c < i; c++)
+        s[e++] = r[c + o];
+    }, writeBytesView(r, o = 0, i = r.byteLength) {
+      n(e + i), s.set(r.subarray(o, o + i), e), e += i;
+    } };
+    function n(r) {
+      var o = s.length;
+      if (o >= r)
+        return;
+      var i = 1024 * 1024;
+      r = Math.max(r, o * (o < i ? 2 : 1.125) >>> 0), o != 0 && (r = Math.max(r, 256));
+      let c = s;
+      s = new Uint8Array(r), e > 0 && s.set(c.subarray(0, e), 0);
+    }
+  }
+  var O = 12;
+  var J = 5003;
+  var lt = [0, 1, 3, 7, 15, 31, 63, 127, 255, 511, 1023, 2047, 4095, 8191, 16383, 32767, 65535];
+  function at(t, e, s, n, r = F(512), o = new Uint8Array(256), i = new Int32Array(J), c = new Int32Array(J)) {
+    let x = i.length, a = Math.max(2, n);
+    o.fill(0), c.fill(0), i.fill(-1);
+    let l = 0, f = 0, g = a + 1, h = g, b = false, w = h, _ = (1 << w) - 1, u = 1 << g - 1, k = u + 1, B = u + 2, p = 0, A = s[0], z = 0;
+    for (let y = x; y < 65536; y *= 2)
+      ++z;
+    z = 8 - z, r.writeByte(a), I(u);
+    let d = s.length;
+    for (let y = 1; y < d; y++) {
+      t: {
+        let m = s[y], v = (m << O) + A, M = m << z ^ A;
+        if (i[M] === v) {
+          A = c[M];
+          break t;
+        }
+        let V = M === 0 ? 1 : x - M;
+        for (; i[M] >= 0; )
+          if (M -= V, M < 0 && (M += x), i[M] === v) {
+            A = c[M];
+            break t;
+          }
+        I(A), A = m, B < 1 << O ? (c[M] = B++, i[M] = v) : (i.fill(-1), B = u + 2, b = true, I(u));
       }
     }
-    if (data == null) {
-      warn("Failed to load rules");
-      return;
-    }
-    inform("parsing");
-    rul2.load(data);
-    await delay(10);
-  }
-  async function loadData(path) {
-    if (typeof fsData != "undefined") {
-      return fsData(path);
-    } else {
-      return path;
-    }
-  }
-  async function exportPedia(onlyCurrentLanguage = false) {
-    document.body.style.cursor = "wait";
-    let jsPath = document.getElementById("xpedia-js")?.src;
-    let js = await (await fetch(jsPath)).text();
-    let mainCSS = document.getElementById("main-css");
-    let style = mainCSS.href ? await (await fetch(mainCSS.href)).text() : mainCSS.innerHTML;
-    let src = rul.src;
-    if (onlyCurrentLanguage) {
-      let langs = {};
-      langs[defaultLanguage2] = src.langs[defaultLanguage2];
-      langs.icon = src.langs.icon;
-      let langName = rul.langName;
-      if (langName != defaultLanguage2) {
-        langs[langName] = src.langs[langName];
+    return I(A), I(k), r.writeByte(0), r.bytesView();
+    function I(y) {
+      for (l &= lt[f], f > 0 ? l |= y << f : l = y, f += w; f >= 8; )
+        o[p++] = l & 255, p >= 254 && (r.writeByte(p), r.writeBytesView(o, 0, p), p = 0), l >>= 8, f -= 8;
+      if ((B > _ || b) && (b ? (w = h, _ = (1 << w) - 1, b = false) : (++w, _ = w === O ? 1 << w : (1 << w) - 1)), y == k) {
+        for (; f > 0; )
+          o[p++] = l & 255, p >= 254 && (r.writeByte(p), r.writeBytesView(o, 0, p), p = 0), l >>= 8, f -= 8;
+        p > 0 && (r.writeByte(p), r.writeBytesView(o, 0, p), p = 0);
       }
-      src = { ...src, langs };
     }
-    let packed = await packZip(JSON.stringify(src));
-    let html = `
-<head>
-  <meta name="description" content="Online reference for OpenXCom games" />
-  <style>${style}</style>
-  <script>
-  window.gameDir = ".";
-  window.xpediaDir = "xpedia2/";
-  window.xpedia = "${packed}";
-  <\/script>
-  <script>${js}<\/script>
-</head>`;
-    download("xpedia.html", html);
-    document.body.style.cursor = "default";
+  }
+  var $ = at;
+  function D(t, e, s) {
+    return t << 8 & 63488 | e << 2 & 992 | s >> 3;
+  }
+  function G(t, e, s, n) {
+    return t >> 4 | e & 240 | (s & 240) << 4 | (n & 240) << 8;
+  }
+  function j(t, e, s) {
+    return t >> 4 << 8 | e & 240 | s >> 4;
+  }
+  function R(t, e, s) {
+    return t < e ? e : t > s ? s : t;
+  }
+  function T(t) {
+    return t * t;
+  }
+  function tt(t, e, s) {
+    var n = 0, r = 1e100;
+    let o = t[e], i = o.cnt, c = o.ac, x = o.rc, a = o.gc, l = o.bc;
+    for (var f = o.fw; f != 0; f = t[f].fw) {
+      let h = t[f], b = h.cnt, w = i * b / (i + b);
+      if (!(w >= r)) {
+        var g = 0;
+        s && (g += w * T(h.ac - c), g >= r) || (g += w * T(h.rc - x), !(g >= r) && (g += w * T(h.gc - a), !(g >= r) && (g += w * T(h.bc - l), !(g >= r) && (r = g, n = f))));
+      }
+    }
+    o.err = r, o.nn = n;
+  }
+  function Q() {
+    return { ac: 0, rc: 0, gc: 0, bc: 0, cnt: 0, nn: 0, fw: 0, bk: 0, tm: 0, mtm: 0, err: 0 };
+  }
+  function ut(t, e) {
+    let s = e === "rgb444" ? 4096 : 65536, n = new Array(s), r = t.length;
+    if (e === "rgba4444")
+      for (let o = 0; o < r; ++o) {
+        let i = t[o], c = i >> 24 & 255, x = i >> 16 & 255, a = i >> 8 & 255, l = i & 255, f = G(l, a, x, c), g = f in n ? n[f] : n[f] = Q();
+        g.rc += l, g.gc += a, g.bc += x, g.ac += c, g.cnt++;
+      }
+    else if (e === "rgb444")
+      for (let o = 0; o < r; ++o) {
+        let i = t[o], c = i >> 16 & 255, x = i >> 8 & 255, a = i & 255, l = j(a, x, c), f = l in n ? n[l] : n[l] = Q();
+        f.rc += a, f.gc += x, f.bc += c, f.cnt++;
+      }
+    else
+      for (let o = 0; o < r; ++o) {
+        let i = t[o], c = i >> 16 & 255, x = i >> 8 & 255, a = i & 255, l = D(a, x, c), f = l in n ? n[l] : n[l] = Q();
+        f.rc += a, f.gc += x, f.bc += c, f.cnt++;
+      }
+    return n;
+  }
+  function H(t, e, s = {}) {
+    let { format: n = "rgb565", clearAlpha: r = true, clearAlphaColor: o = 0, clearAlphaThreshold: i = 0, oneBitAlpha: c = false } = s;
+    if (!t || !t.buffer)
+      throw new Error("quantize() expected RGBA Uint8Array data");
+    if (!(t instanceof Uint8Array) && !(t instanceof Uint8ClampedArray))
+      throw new Error("quantize() expected RGBA Uint8Array data");
+    let x = new Uint32Array(t.buffer), a = s.useSqrt !== false, l = n === "rgba4444", f = ut(x, n), g = f.length, h = g - 1, b = new Uint32Array(g + 1);
+    for (var w = 0, u = 0; u < g; ++u) {
+      let C = f[u];
+      if (C != null) {
+        var _ = 1 / C.cnt;
+        l && (C.ac *= _), C.rc *= _, C.gc *= _, C.bc *= _, f[w++] = C;
+      }
+    }
+    T(e) / w < 0.022 && (a = false);
+    for (var u = 0; u < w - 1; ++u)
+      f[u].fw = u + 1, f[u + 1].bk = u, a && (f[u].cnt = Math.sqrt(f[u].cnt));
+    a && (f[u].cnt = Math.sqrt(f[u].cnt));
+    var k, B, p;
+    for (u = 0; u < w; ++u) {
+      tt(f, u, false);
+      var A = f[u].err;
+      for (B = ++b[0]; B > 1 && (p = B >> 1, !(f[k = b[p]].err <= A)); B = p)
+        b[B] = k;
+      b[B] = u;
+    }
+    var z = w - e;
+    for (u = 0; u < z; ) {
+      for (var d; ; ) {
+        var I = b[1];
+        if (d = f[I], d.tm >= d.mtm && f[d.nn].mtm <= d.tm)
+          break;
+        d.mtm == h ? I = b[1] = b[b[0]--] : (tt(f, I, false), d.tm = u);
+        var A = f[I].err;
+        for (B = 1; (p = B + B) <= b[0] && (p < b[0] && f[b[p]].err > f[b[p + 1]].err && p++, !(A <= f[k = b[p]].err)); B = p)
+          b[B] = k;
+        b[B] = I;
+      }
+      var y = f[d.nn], m = d.cnt, v = y.cnt, _ = 1 / (m + v);
+      l && (d.ac = _ * (m * d.ac + v * y.ac)), d.rc = _ * (m * d.rc + v * y.rc), d.gc = _ * (m * d.gc + v * y.gc), d.bc = _ * (m * d.bc + v * y.bc), d.cnt += y.cnt, d.mtm = ++u, f[y.bk].fw = y.fw, f[y.fw].bk = y.bk, y.mtm = h;
+    }
+    let M = [];
+    var V = 0;
+    for (u = 0; ; ++V) {
+      let L = R(Math.round(f[u].rc), 0, 255), C = R(Math.round(f[u].gc), 0, 255), Y = R(Math.round(f[u].bc), 0, 255), E = 255;
+      if (l) {
+        if (E = R(Math.round(f[u].ac), 0, 255), c) {
+          let st = typeof c == "number" ? c : 127;
+          E = E <= st ? 0 : 255;
+        }
+        r && E <= i && (L = C = Y = o, E = 0);
+      }
+      let K = l ? [L, C, Y, E] : [L, C, Y];
+      if (xt(M, K) || M.push(K), (u = f[u].fw) == 0)
+        break;
+    }
+    return M;
+  }
+  function xt(t, e) {
+    for (let s = 0; s < t.length; s++) {
+      let n = t[s], r = n[0] === e[0] && n[1] === e[1] && n[2] === e[2], o = n.length >= 4 && e.length >= 4 ? n[3] === e[3] : true;
+      if (r && o)
+        return true;
+    }
+    return false;
+  }
+  function nt(t, e, s = "rgb565") {
+    if (!t || !t.buffer)
+      throw new Error("quantize() expected RGBA Uint8Array data");
+    if (!(t instanceof Uint8Array) && !(t instanceof Uint8ClampedArray))
+      throw new Error("quantize() expected RGBA Uint8Array data");
+    if (e.length > 256)
+      throw new Error("applyPalette() only works with 256 colors or less");
+    let n = new Uint32Array(t.buffer), r = n.length, o = s === "rgb444" ? 4096 : 65536, i = new Uint8Array(r), c = new Array(o), x = s === "rgba4444";
+    if (s === "rgba4444")
+      for (let a = 0; a < r; a++) {
+        let l = n[a], f = l >> 24 & 255, g = l >> 16 & 255, h = l >> 8 & 255, b = l & 255, w = G(b, h, g, f), _ = w in c ? c[w] : c[w] = gt(b, h, g, f, e);
+        i[a] = _;
+      }
+    else {
+      let a = s === "rgb444" ? j : D;
+      for (let l = 0; l < r; l++) {
+        let f = n[l], g = f >> 16 & 255, h = f >> 8 & 255, b = f & 255, w = a(b, h, g), _ = w in c ? c[w] : c[w] = bt(b, h, g, e);
+        i[l] = _;
+      }
+    }
+    return i;
+  }
+  function gt(t, e, s, n, r) {
+    let o = 0, i = 1e100;
+    for (let c = 0; c < r.length; c++) {
+      let x = r[c], a = x[3], l = q(a - n);
+      if (l > i)
+        continue;
+      let f = x[0];
+      if (l += q(f - t), l > i)
+        continue;
+      let g = x[1];
+      if (l += q(g - e), l > i)
+        continue;
+      let h = x[2];
+      l += q(h - s), !(l > i) && (i = l, o = c);
+    }
+    return o;
+  }
+  function bt(t, e, s, n) {
+    let r = 0, o = 1e100;
+    for (let i = 0; i < n.length; i++) {
+      let c = n[i], x = c[0], a = q(x - t);
+      if (a > o)
+        continue;
+      let l = c[1];
+      if (a += q(l - e), a > o)
+        continue;
+      let f = c[2];
+      a += q(f - s), !(a > o) && (o = a, r = i);
+    }
+    return r;
+  }
+  function q(t) {
+    return t * t;
+  }
+  function ct(t = {}) {
+    let { initialCapacity: e = 4096, auto: s = true } = t, n = F(e), r = 5003, o = new Uint8Array(256), i = new Int32Array(r), c = new Int32Array(r), x = false;
+    return { reset() {
+      n.reset(), x = false;
+    }, finish() {
+      n.writeByte(X.trailer);
+    }, bytes() {
+      return n.bytes();
+    }, bytesView() {
+      return n.bytesView();
+    }, get buffer() {
+      return n.buffer;
+    }, get stream() {
+      return n;
+    }, writeHeader: a, writeFrame(l, f, g, h = {}) {
+      let { transparent: b = false, transparentIndex: w = 0, delay: _ = 0, palette: u = null, repeat: k = 0, colorDepth: B = 8, dispose: p = -1 } = h, A = false;
+      if (s ? x || (A = true, a(), x = true) : A = Boolean(h.first), f = Math.max(0, Math.floor(f)), g = Math.max(0, Math.floor(g)), A) {
+        if (!u)
+          throw new Error("First frame must include a { palette } option");
+        pt(n, f, g, u, B), it(n, u), k >= 0 && dt(n, k);
+      }
+      let z = Math.round(_ / 10);
+      wt(n, p, z, b, w);
+      let d = Boolean(u) && !A;
+      ht(n, f, g, d ? u : null), d && it(n, u), yt(n, l, f, g, B, o, i, c);
+    } };
+    function a() {
+      ft(n, "GIF89a");
+    }
+  }
+  function wt(t, e, s, n, r) {
+    t.writeByte(33), t.writeByte(249), t.writeByte(4), r < 0 && (r = 0, n = false);
+    var o, i;
+    n ? (o = 1, i = 2) : (o = 0, i = 0), e >= 0 && (i = e & 7), i <<= 2;
+    let c = 0;
+    t.writeByte(0 | i | c | o), S(t, s), t.writeByte(r || 0), t.writeByte(0);
+  }
+  function pt(t, e, s, n, r = 8) {
+    let o = 1, i = 0, c = Z(n.length) - 1, x = o << 7 | r - 1 << 4 | i << 3 | c, a = 0, l = 0;
+    S(t, e), S(t, s), t.writeBytes([x, a, l]);
+  }
+  function dt(t, e) {
+    t.writeByte(33), t.writeByte(255), t.writeByte(11), ft(t, "NETSCAPE2.0"), t.writeByte(3), t.writeByte(1), S(t, e), t.writeByte(0);
+  }
+  function it(t, e) {
+    let s = 1 << Z(e.length);
+    for (let n = 0; n < s; n++) {
+      let r = [0, 0, 0];
+      n < e.length && (r = e[n]), t.writeByte(r[0]), t.writeByte(r[1]), t.writeByte(r[2]);
+    }
+  }
+  function ht(t, e, s, n) {
+    if (t.writeByte(44), S(t, 0), S(t, 0), S(t, e), S(t, s), n) {
+      let r = 0, o = 0, i = Z(n.length) - 1;
+      t.writeByte(128 | r | o | 0 | i);
+    } else
+      t.writeByte(0);
+  }
+  function yt(t, e, s, n, r = 8, o, i, c) {
+    $(s, n, e, r, t, o, i, c);
+  }
+  function S(t, e) {
+    t.writeByte(e & 255), t.writeByte(e >> 8 & 255);
+  }
+  function ft(t, e) {
+    for (var s = 0; s < e.length; s++)
+      t.writeByte(e.charCodeAt(s));
+  }
+  function Z(t) {
+    return Math.max(Math.ceil(Math.log2(t)), 1);
+  }
+
+  // src/palettes.js
+  var palettes = { "PAL_BACKGROUND_SAFE.pal": `JASC-PAL
+0100
+256
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+104 124 68
+104 116 64
+100 108 60
+100 104 56
+96 96 52
+92 88 52
+84 76 48
+76 68 44
+72 60 40
+64 52 36
+60 44 32
+52 40 28
+44 32 24
+40 24 24
+32 20 20
+28 16 16
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+`, "PAL_BASESCAPE_SAFE.pal": `JASC-PAL
+0100
+256
+0 255 0
+252 252 252
+232 232 232
+216 216 216
+196 196 196
+176 176 176
+160 160 160
+140 140 140
+124 124 124
+104 104 104
+88 88 88
+68 68 68
+52 52 52
+32 32 32
+12 12 12
+0 0 0
+252 208 0
+240 184 0
+228 160 0
+216 140 0
+204 120 0
+192 104 0
+180 84 0
+168 72 0
+156 56 0
+144 44 0
+132 32 0
+120 24 0
+108 12 0
+96 4 0
+84 0 0
+72 0 0
+252 120 120
+240 104 104
+228 92 92
+216 80 80
+204 68 68
+192 60 60
+180 48 48
+168 40 40
+156 32 32
+144 24 24
+132 16 16
+120 12 12
+108 4 4
+96 4 4
+84 0 0
+72 0 0
+208 228 96
+184 212 84
+164 196 72
+144 184 60
+124 168 48
+104 156 40
+88 140 32
+72 124 24
+56 112 20
+40 96 12
+28 84 8
+16 68 4
+8 52 0
+4 40 0
+0 24 0
+0 12 0
+236 236 248
+216 216 232
+200 200 220
+184 184 208
+172 168 196
+156 152 184
+144 140 172
+132 124 160
+120 112 148
+108 100 132
+96 88 120
+84 76 108
+72 64 96
+64 52 84
+52 44 72
+44 36 60
+248 248 248
+232 228 224
+220 208 208
+204 192 188
+192 176 172
+180 156 152
+164 140 136
+152 128 120
+136 112 104
+124 100 92
+112 84 80
+96 72 64
+84 60 52
+68 48 44
+56 36 32
+44 28 24
+240 196 72
+228 176 64
+212 156 52
+200 136 48
+188 120 40
+176 104 32
+164 88 28
+152 72 20
+140 60 16
+128 48 12
+116 32 8
+104 24 4
+92 16 4
+80 8 0
+68 0 0
+56 0 0
+200 184 172
+188 172 156
+180 160 144
+168 148 132
+160 140 120
+152 128 108
+128 96 80
+120 76 68
+112 60 56
+104 48 52
+96 40 48
+88 32 48
+80 24 48
+72 16 48
+64 12 48
+56 8 48
+168 208 240
+148 192 228
+132 176 220
+116 160 208
+100 148 200
+88 132 192
+72 116 180
+60 104 172
+48 92 160
+40 76 152
+28 64 144
+20 52 132
+12 44 124
+4 32 112
+0 24 104
+0 16 96
+252 252 120
+240 232 104
+228 216 92
+216 196 80
+204 180 68
+196 160 60
+184 144 48
+172 128 40
+160 112 32
+148 96 24
+140 80 16
+128 64 12
+116 52 8
+104 40 4
+92 28 0
+84 20 0
+184 160 88
+172 144 76
+160 128 64
+148 112 56
+136 96 44
+124 80 36
+112 68 28
+104 56 24
+92 44 16
+80 32 12
+68 20 8
+56 12 4
+44 8 0
+32 4 0
+20 0 0
+12 0 0
+248 220 212
+236 200 192
+224 180 176
+212 160 160
+200 144 148
+188 128 136
+176 116 124
+164 104 116
+152 88 104
+136 72 96
+124 60 88
+112 48 80
+100 36 72
+88 28 64
+76 16 60
+48 0 40
+100 64 92
+96 60 88
+88 56 88
+84 52 84
+80 52 80
+72 48 76
+64 44 72
+60 40 68
+52 40 64
+48 36 60
+40 32 56
+36 28 52
+32 28 48
+28 24 44
+24 20 40
+20 20 36
+248 220 212
+232 232 232
+184 184 184
+136 136 136
+88 88 88
+44 44 44
+216 216 132
+176 168 100
+140 120 72
+100 80 48
+64 44 28
+132 176 220
+80 124 180
+40 80 140
+12 44 100
+0 16 60
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+0 0 0
+0 0 0
+236 200 192
+196 128 132
+156 80 100
+116 40 80
+76 16 60
+180 148 232
+136 100 184
+100 60 136
+68 28 88
+32 8 40
+252 252 164
+220 232 140
+192 212 120
+164 192 104
+`, "PAL_BATTLEPEDIA_SAFE.pal": `JASC-PAL
+0100
+256
+0 255 0
+252 252 252
+232 232 232
+216 216 216
+196 196 196
+176 176 176
+160 160 160
+140 140 140
+124 124 124
+104 104 104
+88 88 88
+68 68 68
+52 52 52
+32 32 32
+12 12 12
+0 0 0
+252 208 0
+236 180 0
+224 160 0
+208 136 0
+196 116 0
+180 96 0
+168 80 0
+152 64 0
+140 52 0
+124 36 0
+112 28 0
+96 16 0
+84 8 0
+72 4 0
+56 0 0
+44 0 0
+252 120 120
+236 104 104
+224 92 92
+208 76 76
+196 68 68
+184 56 56
+168 44 44
+156 36 36
+140 28 28
+128 20 20
+116 12 12
+100 8 8
+88 4 4
+72 0 0
+60 0 0
+48 0 0
+160 224 132
+136 208 116
+116 196 100
+92 184 84
+72 172 72
+60 160 64
+48 144 60
+40 132 56
+28 120 56
+20 108 52
+16 96 48
+8 80 44
+4 68 40
+0 56 36
+0 44 28
+0 32 24
+208 228 96
+184 212 84
+164 196 72
+144 184 60
+124 168 48
+104 156 40
+88 140 32
+72 124 24
+56 112 20
+40 96 12
+28 84 8
+16 68 4
+8 52 0
+4 40 0
+0 24 0
+0 12 0
+248 248 248
+232 224 224
+220 208 204
+204 188 184
+192 172 168
+176 156 148
+164 140 132
+148 124 116
+136 108 100
+120 92 88
+108 80 72
+92 68 60
+80 56 48
+68 44 40
+52 32 28
+40 24 20
+240 196 72
+224 176 64
+212 156 52
+200 136 48
+188 120 40
+176 104 32
+160 84 24
+148 72 20
+136 56 16
+124 44 12
+112 32 8
+96 20 4
+84 12 4
+72 4 0
+60 0 0
+48 0 0
+140 176 200
+128 160 188
+112 144 176
+104 128 164
+92 112 152
+80 100 144
+72 84 132
+60 72 120
+52 60 108
+44 48 96
+36 36 88
+32 28 76
+28 24 64
+24 16 52
+20 12 40
+16 8 32
+168 208 240
+148 188 224
+128 172 212
+112 152 200
+96 136 188
+80 120 172
+64 104 160
+52 88 148
+40 72 132
+28 60 120
+20 48 108
+12 36 96
+8 24 80
+4 16 68
+0 8 56
+0 4 44
+252 252 120
+236 228 104
+224 204 92
+208 184 76
+196 160 68
+184 140 56
+168 120 44
+156 100 36
+140 80 28
+128 64 20
+116 48 12
+100 32 8
+88 20 4
+72 8 0
+60 4 0
+48 0 0
+184 160 88
+172 144 76
+160 128 64
+148 112 56
+136 96 44
+124 80 36
+112 68 28
+104 56 24
+92 44 16
+80 32 12
+68 20 8
+56 12 4
+44 8 0
+32 4 0
+20 0 0
+12 0 0
+248 220 212
+232 196 192
+220 176 172
+208 152 152
+192 136 140
+180 120 128
+168 104 120
+152 92 108
+140 76 100
+128 64 92
+112 52 84
+100 44 76
+88 32 68
+72 24 60
+60 16 52
+48 12 44
+216 196 252
+200 172 236
+184 148 224
+172 128 208
+160 108 196
+152 92 180
+140 76 168
+132 60 152
+124 48 140
+116 36 124
+108 24 112
+96 16 96
+84 8 80
+72 4 60
+56 0 44
+44 0 32
+64 196 252
+56 172 236
+48 148 224
+40 128 208
+32 108 196
+28 88 184
+24 72 168
+16 52 156
+12 40 140
+8 24 128
+4 16 116
+4 4 100
+4 0 88
+4 0 72
+8 0 60
+8 0 48
+236 236 248
+216 216 232
+196 196 220
+180 180 208
+164 164 192
+148 144 180
+136 132 168
+120 116 152
+108 100 140
+96 88 128
+84 76 112
+72 64 100
+60 52 88
+52 40 72
+40 32 60
+32 24 48
+160 184 216
+128 148 180
+96 120 144
+68 88 108
+44 60 76
+116 184 252
+80 144 208
+52 108 168
+28 76 124
+12 48 84
+68 76 80
+64 68 72
+252 252 164
+220 232 140
+192 212 120
+164 192 104
+`, "PAL_BATTLESCAPE_SAFE.pal": `JASC-PAL
+0100
+256
+0 255 0
+252 252 252
+232 232 232
+216 216 216
+196 196 196
+176 176 176
+160 160 160
+140 140 140
+124 124 124
+104 104 104
+88 88 88
+68 68 68
+52 52 52
+32 32 32
+12 12 12
+0 0 0
+252 208 0
+236 180 0
+224 160 0
+208 136 0
+196 116 0
+180 96 0
+168 80 0
+152 64 0
+140 52 0
+124 36 0
+112 28 0
+96 16 0
+84 8 0
+72 4 0
+56 0 0
+44 0 0
+252 120 120
+236 104 104
+224 92 92
+208 76 76
+196 68 68
+184 56 56
+168 44 44
+156 36 36
+140 28 28
+128 20 20
+116 12 12
+100 8 8
+88 4 4
+72 0 0
+60 0 0
+48 0 0
+160 224 132
+136 208 116
+116 196 100
+92 184 84
+72 172 72
+60 160 64
+48 144 60
+40 132 56
+28 120 56
+20 108 52
+16 96 48
+8 80 44
+4 68 40
+0 56 36
+0 44 28
+0 32 24
+208 228 96
+184 212 84
+164 196 72
+144 184 60
+124 168 48
+104 156 40
+88 140 32
+72 124 24
+56 112 20
+40 96 12
+28 84 8
+16 68 4
+8 52 0
+4 40 0
+0 24 0
+0 12 0
+248 248 248
+232 224 224
+220 208 204
+204 188 184
+192 172 168
+176 156 148
+164 140 132
+148 124 116
+136 108 100
+120 92 88
+108 80 72
+92 68 60
+80 56 48
+68 44 40
+52 32 28
+40 24 20
+240 196 72
+224 176 64
+212 156 52
+200 136 48
+188 120 40
+176 104 32
+160 84 24
+148 72 20
+136 56 16
+124 44 12
+112 32 8
+96 20 4
+84 12 4
+72 4 0
+60 0 0
+48 0 0
+140 176 200
+128 160 188
+112 144 176
+104 128 164
+92 112 152
+80 100 144
+72 84 132
+60 72 120
+52 60 108
+44 48 96
+36 36 88
+32 28 76
+28 24 64
+24 16 52
+20 12 40
+16 8 32
+168 208 240
+148 188 224
+128 172 212
+112 152 200
+96 136 188
+80 120 172
+64 104 160
+52 88 148
+40 72 132
+28 60 120
+20 48 108
+12 36 96
+8 24 80
+4 16 68
+0 8 56
+0 4 44
+252 252 120
+236 228 104
+224 204 92
+208 184 76
+196 160 68
+184 140 56
+168 120 44
+156 100 36
+140 80 28
+128 64 20
+116 48 12
+100 32 8
+88 20 4
+72 8 0
+60 4 0
+48 0 0
+184 160 88
+172 144 76
+160 128 64
+148 112 56
+136 96 44
+124 80 36
+112 68 28
+104 56 24
+92 44 16
+80 32 12
+68 20 8
+56 12 4
+44 8 0
+32 4 0
+20 0 0
+12 0 0
+248 220 212
+232 196 192
+220 176 172
+208 152 152
+192 136 140
+180 120 128
+168 104 120
+152 92 108
+140 76 100
+128 64 92
+112 52 84
+100 44 76
+88 32 68
+72 24 60
+60 16 52
+48 12 44
+216 196 252
+200 172 236
+184 148 224
+172 128 208
+160 108 196
+152 92 180
+140 76 168
+132 60 152
+124 48 140
+116 36 124
+108 24 112
+96 16 96
+84 8 80
+72 4 60
+56 0 44
+44 0 32
+64 196 252
+56 172 236
+48 148 224
+40 128 208
+32 108 196
+28 88 184
+24 72 168
+16 52 156
+12 40 140
+8 24 128
+4 16 116
+4 4 100
+4 0 88
+4 0 72
+8 0 60
+8 0 48
+236 236 248
+216 216 232
+196 196 220
+180 180 208
+164 164 192
+148 144 180
+136 132 168
+120 116 152
+108 100 140
+96 88 128
+84 76 112
+72 64 100
+60 52 88
+52 40 72
+40 32 60
+32 24 48
+140 152 148
+132 136 140
+116 124 132
+108 116 124
+92 104 108
+84 92 100
+76 80 92
+56 68 84
+48 56 68
+40 48 56
+32 36 48
+24 28 32
+16 20 24
+8 12 16
+3 4 8
+3 3 6
+`, "PAL_BATTLE_COMMON_SAFE.pal": `JASC-PAL
+0100
+256
+0 255 0
+252 252 252
+232 232 232
+216 216 216
+196 196 196
+176 176 176
+160 160 160
+140 140 140
+124 124 124
+104 104 104
+88 88 88
+68 68 68
+52 52 52
+32 32 32
+12 12 12
+0 0 0
+252 208 0
+236 180 0
+224 160 0
+208 136 0
+196 116 0
+180 96 0
+168 80 0
+152 64 0
+140 52 0
+124 36 0
+112 28 0
+96 16 0
+84 8 0
+72 4 0
+56 0 0
+44 0 0
+252 120 120
+236 104 104
+224 92 92
+208 76 76
+196 68 68
+184 56 56
+168 44 44
+156 36 36
+140 28 28
+128 20 20
+116 12 12
+100 8 8
+88 4 4
+72 0 0
+60 0 0
+48 0 0
+160 224 132
+136 208 116
+116 196 100
+92 184 84
+72 172 72
+60 160 64
+48 144 60
+40 132 56
+28 120 56
+20 108 52
+16 96 48
+8 80 44
+4 68 40
+0 56 36
+0 44 28
+0 32 24
+208 228 96
+184 212 84
+164 196 72
+144 184 60
+124 168 48
+104 156 40
+88 140 32
+72 124 24
+56 112 20
+40 96 12
+28 84 8
+16 68 4
+8 52 0
+4 40 0
+0 24 0
+0 12 0
+248 248 248
+232 224 224
+220 208 204
+204 188 184
+192 172 168
+176 156 148
+164 140 132
+148 124 116
+136 108 100
+120 92 88
+108 80 72
+92 68 60
+80 56 48
+68 44 40
+52 32 28
+40 24 20
+240 196 72
+224 176 64
+212 156 52
+200 136 48
+188 120 40
+176 104 32
+160 84 24
+148 72 20
+136 56 16
+124 44 12
+112 32 8
+96 20 4
+84 12 4
+72 4 0
+60 0 0
+48 0 0
+140 176 200
+128 160 188
+112 144 176
+104 128 164
+92 112 152
+80 100 144
+72 84 132
+60 72 120
+52 60 108
+44 48 96
+36 36 88
+32 28 76
+28 24 64
+24 16 52
+20 12 40
+16 8 32
+168 208 240
+148 188 224
+128 172 212
+112 152 200
+96 136 188
+80 120 172
+64 104 160
+52 88 148
+40 72 132
+28 60 120
+20 48 108
+12 36 96
+8 24 80
+4 16 68
+0 8 56
+0 4 44
+252 252 120
+236 228 104
+224 204 92
+208 184 76
+196 160 68
+184 140 56
+168 120 44
+156 100 36
+140 80 28
+128 64 20
+116 48 12
+100 32 8
+88 20 4
+72 8 0
+60 4 0
+48 0 0
+184 160 88
+172 144 76
+160 128 64
+148 112 56
+136 96 44
+124 80 36
+112 68 28
+104 56 24
+92 44 16
+80 32 12
+68 20 8
+56 12 4
+44 8 0
+32 4 0
+20 0 0
+12 0 0
+248 220 212
+232 196 192
+220 176 172
+208 152 152
+192 136 140
+180 120 128
+168 104 120
+152 92 108
+140 76 100
+128 64 92
+112 52 84
+100 44 76
+88 32 68
+72 24 60
+60 16 52
+48 12 44
+216 196 252
+200 172 236
+184 148 224
+172 128 208
+160 108 196
+152 92 180
+140 76 168
+132 60 152
+124 48 140
+116 36 124
+108 24 112
+96 16 96
+84 8 80
+72 4 60
+56 0 44
+44 0 32
+64 196 252
+56 172 236
+48 148 224
+40 128 208
+32 108 196
+28 88 184
+24 72 168
+16 52 156
+12 40 140
+8 24 128
+4 16 116
+4 4 100
+4 0 88
+4 0 72
+8 0 60
+8 0 48
+236 236 248
+216 216 232
+196 196 220
+180 180 208
+164 164 192
+148 144 180
+136 132 168
+120 116 152
+108 100 140
+96 88 128
+84 76 112
+72 64 100
+60 52 88
+52 40 72
+40 32 60
+32 24 48
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+`, "PAL_GEOSCAPE_SAFE.pal": `JASC-PAL
+0100
+256
+0 255 0
+252 164 212
+192 112 152
+252 128 0
+192 92 0
+252 252 252
+192 192 192
+0 252 0
+0 192 0
+0 252 252
+0 192 192
+252 252 0
+192 192 0
+252 0 0
+192 0 0
+0 0 0
+0 128 44
+0 120 40
+0 116 36
+0 108 36
+0 104 32
+0 100 32
+0 92 28
+0 88 28
+0 80 24
+0 76 24
+0 72 20
+0 64 20
+0 60 16
+0 52 16
+0 48 12
+0 44 12
+116 156 44
+100 148 36
+88 140 32
+76 132 28
+60 124 24
+52 116 20
+40 108 16
+28 104 12
+20 96 8
+12 88 4
+4 80 4
+4 72 4
+0 64 8
+0 56 8
+0 48 8
+0 44 12
+172 164 0
+160 152 0
+152 144 0
+144 136 0
+136 124 0
+124 116 0
+116 108 0
+108 100 0
+96 88 0
+88 80 0
+80 72 0
+72 64 0
+60 56 0
+52 48 0
+44 40 0
+36 32 0
+148 164 48
+136 152 44
+128 144 40
+120 136 36
+112 128 32
+100 120 28
+92 108 28
+84 100 24
+76 92 20
+68 84 16
+60 76 16
+52 64 12
+44 56 8
+36 48 8
+32 40 4
+24 32 4
+124 244 216
+112 228 220
+104 196 208
+92 164 192
+84 132 176
+72 104 160
+64 80 144
+56 56 128
+56 48 112
+56 40 96
+216 252 0
+160 212 0
+116 172 0
+76 132 0
+44 92 0
+20 56 0
+204 188 204
+184 168 184
+168 152 168
+148 132 152
+132 116 136
+116 100 120
+96 84 100
+80 68 84
+64 52 68
+48 40 52
+28 72 116
+216 252 0
+188 232 0
+160 212 0
+136 196 0
+116 176 0
+96 160 0
+88 152 0
+80 144 0
+76 136 0
+68 132 0
+64 124 0
+60 116 0
+52 108 0
+48 104 0
+44 96 0
+40 88 0
+36 84 0
+32 76 0
+28 68 0
+24 60 0
+20 56 0
+252 0 0
+252 0 0
+252 0 0
+252 0 0
+252 0 0
+252 0 0
+100 204 188
+60 164 144
+28 128 100
+8 88 64
+0 52 32
+168 188 80
+128 152 56
+96 120 40
+64 84 24
+36 52 12
+176 148 68
+168 140 68
+160 132 68
+148 124 68
+140 116 68
+128 108 64
+120 100 64
+108 92 60
+100 84 56
+88 76 52
+80 68 48
+68 60 44
+60 52 40
+52 44 36
+40 36 28
+32 28 24
+152 176 176
+144 168 168
+136 160 160
+128 148 148
+120 140 140
+112 128 128
+104 120 120
+96 108 108
+84 100 100
+76 88 88
+68 80 80
+60 68 68
+52 60 60
+44 52 52
+36 40 40
+28 32 32
+112 48 132
+104 44 120
+96 40 112
+88 36 104
+80 32 96
+72 28 84
+64 24 76
+56 24 68
+48 20 60
+40 16 48
+32 12 40
+28 8 32
+20 4 24
+12 4 12
+4 0 4
+0 0 0
+0 36 116
+0 32 112
+0 32 112
+0 32 108
+0 32 108
+0 32 104
+0 32 104
+0 28 100
+0 28 100
+0 28 96
+0 28 96
+0 28 92
+0 28 92
+0 28 88
+0 24 88
+0 24 84
+0 24 84
+0 24 80
+0 24 80
+0 24 76
+0 20 76
+0 20 72
+0 20 72
+0 20 68
+0 20 68
+0 20 68
+0 16 64
+0 16 64
+0 16 60
+0 16 60
+0 16 56
+0 16 56
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+255 0 255
+64 176 108
+52 140 84
+40 108 64
+28 76 44
+16 44 24
+128 188 228
+104 160 204
+88 136 184
+68 112 164
+52 92 140
+40 68 120
+28 52 100
+252 252 164
+220 232 140
+192 212 120
+164 192 104
+`, "PAL_GRAPHS_SAFE.pal": `JASC-PAL
+0100
+256
+0 255 0
+252 252 252
+236 236 236
+216 216 216
+200 200 200
+184 184 184
+168 168 168
+152 152 152
+136 136 136
+120 120 120
+104 104 104
+88 88 88
+72 72 72
+56 56 56
+40 40 40
+24 24 24
+252 252 0
+216 208 0
+180 168 0
+144 128 0
+108 92 0
+72 60 0
+96 84 0
+72 60 0
+252 0 0
+212 0 0
+176 0 0
+136 0 0
+100 0 0
+64 0 0
+88 0 0
+64 0 0
+0 252 0
+0 212 0
+0 176 0
+0 136 0
+0 100 0
+0 64 0
+0 88 0
+0 64 0
+0 124 252
+0 100 208
+0 76 168
+0 52 124
+0 32 84
+0 16 44
+0 28 72
+0 16 44
+0 252 252
+0 212 212
+0 172 172
+0 132 132
+0 92 92
+0 56 56
+0 84 84
+0 56 56
+252 132 208
+208 96 164
+164 68 128
+120 44 88
+76 24 56
+36 8 24
+64 20 44
+36 8 24
+252 112 0
+212 84 0
+172 56 0
+132 36 0
+92 20 0
+52 8 0
+80 16 0
+52 8 0
+252 172 88
+216 144 72
+184 120 56
+152 96 44
+120 72 28
+88 52 20
+108 64 28
+88 52 20
+184 120 252
+152 92 220
+124 68 188
+96 44 156
+72 28 124
+52 16 92
+68 24 112
+52 16 92
+132 184 196
+104 152 164
+80 120 136
+56 88 104
+36 60 76
+20 36 48
+32 52 68
+20 36 48
+252 252 252
+216 216 216
+180 180 180
+144 144 144
+108 108 108
+76 76 76
+100 100 100
+76 76 76
+24 220 140
+20 184 112
+16 148 84
+12 112 60
+8 76 40
+4 44 20
+8 68 32
+4 44 20
+224 128 100
+188 96 72
+152 64 48
+116 40 28
+80 20 12
+48 8 4
+72 16 8
+48 8 4
+200 168 200
+164 132 164
+128 100 128
+92 68 92
+56 40 56
+24 16 24
+48 32 48
+24 16 24
+192 164 68
+160 132 48
+128 104 36
+100 76 20
+68 52 12
+40 28 4
+60 44 8
+40 28 4
+252 148 148
+208 112 112
+164 80 80
+124 52 52
+80 32 32
+40 12 12
+68 24 24
+40 12 12
+208 32 128
+172 20 104
+136 8 84
+104 4 60
+68 0 40
+36 0 20
+60 0 32
+36 0 20
+160 160 160
+128 128 128
+96 96 96
+68 68 68
+36 36 36
+8 8 8
+28 28 28
+8 8 8
+0 68 0
+0 56 0
+0 44 0
+0 32 0
+0 24 0
+96 96 96
+96 96 96
+96 96 96
+96 96 96
+96 96 96
+96 96 96
+96 96 96
+96 96 96
+96 96 96
+96 96 96
+96 96 96
+136 244 224
+120 228 208
+108 216 192
+96 200 176
+80 188 160
+72 172 148
+60 160 132
+52 148 120
+0 76 160
+0 64 144
+0 56 132
+0 48 120
+0 40 104
+0 32 92
+0 24 80
+0 20 68
+60 156 188
+44 124 168
+32 92 148
+20 68 128
+12 44 108
+4 24 88
+0 4 68
+0 0 52
+52 112 44
+40 100 32
+28 92 24
+20 84 16
+12 76 8
+4 68 4
+0 60 0
+0 52 0
+0 76 192
+0 72 184
+0 68 180
+0 68 172
+0 64 168
+0 64 160
+0 60 156
+0 56 148
+0 56 144
+0 52 136
+0 52 132
+0 48 124
+0 44 120
+0 44 116
+0 40 108
+0 40 104
+12 76 8
+8 72 4
+8 68 4
+4 64 4
+4 60 4
+4 56 4
+4 52 0
+4 48 0
+0 44 0
+0 40 0
+0 36 0
+0 32 0
+0 28 0
+0 24 0
+0 20 0
+0 16 0
+0 20 68
+8 44 100
+28 76 136
+60 116 168
+96 156 204
+144 204 240
+96 96 96
+96 96 96
+96 96 96
+96 96 96
+96 96 96
+96 96 96
+252 252 164
+220 232 140
+192 212 120
+164 192 104
+`, "PAL_UFOPAEDIA_SAFE.pal": `JASC-PAL
+0100
+256
+0 255 0
+252 252 228
+252 248 216
+252 248 204
+252 244 192
+252 240 184
+252 236 172
+252 228 160
+252 220 152
+252 216 140
+252 208 128
+252 196 116
+252 188 108
+252 176 96
+252 164 84
+252 152 76
+252 232 0
+248 212 0
+244 200 0
+244 184 0
+240 168 0
+236 152 0
+236 136 0
+232 124 0
+228 108 0
+228 96 0
+216 84 0
+204 72 0
+192 60 0
+180 48 0
+168 40 0
+156 32 0
+252 252 236
+244 244 228
+236 236 220
+228 232 216
+216 224 208
+212 220 200
+200 212 196
+192 204 188
+184 200 180
+176 192 176
+168 184 168
+164 180 164
+156 172 160
+152 168 156
+144 160 152
+136 152 144
+132 148 140
+124 140 136
+120 136 132
+112 128 124
+108 120 120
+100 116 116
+96 108 108
+88 100 104
+84 92 96
+76 84 88
+72 76 84
+64 72 76
+60 64 68
+56 56 64
+48 48 56
+44 44 52
+236 252 124
+212 236 108
+192 224 96
+172 212 80
+152 200 68
+132 188 60
+112 172 48
+96 160 40
+80 148 32
+64 136 24
+48 124 16
+32 108 8
+20 96 4
+12 84 4
+4 72 0
+0 60 0
+236 236 248
+224 224 240
+212 212 232
+204 204 224
+196 192 220
+184 184 212
+176 172 204
+164 160 196
+156 152 188
+148 144 184
+140 132 176
+136 128 168
+128 116 164
+120 108 156
+112 104 148
+108 96 144
+104 92 136
+96 84 132
+88 76 124
+84 68 116
+80 64 108
+72 56 104
+68 52 96
+64 48 88
+56 40 84
+52 36 76
+48 32 68
+40 28 60
+36 24 56
+32 20 48
+28 16 40
+24 12 36
+252 208 252
+240 192 240
+232 176 232
+224 160 224
+212 144 216
+204 132 208
+196 120 196
+184 108 188
+176 96 180
+168 84 172
+156 72 164
+148 64 152
+140 56 144
+128 48 136
+120 40 128
+112 32 120
+204 236 252
+192 224 244
+180 216 240
+168 208 232
+156 200 228
+148 192 220
+136 180 216
+128 172 208
+116 164 204
+108 156 196
+96 148 192
+92 140 184
+84 132 180
+76 124 172
+68 116 168
+60 108 160
+56 100 156
+48 92 148
+44 88 144
+40 80 136
+32 72 132
+28 68 128
+24 60 120
+20 56 116
+16 52 112
+12 44 104
+8 40 100
+4 36 92
+4 32 88
+0 28 84
+0 24 76
+0 20 72
+248 220 212
+232 196 192
+220 176 172
+208 152 152
+192 136 140
+180 120 128
+168 104 120
+152 92 108
+140 76 100
+128 64 92
+112 52 84
+100 44 76
+88 32 68
+72 24 60
+60 16 52
+48 12 44
+252 228 184
+244 216 172
+240 208 160
+232 200 148
+228 192 140
+224 184 128
+216 176 116
+212 164 108
+204 156 100
+200 148 88
+196 140 80
+188 132 72
+184 124 64
+176 116 56
+172 108 52
+168 100 44
+212 180 108
+200 168 100
+192 156 92
+184 144 88
+172 132 80
+164 124 72
+156 112 68
+144 104 64
+136 92 56
+128 84 52
+116 76 48
+108 64 40
+100 56 36
+88 48 32
+80 40 28
+72 36 24
+164 56 0
+148 40 0
+136 32 0
+124 20 0
+108 12 0
+96 4 0
+84 0 0
+72 0 0
+204 248 192
+168 224 156
+132 204 120
+104 184 92
+76 160 64
+48 140 44
+28 120 24
+12 100 12
+244 220 204
+232 204 188
+220 192 172
+208 176 156
+200 164 144
+188 152 132
+176 140 116
+164 128 104
+156 116 96
+144 104 84
+132 96 72
+124 84 64
+112 76 56
+100 64 44
+88 56 36
+80 48 32
+156 148 188
+124 120 148
+92 92 108
+60 60 68
+28 28 32
+140 204 184
+104 164 152
+72 124 120
+44 80 84
+20 40 44
+252 0 252
+252 0 252
+252 252 164
+220 232 140
+192 212 120
+164 192 104
+` };
+
+  // src/pedipal.js
+  function initPedipal() {
+    function unpackPalette(s) {
+      return s.trim().split(/\n/g).map((line) => line.split(" ").map((n) => Number(n))).slice(3);
+    }
+    let pedipalName = "PAL_UFOPAEDIA_SAFE.pal";
+    palettes.CPAL = `JASC-PAL
+0100
+256
+156 148 188
+124 120 148
+ 92  92 108
+ 60  60  68
+ 28  28  32
+140 204 184
+104 164 152
+ 72 124 120
+ 44  80  84
+ 20  40  44
+176  11  21
+176  11  21
+252 252 164
+220 232 140
+192 212 120
+164 192 104`;
+    for (let k in palettes) {
+      if (typeof palettes[k] == "string")
+        palettes[k] = unpackPalette(palettes[k]);
+    }
+    function download2(buf, filename, type2) {
+      const blob = buf instanceof Blob ? buf : new Blob([buf], { type: type2 });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = filename;
+      anchor.click();
+    }
+    ;
+    const form = document.getElementById("my-form");
+    let paletteSelect = document.getElementById("palette-select");
+    if (!paletteSelect) {
+      form.insertAdjacentHTML("afterend", `<select name="palette-select" id="palette-select">${Object.keys(palettes).map((k) => `<option ${k == pedipalName && "selected"} value="${k}">${k}</option>`)}</select>`);
+      paletteSelect = document.getElementById("palette-select");
+    }
+    const inputs = document.getElementById("inputs");
+    const results = document.getElementById("results");
+    const dropArea = document.getElementById("drop-area");
+    const downloadButton = document.getElementById("download");
+    let files = [], urls = [];
+    downloadButton.onclick = () => {
+      var _a;
+      let images = results.children;
+      for (let i = 0; i < images.length; i++) {
+        const anchor = document.createElement("a");
+        anchor.href = urls[i];
+        let name = ((_a = files[i]) == null ? void 0 : _a.name) || "pedipal.gif";
+        let pos = name.lastIndexOf(".");
+        name = name.substr(0, pos < 0 ? name.length : pos) + ".gif";
+        anchor.download = name;
+        anchor.click();
+        console.log(anchor.download);
+      }
+    };
+    function hasTransparency(data) {
+      let yes = false;
+      for (let i = 3; i < data.length; i += 4) {
+        if (data[i] < 128) {
+          yes = true;
+          break;
+        }
+      }
+      return yes;
+    }
+    function encode(img) {
+      return __async(this, null, function* () {
+        const gif = ct();
+        const image = imgData(img);
+        const { width, height, data } = image;
+        const format = "rgba565";
+        let palette;
+        let transparent = hasTransparency(data);
+        palette = palettes[paletteSelect.value || pedipalName];
+        console.log(paletteSelect.value);
+        if (palette.length < 256) {
+          let newPalette = H(data, 256 - palette.length - 1, { format, clearAlpha: transparent, oneBitAlpha: transparent });
+          palette = [[0, 0, 0], ...newPalette, ...palette];
+        }
+        const index = nt(data, palette, format);
+        for (let i = 0; i < index.length; i++) {
+          if (data[i * 4 + 3] < 127)
+            index[i] = 0;
+        }
+        console.log({ data, palette, index });
+        gif.writeFrame(index, width, height, { palette, transparent, transparentIndex: 0 });
+        gif.finish();
+        const buffer = gif.bytesView();
+        const blob = buffer instanceof Blob ? buffer : new Blob([buffer], { type: "image/gif" });
+        let rimg = document.createElement("img");
+        results.appendChild(rimg);
+        let url = URL.createObjectURL(blob);
+        rimg.src = url;
+        urls.push(url);
+      });
+    }
+    encodeAll();
+    function encodeAll() {
+      return __async(this, null, function* () {
+        results.innerHTML = "";
+        let images = inputs.children;
+        for (let img of images)
+          encode(img);
+      });
+    }
+    function imgData(img) {
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      context.drawImage(img, 0, 0);
+      const myData = context.getImageData(0, 0, img.width, img.height);
+      return { data: myData.data, width: canvas.width, height: canvas.height };
+    }
+    ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+      [dropArea, results].forEach((e) => e.addEventListener(eventName, preventDefaults, false));
+    });
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    function addInput(file) {
+      return new Promise((done) => {
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = function() {
+          let img = document.createElement("img");
+          img.src = reader.result;
+          inputs.appendChild(img);
+          done(img);
+        };
+      });
+    }
+    function handleFiles(_files) {
+      return __async(this, null, function* () {
+        files = _files;
+        urls = [];
+        console.log({ files });
+        inputs.innerHTML = "";
+        yield Promise.allSettled([...files].map((f) => addInput(f)));
+        encodeAll();
+      });
+    }
+    paletteSelect.onchange = encodeAll;
+    function handleDrop(e) {
+      let dt2 = e.dataTransfer;
+      let files2 = dt2.files;
+      handleFiles(files2);
+    }
+    dropArea.addEventListener("drop", handleDrop, false);
+    document.getElementById("fileElem").onchange = function() {
+      handleFiles(this.files);
+    };
+    document.addEventListener("DOMContentLoaded", () => {
+      document.onpaste = function(event) {
+        const files2 = getFilesFromPasteEvent(event);
+        if (files2.length > 0)
+          handleFiles(files2);
+      };
+    });
+    function getFilesFromPasteEvent(event) {
+      const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+      let files2 = [];
+      for (let index in items) {
+        const item = items[index];
+        if (item.kind === "file") {
+          files2.push(item.getAsFile());
+        }
+      }
+      return files2;
+    }
   }
 
   // src/Ruleset.ts
@@ -12347,10 +15093,16 @@
   }
   function sortFirstLast(item, options = {}) {
     if (item == null)
-      return { all: [] };
+      return { all: [], first: [], misc: [], last: [], exclude: [] };
+    if (options.exclude) {
+      if (options.first)
+        options.first = exclude(options.first, options.exclude);
+      if (options.last)
+        options.last = exclude(options.last, options.exclude);
+    }
     let first = orderedFilteredEntries(item, options.first);
     let last = orderedFilteredEntries(item, options.last);
-    let exclude = orderedFilteredEntries(item, options.exclude);
+    let exclude2 = orderedFilteredEntries(item, options.exclude);
     let special = /* @__PURE__ */ new Set([...options.first || [], ...options.last || [], ...options.exclude || [], "id", "list", "name"]);
     let misc = Object.entries(item).filter(([k, v]) => !special.has(k));
     if (options.sortBy) {
@@ -12359,7 +15111,7 @@
       misc = misc.sort((a, b) => a[0] > b[0] ? 1 : -1);
     }
     let all = [...first, ...misc, ...last];
-    return { first, misc, last, exclude, all };
+    return { first, misc, last, exclude: exclude2, all };
   }
   var Search = class {
     constructor() {
@@ -12369,8 +15121,10 @@
         this.articles.indexDocument(a.id, texts);
       }
     }
-    async findArticles(query) {
-      return this.articles.search(query.toLowerCase());
+    findArticles(query) {
+      return __async(this, null, function* () {
+        return this.articles.search(query.toLowerCase());
+      });
     }
   };
   var Entry = class {
@@ -12440,25 +15194,33 @@
   var EventScript = class extends Entry {
     constructor(raw) {
       super(raw, "eventScripts");
+      this._xcomBaseInCountryTrue = [];
+      this._xcomBaseInCountryFalse = [];
       let relatedEvents = /* @__PURE__ */ new Set([
         ...Object.values(this.eventWeights || []).map((w) => Object.keys(w)).flat(),
         ...Object.keys(this.oneTimeRandomEvents || {})
       ]);
       this._relatedEvents = [...relatedEvents];
       this._relatedResearch = [...new Set(Object.keys(this.researchTriggers || {}))];
+      if (this.xcomBaseInCountryTriggers) {
+        this._xcomBaseInCountryTrue = Object.keys(this.xcomBaseInCountryTriggers).filter((k) => this.xcomBaseInCountryTriggers[k] == true);
+        this._xcomBaseInCountryFalse = Object.keys(this.xcomBaseInCountryTriggers).filter((k) => this.xcomBaseInCountryTriggers[k] == false);
+      }
     }
   };
   function totalSellCost(items = {}) {
+    var _a;
     let c = 0;
     for (let k in items) {
-      c += items[k] * (rul.items[k] || rul.crafts[k])?.costSell || 0;
+      c += items[k] * ((_a = rul.items[k] || rul.crafts[k]) == null ? void 0 : _a.costSell) || 0;
     }
     return c || 0;
   }
   function totalSize(items = {}) {
+    var _a;
     let c = 0;
     for (let k in items) {
-      c += items[k] * (rul.items[k] || rul.crafts[k])?.size || 0;
+      c += items[k] * ((_a = rul.items[k] || rul.crafts[k]) == null ? void 0 : _a.size) || 0;
     }
     return c;
   }
@@ -12496,7 +15258,7 @@
         this.chanceSum = 0;
         for (let chance of this.randomProducedItems)
           this.chanceSum += chance[0];
-        this.totalProducedItems = { ...this.producedItems };
+        this.totalProducedItems = __spreadValues({}, this.producedItems);
         for (let chance of this.randomProducedItems) {
           for (let k in chance[1]) {
             this.totalProducedItems[k] = (this.totalProducedItems[k] || 0) + chance[1][k] * chance[0] / this.chanceSum;
@@ -12575,7 +15337,10 @@
               } else if (!deed.element) {
                 backLink2(this, rul.battleTypes[deed.type]["items"], rul.items, "commendations", "items");
               } else {
-                let items = rul.damageTypes[deed.element].items.filter((id) => rul.items[id]?.internalBattleType == deed.type);
+                let items = rul.damageTypes[deed.element].items.filter((id) => {
+                  var _a;
+                  return ((_a = rul.items[id]) == null ? void 0 : _a.internalBattleType) == deed.type;
+                });
                 backLink2(this, items, rul.items, "commendations", "items");
               }
             }
@@ -12587,13 +15352,14 @@
       }
     }
     matchesItem(item) {
+      var _a;
       let id = item.id;
       for (let deed of this.kcd) {
         if (deed.item == id)
           return true;
         if (deed.element == null && deed.type == null)
           continue;
-        if (deed.element != null && !item.damageTypes?.includes(deed.element))
+        if (deed.element != null && !((_a = item.damageTypes) == null ? void 0 : _a.includes(deed.element)))
           continue;
         if (deed.type != null && item.battleType != deed.type)
           continue;
@@ -12602,6 +15368,7 @@
       return false;
     }
     sortField(n) {
+      var _a;
       if (n == null)
         return;
       let fb = this.finalBonus;
@@ -12611,7 +15378,7 @@
         if (statsList.includes(n))
           return fb["stats"] ? fb["stats"][n] || 0 : 0;
         if (this.finalBonus.recovery && n.substring(0, 9) == "recovery.") {
-          return this.finalBonus.recovery[n.substring(9)]?.flatOne;
+          return (_a = this.finalBonus.recovery[n.substring(9)]) == null ? void 0 : _a.flatOne;
         }
       }
       return this[n];
@@ -12690,6 +15457,8 @@
       if (this.aliens) {
         Service.add("providedBy", this.type, [`prisonType${this.prisonType || 1}`]);
       }
+      if (!this.prisonType && this.aliens)
+        this.prisonType = 1;
     }
     get kennel() {
       return this.prisonType == 2 ? this.aliens : null;
@@ -12732,6 +15501,7 @@
       this.flatTime = false;
       this.shots = 1;
       this.pellets = 1;
+      var _a;
       let capMode = mode.charAt(0).toUpperCase() + mode.substr(1);
       let isDefaultAttack = mode == "ammo" && item.battleType == 2 || mode == "melee" && item.battleType == 3 || mode == "psi" && item.battleType == 9 || mode == "throw" && [4, 5].includes(item.battleType);
       if (mode == "throw" && !isDefaultAttack)
@@ -12815,6 +15585,9 @@
       if (this.alter && item.maxRange < +this.alter.range)
         this.alter.range = `${item.maxRange}`;
       this.possible = true;
+      if (!this.flatTime && ((_a = this.cost) == null ? void 0 : _a.time)) {
+        this.tuPercent = this.cost.time;
+      }
       rul.attacks.push(this);
     }
     sortField(n) {
@@ -12834,7 +15607,7 @@
       if (this.damageBonus && this.damageBonus[n]) {
         return this.damageBonus[n];
       }
-      if (n.substring(0, 4) == "acc*" && this.accuracyMultiplier) {
+      if ((n == null ? void 0 : n.substring(0, 4)) == "acc*" && this.accuracyMultiplier) {
         return this.accuracyMultiplier[n.substring(4)];
       }
       return this[n];
@@ -12857,7 +15630,8 @@
       }
     }
     get section() {
-      return this.sections[0]?.id;
+      var _a;
+      return (_a = this.sections[0]) == null ? void 0 : _a.id;
     }
     static create(id, section) {
       if (rul.sections[section] == null) {
@@ -12886,7 +15660,8 @@
       return section;
     }
     get text() {
-      let t = rul.lang[this._text] || rul.lang[this.id + "_UFOPEDIA"] || rul.lang[rul.research[this.id]?.lookup];
+      var _a;
+      let t = rul.lang[this._text] || rul.lang[this.id + "_UFOPEDIA"] || rul.lang[(_a = rul.research[this.id]) == null ? void 0 : _a.lookup];
       t = stripPediaMarkup(t);
       return t;
     }
@@ -12941,19 +15716,21 @@
     }
     get path() {
       let path = this.modDir + this._path;
-      if (window["gameDir"] && path[0] == "/") {
-        path = window["gameDir"] + path;
-      } else if (window["xpediaDir"] && path[0] != "/") {
-        path = window["xpediaDir"] + path;
+      if (globalThis["gameDir"] && path[0] == "/") {
+        path = globalThis["gameDir"] + path;
+      } else if (globalThis["xpediaDir"] && path[0] != "/") {
+        path = globalThis["xpediaDir"] + path;
       }
       return path;
     }
-    async data() {
-      let data = loadData(this.path);
-      if (data != null)
-        return data;
-      else
-        return this.path;
+    data() {
+      return __async(this, null, function* () {
+        let data = loadData(this.path);
+        if (data != null)
+          return data;
+        else
+          return this.path;
+      });
     }
   };
   var Armor = class extends Entry {
@@ -12983,41 +15760,44 @@
         }
       }
     }
-    async dollSprites() {
-      let ds = {};
-      if (this.layersDefinition) {
-        let prefix = this.layersDefaultPrefix;
-        for (let body in this.layersDefinition) {
-          let layersDef = this.layersDefinition[body];
-          let layers = [];
-          for (let layer in layersDef) {
-            let name = layersDef[layer];
-            if (name && name.length) {
-              let id = prefix + "__" + layer + "__" + name;
-              layers.push(await rul.sprite(id));
+    dollSprites() {
+      return __async(this, null, function* () {
+        let ds = {};
+        if (this.layersDefinition) {
+          let prefix = this.layersDefaultPrefix;
+          for (let body in this.layersDefinition) {
+            let layersDef = this.layersDefinition[body];
+            let layers = [];
+            for (let layer in layersDef) {
+              let name = layersDef[layer];
+              if (name && name.length) {
+                let id = prefix + "__" + layer + "__" + name;
+                layers.push(yield rul.sprite(id));
+              }
+            }
+            ds[body] = layers;
+          }
+        } else if (this.spriteInv) {
+          let name = this.spriteInv;
+          let l = name == null ? void 0 : name.length;
+          if (this.spriteInv + ".SPK" in rul.sprites) {
+            ds = {
+              0: [yield rul.sprites[this.spriteInv + ".SPK"].data()]
+            };
+          } else {
+            for (let s in rul.sprites) {
+              if (s.substr(0, l) == name) {
+                ds[s.substr(l, s.length - l - 4)] = [yield rul.sprite(s)];
+              }
             }
           }
-          ds[body] = layers;
         }
-      } else if (this.spriteInv) {
-        let name = this.spriteInv;
-        let l = name?.length;
-        if (this.spriteInv + ".SPK" in rul.sprites) {
-          ds = {
-            0: [await rul.sprites[this.spriteInv + ".SPK"].data()]
-          };
-        } else {
-          for (let s in rul.sprites) {
-            if (s.substr(0, l) == name) {
-              ds[s.substr(l, s.length - l - 4)] = [await rul.sprite(s)];
-            }
-          }
-        }
-      }
-      console.log({ ds });
-      return ds;
+        console.log({ ds });
+        return ds;
+      });
     }
     sortField(n, v) {
+      var _a, _b;
       if (statsList.includes(n))
         return this.stats ? this.stats[n] || 0 : 0;
       if (damageTypes.includes(n))
@@ -13030,16 +15810,20 @@
         if (v == "allies")
           return Object.values(this.units || {}).length > 0;
         if (rul.soldiers[v]) {
-          return this.units?.includes(v);
+          return (_a = this.units) == null ? void 0 : _a.includes(v);
         }
+      }
+      if (n == "allowedIn") {
+        return (_b = this.allowedIn) == null ? void 0 : _b.includes(v);
       }
       return this[n];
     }
   };
   var Item = class extends Entry {
     constructor(raw) {
+      var _a, _b;
       super(raw, "items");
-      for (let k in { ...raw, ...raw.damageAlter || {} }) {
+      for (let k in __spreadValues(__spreadValues({}, raw), raw.damageAlter || {})) {
         if (typeof raw[k] == "string" || typeof raw[k] == "number" || raw.damageAlter && raw.damageAlter[k] != null) {
           rul.itemFields.add(k);
         }
@@ -13080,11 +15864,12 @@
       if (this.damageType != null) {
         backLink(this.id, [damageTypes[this.damageType]], "damageTypes", "items");
       }
-      if (this.damageAlter?.ResistType) {
-        let rt = this.damageAlter?.ResistType;
+      if ((_a = this.damageAlter) == null ? void 0 : _a.ResistType) {
+        let rt = (_b = this.damageAlter) == null ? void 0 : _b.ResistType;
         backLink(this.id, [damageTypes[rt] || rt], "damageTypes", "items");
       }
       this.attacks();
+      this.invSize = `${this.invWidth}\xD7${this.invHeight}`;
     }
     get sprite() {
       if (this.bigSprite) {
@@ -13117,14 +15902,15 @@
       return this._attacks;
     }
     sortField(n, v) {
+      var _a, _b;
       if (n === "category" && this.categories)
         return this.categories.includes(v) ? v : null;
       if (n === "damageTypes") {
         if (v !== true) {
           let i = damageTypes.indexOf(v);
-          return this.damageTypes?.includes(i);
+          return (_a = this.damageTypes) == null ? void 0 : _a.includes(i);
         } else {
-          return this.damageTypes?.map((d) => damageTypes[d]);
+          return (_b = this.damageTypes) == null ? void 0 : _b.map((d) => damageTypes[d]);
         }
       }
       if (n === "damageType" && this.damageTypes) {
@@ -13158,6 +15944,7 @@
       this.itemTypes = {};
       this.stats = {};
       this.battleTypes = {};
+      this.countries = {};
       this.damageTypes = {};
       this.research = {};
       this.soldierBonuses = {};
@@ -13179,6 +15966,7 @@
       this.baseServices = {};
       this.redirect = {};
       this.attacks = [];
+      this.pageScripts = { STR_PALETTE_CONVERTER: initPedipal };
       this.itemFields = /* @__PURE__ */ new Set();
       this.lang = {};
       this.langs = {};
@@ -13201,7 +15989,8 @@
       return this.sounds[id];
     }
     obsSprite(type2, num) {
-      let path = (this.obs[type2] || [])[num]?.path;
+      var _a;
+      let path = (_a = (this.obs[type2] || [])[num]) == null ? void 0 : _a.path;
       if (!path)
         return emptyImg;
       return loadData(path);
@@ -13270,7 +16059,7 @@
               }
             } else {
               if (data.files) {
-                let files = { ...merged[id].files, ...data.files };
+                let files = __spreadValues(__spreadValues({}, merged[id].files), data.files);
                 Object.assign(merged[id], data);
                 merged[id].files = files;
               } else {
@@ -13296,22 +16085,19 @@
         return;
       lang.ALREADYCONVERTED = "true";
       if (langName == defaultLanguage2)
-        lang = {
-          ...{
-            dependencies: "STR_DEPENDS_ON",
-            seeAlso: "STR_ITEM_REQUIRED",
-            requiresBaseFunc: "STR_SERVICES_REQUIRED",
-            freeFrom: "STR_GET_FOR_FREE_FROM",
-            leadsTo: "STR_LEADS_TO",
-            unlocks: "STR_UNLOCKS",
-            disables: "STR_DISABLES",
-            getOneFree: "STR_GIVES_ONE_FOR_FREE",
-            manufacture: "STR_REQUIRED_BY",
-            randomProducedItems: "STR_RANDOM_PRODUCTION_DISCLAIMER",
-            cost: "STR_COST"
-          },
-          ...lang
-        };
+        lang = __spreadValues(__spreadValues({}, {
+          dependencies: "STR_DEPENDS_ON",
+          seeAlso: "STR_ITEM_REQUIRED",
+          requiresBaseFunc: "STR_SERVICES_REQUIRED",
+          freeFrom: "STR_GET_FOR_FREE_FROM",
+          leadsTo: "STR_LEADS_TO",
+          unlocks: "STR_UNLOCKS",
+          disables: "STR_DISABLES",
+          getOneFree: "STR_GIVES_ONE_FOR_FREE",
+          manufacture: "STR_REQUIRED_BY",
+          randomProducedItems: "STR_RANDOM_PRODUCTION_DISCLAIMER",
+          cost: "STR_COST"
+        }), lang);
       this.convertedLangs[langName] = true;
       return true;
     }
@@ -13329,18 +16115,19 @@
           }
     }
     parse(data) {
+      var _a, _b, _c, _d, _e, _f, _g;
       let reversed = false;
       this.combineFiles(data, reversed);
       this.mergeRuls(reversed);
       this.sounds = [];
-      if (this.raw?.extraSounds?.length)
+      if ((_b = (_a = this.raw) == null ? void 0 : _a.extraSounds) == null ? void 0 : _b.length)
         for (let table of this.raw.extraSounds) {
           for (let e of Object.entries(table.files)) {
             this.sounds[e[0]] = table.modDir + e[1];
           }
         }
-      if (this.raw?.extraSprites?.length)
-        for (let spriteData of this.raw?.extraSprites)
+      if ((_d = (_c = this.raw) == null ? void 0 : _c.extraSprites) == null ? void 0 : _d.length)
+        for (let spriteData of (_e = this.raw) == null ? void 0 : _e.extraSprites)
           new Sprite(spriteData);
       this.deleteModDirs();
       this.parseArticles(this.raw.ufopaedia);
@@ -13354,11 +16141,12 @@
         if (blocks == null)
           return [];
         blocks = blocks.flat();
-        let x = blocks.map((b) => b.randomizedItems || []).flat().map((c) => c?.itemList || []).flat();
+        let x = blocks.map((b) => b.randomizedItems || []).flat().map((c) => (c == null ? void 0 : c.itemList) || []).flat();
         let y = blocks.map((b) => b.items ? Object.keys(b.items) : []).flat();
         return [...x, ...y];
       }
       new Section("ATTACKS", true);
+      crosslink(this.eventScripts, "_xcomBaseInCountryTrue", "countries", "events");
       crosslink(this.units, "race", "alienRaces", "hasThisRace");
       crosslink(this.units, "rank", "alienRanks", "hasThisRank");
       crosslink(this.alienRaces, "members", "units", "memberOf");
@@ -13370,8 +16158,14 @@
       crosslink(this.alienDeployments, "startingCondition", this.startingConditions, "deployments");
       crosslink(this.missionScripts, "researchNeeded", this.research, "unlocksMissions");
       crosslink(this.missionScripts, "researchForbidden", this.research, "stopsMissions");
-      crosslink(this.alienMissions, (t) => Object.values(t.raceWeights)?.map((w) => Object.keys(w)).flat(), "alienRaces", "missions");
-      crosslink(this.ufos, (t) => blockItems(t.battlescapeTerrainData?.mapBlocks), this.items, "ufos");
+      crosslink(this.alienMissions, (t) => {
+        var _a2;
+        return (_a2 = Object.values(t.raceWeights)) == null ? void 0 : _a2.map((w) => Object.keys(w)).flat();
+      }, "alienRaces", "missions");
+      crosslink(this.ufos, (t) => {
+        var _a2;
+        return blockItems((_a2 = t.battlescapeTerrainData) == null ? void 0 : _a2.mapBlocks);
+      }, this.items, "ufos");
       crosslink(this.terrains, (t) => blockItems(t.mapBlocks), this.items, "terrains");
       crosslink(this.terrains, "civilianTypes", this.units, "terrains");
       crosslink(this.items, "spawnUnit", this.units, "spawnedBy");
@@ -13386,29 +16180,44 @@
       crosslink(this.manufacture, "spawnedPersonType", this.soldiers, "manufacture");
       crosslink(this.events, "spawnedPersonType", this.soldiers, "events");
       crosslink(this.missionScripts, "_missions", this.alienMissions, "scripts");
+      crosslink(this.alienDeployments, "terrains", this.terrains, "alienDeployments");
+      crosslink(this.terrains, "enviroEffects", this.enviroEffects, "terrains");
       let all = {
-        armors: Object.values(this.armors).filter((a) => a.units).map((a) => a.id),
-        soldierTypes: Object.keys(rul.soldiers),
-        crafts: Object.keys(rul.crafts)
+        Armors: Object.values(this.armors).filter((a) => a.units).map((a) => a.id),
+        SoldierTypes: Object.keys(rul.soldiers),
+        Vehicles: Object.keys(rul.units).filter((k) => {
+          var _a2;
+          return ((_a2 = rul.items[k]) == null ? void 0 : _a2.battleType) == 3;
+        }),
+        Craft: Object.keys(rul.crafts)
       };
       for (let sc of Object.values(this.startingConditions)) {
-        if (sc.forbiddenSoldierTypes?.length > 0) {
+        if (((_f = sc.forbiddenSoldierTypes) == null ? void 0 : _f.length) > 0) {
           let forbiddenSoldierTypes = new Set(sc.forbiddenSoldierTypes);
           sc.allowedSoldierTypes = Object.keys(rul.soldiers).filter((st) => !forbiddenSoldierTypes.has(st));
         }
-        if (sc.forbiddenArmors?.length > 0) {
+        sc.allowedSoldierTypes || (sc.allowedSoldierTypes = all.SoldierTypes);
+        sc.allowedArmors || (sc.allowedArmors = all.Armors);
+        if (((_g = sc.forbiddenArmors) == null ? void 0 : _g.length) > 0) {
           let forbiddenArmors = new Set(sc.forbiddenArmors);
-          sc.allowedArmors = all.armors.filter((a) => !forbiddenArmors.has(a));
+          sc.allowedArmors = all.Armors.filter((a) => !forbiddenArmors.has(a));
         }
-        sc.allowedsoldierTypes ||= [];
-        sc.allowedArmors ||= [];
+        let armorsAllowedForSoldiers = /* @__PURE__ */ new Set();
+        for (let st of sc.allowedSoldierTypes)
+          for (let a of rul.soldiers[st].armors)
+            armorsAllowedForSoldiers.add(a);
+        sc.allowedArmors = sc.allowedArmors.filter((a) => armorsAllowedForSoldiers.has(a));
       }
       for (let option of [
         ["Craft", this.crafts],
-        ["Armors", this.armors],
         ["SoldierTypes", this.soldiers],
-        ["Vehicles", this.units]
+        ["Vehicles", this.units],
+        ["Armors", this.armors]
       ]) {
+        for (let sc of Object.values(this.startingConditions)) {
+          if (sc[`allowed${option[0]}`])
+            sc[`forbidden${option[0]}`] = all[option[0]].filter((e) => !sc[`allowed${option[0]}`].includes(e));
+        }
         crosslink(this.startingConditions, `allowed${option[0]}`, option[1], "allowedIn");
         crosslink(this.startingConditions, `forbidden${option[0]}`, option[1], "forbiddenIn");
       }
@@ -13474,7 +16283,26 @@
         if (this.manufactureCategories[cat].length)
           Article.create(cat, "MANUFACTURE_CATEGORIES");
       }
+      this.loadMarkers();
       console.log("parse done");
+    }
+    loadMarkers() {
+      return __async(this, null, function* () {
+        if (rul.globeMarkers)
+          return rul.globeMarkers;
+        if (!window["GlobeMarkers"]) {
+          let markers = this.sprites["GlobeMarkers"];
+          let path = markers == null ? void 0 : markers.path;
+          let dataUrl = yield pathToDataUrl(path);
+          window["GlobeMarkers"] = dataUrl;
+        }
+        let dataURL = window["GlobeMarkers"];
+        let canvas = imageToCanvas(yield loadImage(dataURL));
+        let parts = splitCanvas(canvas);
+        rul.globeMarkers = parts.map((p) => p.toDataURL());
+        markersLoaded.set(true);
+        return rul.globeMarkers;
+      });
     }
     sortedTypeSections() {
       return this.sortStrings(this.typeSectionsOrder.map((s) => s.id)).map((id) => this.sections[id]);
@@ -13513,7 +16341,8 @@
       return this.lang[id] || id;
     }
     icon(name) {
-      return this.langs?.icon ? this.langs.icon[name] : null;
+      var _a;
+      return ((_a = this.langs) == null ? void 0 : _a.icon) ? this.langs.icon[name] : null;
     }
     tr(id, options) {
       if (id == null)
@@ -13535,19 +16364,19 @@
           str2 = str2.replace(/([a-z])([A-Z])/g, "$1 $2");
         }
       }
-      if (options?.capital)
+      if (options == null ? void 0 : options.capital)
         str2 = capital(str2);
-      if (str2?.length < options?.nobr)
+      if ((str2 == null ? void 0 : str2.length) < (options == null ? void 0 : options.nobr))
         str2 = `<nobr>${str2}</nobr>`;
       if (icon) {
-        if (options?.icon == "monospace")
+        if ((options == null ? void 0 : options.icon) == "monospace")
           str2 = `<div class='inem'>${icon}</div>${str2 || ""}`;
-        else if (options?.icon == "simple")
+        else if ((options == null ? void 0 : options.icon) == "simple")
           str2 = `${icon}${str2 || ""}`;
-        else if (options?.icon != "none")
+        else if ((options == null ? void 0 : options.icon) != "none")
           str2 = `<div class='comem'>${icon}</div>${str2 || ""}`;
       }
-      if (!options?.notip && "tip_" + id in rul.lang) {
+      if (!(options == null ? void 0 : options.notip) && "tip_" + id in rul.lang) {
         str2 = `<span tooltip=${"tip_" + id}>${str2}<sup class="tipmark">?</sup></span>`;
       }
       return str2;
@@ -13555,19 +16384,21 @@
     hasSprite(id) {
       return this.sprites[id];
     }
-    async sprite(id, onlyIfExists = false) {
-      if (id instanceof Promise)
-        return id;
-      if (id in this.sprites)
-        return this.sprites[id].data();
-      return onlyIfExists ? null : id;
+    sprite(id, onlyIfExists = false) {
+      return __async(this, null, function* () {
+        if (id instanceof Promise)
+          return id;
+        if (id in this.sprites)
+          return this.sprites[id].data();
+        return onlyIfExists ? null : id;
+      });
     }
     load({ ruls, langs, mods }) {
       this.src = { ruls, langs: {}, mods };
       this.mods = mods;
       this.langs = langs;
       for (let langName in this.langs) {
-        this.src.langs[langName] = { ...this.langs[langName] };
+        this.src.langs[langName] = __spreadValues({}, this.langs[langName]);
       }
       let langWeight = Object.fromEntries(Object.keys(langs).map((n) => [n, n == defaultLanguage2 ? 1e6 : Object.keys(langs[n]).length]));
       this.langNames = Object.keys(langs).sort((a, b) => langWeight[b] - langWeight[a]);
@@ -13576,7 +16407,7 @@
       for (let name of this.langNames) {
         if (!this.langs[defaultLanguage2][name]) {
           let country = name.match(/([a-z]+)/i);
-          if (country?.length > 0) {
+          if ((country == null ? void 0 : country.length) > 0) {
             let flag = getFlagEmoji(country[1]);
             if (flag)
               this.langs[defaultLanguage2][name] = flag;
@@ -13602,7 +16433,7 @@
         this.lang = this.langs[defaultLanguage2];
       } else {
         this.convertLang(name);
-        this.lang = { ...this.langs[defaultLanguage2], ...this.langs[name] };
+        this.lang = __spreadValues(__spreadValues({}, this.langs[defaultLanguage2]), this.langs[name]);
       }
       if (!this.search[name])
         this.search[name] = new Search();
@@ -13638,6 +16469,7 @@
     battleTypes: Entry,
     soldiers: Soldiers,
     alienRaces: Entry,
+    countries: Entry,
     armors: Armor,
     units: Unit,
     crafts: Craft,
@@ -13786,7 +16618,7 @@
           entry[field].push(id);
       }
     } else {
-      entry[field] = { ...entry[field] || {}, ...list };
+      entry[field] = __spreadValues(__spreadValues({}, entry[field] || {}), list);
     }
   }
   function crosslink(collection1, prop1, collection2, prop2, prefix) {
@@ -14141,9 +16973,6 @@
   };
   var BaseServices_default = BaseServices;
 
-  // src/TableSort.svelte
-  var import_generator_sort = __toESM(require_build());
-
   // src/SectionTable.svelte
   function get_each_context10(ctx, list, i) {
     const child_ctx = ctx.slice();
@@ -14317,7 +17146,7 @@
     return {
       c() {
         create_component(tr_1.$$.fragment);
-        t = text(":\n  ");
+        t = text(":\n    ");
         select = element("select");
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
@@ -14492,6 +17321,7 @@
     value = new Value_default({
       props: {
         nobr: 20,
+        key: ctx[28],
         val: ctx[25].sortField(ctx[28], true)
       }
     });
@@ -14508,6 +17338,8 @@
       },
       p(ctx2, dirty) {
         const value_changes = {};
+        if (dirty[0] & 8)
+          value_changes.key = ctx2[28];
         if (dirty[0] & 16777224)
           value_changes.val = ctx2[25].sortField(ctx2[28], true);
         value.$set(value_changes);
@@ -14740,7 +17572,7 @@
     let current;
     let mounted;
     let dispose;
-    let each_value_5 = [...ctx[0], ...ctx[1]];
+    let each_value_5 = [...ctx[1], ...ctx[0]];
     let each_blocks_1 = [];
     for (let i = 0; i < each_value_5.length; i += 1) {
       each_blocks_1[i] = create_each_block_5(get_each_context_5(ctx, each_value_5, i));
@@ -14814,7 +17646,7 @@
       },
       p(ctx2, dirty) {
         if (dirty[0] & 2059) {
-          each_value_5 = [...ctx2[0], ...ctx2[1]];
+          each_value_5 = [...ctx2[1], ...ctx2[0]];
           let i;
           for (i = 0; i < each_value_5.length; i += 1) {
             const child_ctx = get_each_context_5(ctx2, each_value_5, i);
@@ -14912,6 +17744,7 @@
     e.dataTransfer.dropEffect = "move";
   };
   function instance16($$self, $$props, $$invalidate) {
+    "use strict";
     let { entries } = $$props;
     let { fields } = $$props;
     let { extraFields = [] } = $$props;
@@ -14950,11 +17783,14 @@
             return v === true || v == filtersSelected[k] || Array.isArray(v) && v.includes(filtersSelected[k]);
           }));
       }
-      if (filterId?.length > 0) {
+      if ((filterId == null ? void 0 : filterId.length) > 0) {
         $$invalidate(5, sorted = sorted.filter((a) => a.sortField("id").toLowerCase().match(filterId)));
       }
       let nullValue = sortDescending ? Number.MIN_VALUE : Number.MAX_VALUE;
-      $$invalidate(5, sorted = sorted.sort((a, b) => (a.sortField(sortField) ?? nullValue) > (b.sortField(sortField) ?? nullValue) == sortDescending ? -1 : 1));
+      $$invalidate(5, sorted = sorted.sort((a, b) => {
+        var _a, _b;
+        return ((_a = a.sortField(sortField)) != null ? _a : nullValue) > ((_b = b.sortField(sortField)) != null ? _b : nullValue) == sortDescending ? -1 : 1;
+      }));
     }
     function toggleField(field) {
       if (shownFields.includes(field)) {
@@ -14997,7 +17833,7 @@
             $$invalidate(6, sortField = parsed.sortField);
             $$invalidate(7, sortDescending = parsed.sortDescending);
           }
-        } catch {
+        } catch (e) {
         }
         $$invalidate(15, aIdLoaded = aId);
       }
@@ -15019,17 +17855,18 @@
       if ("entries" in $$props2)
         $$invalidate(13, entries = $$props2.entries);
       if ("fields" in $$props2)
-        $$invalidate(0, fields = $$props2.fields);
+        $$invalidate(1, fields = $$props2.fields);
       if ("extraFields" in $$props2)
-        $$invalidate(1, extraFields = $$props2.extraFields);
+        $$invalidate(0, extraFields = $$props2.extraFields);
       if ("filters" in $$props2)
         $$invalidate(2, filters = $$props2.filters);
       if ("aId" in $$props2)
         $$invalidate(14, aId = $$props2.aId);
     };
     $$self.$$.update = () => {
-      if ($$self.$$.dirty[0] & 57592) {
+      if ($$self.$$.dirty[0] & 57599) {
         $: {
+          $$invalidate(0, extraFields = extraFields.filter((item) => !fields.includes(item)));
           $$invalidate(5, sorted = sorted || [...entries]);
           if (aIdLoaded == null || aIdLoaded != aId)
             loadFields();
@@ -15039,12 +17876,20 @@
             sortField,
             sortDescending
           });
+          for (let i in filters) {
+            let autoAt = filters[i].indexOf("auto");
+            if (autoAt != -1) {
+              let s = allFieldValuesOf(entries, i);
+              if (s.length > 0)
+                filters[i].splice(autoAt, 1, ...s.sort());
+            }
+          }
         }
       }
     };
     return [
-      fields,
       extraFields,
+      fields,
       filters,
       shownFields,
       filtersSelected,
@@ -15072,8 +17917,8 @@
       super();
       init(this, options, instance16, create_fragment16, safe_not_equal, {
         entries: 13,
-        fields: 0,
-        extraFields: 1,
+        fields: 1,
+        extraFields: 0,
         filters: 2,
         aId: 14
       }, null, [-1, -1]);
@@ -16158,12 +19003,12 @@
     child_ctx[18] = list[i];
     return child_ctx;
   }
-  function create_if_block_122(ctx) {
+  function create_if_block_142(ctx) {
     let tr2;
     let td;
     let div;
     let current;
-    let if_block = ctx[1].length > 0 && create_if_block_132(ctx);
+    let if_block = ctx[1].length > 0 && create_if_block_152(ctx);
     return {
       c() {
         tr2 = element("tr");
@@ -16190,7 +19035,7 @@
               transition_in(if_block, 1);
             }
           } else {
-            if_block = create_if_block_132(ctx2);
+            if_block = create_if_block_152(ctx2);
             if_block.c();
             transition_in(if_block, 1);
             if_block.m(div, null);
@@ -16221,7 +19066,7 @@
       }
     };
   }
-  function create_if_block_132(ctx) {
+  function create_if_block_152(ctx) {
     let table;
     let thead;
     let current_block_type_index;
@@ -16232,7 +19077,7 @@
     let t1;
     let t2;
     let current;
-    const if_block_creators = [create_if_block_20, create_else_block_3];
+    const if_block_creators = [create_if_block_222, create_else_block_3];
     const if_blocks = [];
     function select_block_type(ctx2, dirty) {
       if (ctx2[0].battleType == 2)
@@ -16250,7 +19095,7 @@
     const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
       each_blocks[i] = null;
     });
-    let if_block1 = ctx[0].damageAlter && ctx[0].battleType != 2 && create_if_block_142(ctx);
+    let if_block1 = ctx[0].damageAlter && ctx[0].battleType != 2 && create_if_block_162(ctx);
     return {
       c() {
         table = element("table");
@@ -16333,7 +19178,7 @@
               transition_in(if_block1, 1);
             }
           } else {
-            if_block1 = create_if_block_142(ctx2);
+            if_block1 = create_if_block_162(ctx2);
             if_block1.c();
             transition_in(if_block1, 1);
             if_block1.m(table, null);
@@ -16416,7 +19261,7 @@
         create_component(tr2.$$.fragment);
         t2 = space();
         t3 = text(t3_value);
-        t4 = text("%\r\n                    -");
+        t4 = text("% -");
         t5 = text(t5_value);
         t6 = text("/");
         create_component(tr3.$$.fragment);
@@ -16493,7 +19338,7 @@
       }
     };
   }
-  function create_if_block_20(ctx) {
+  function create_if_block_222(ctx) {
     let td;
     return {
       c() {
@@ -16534,7 +19379,7 @@
     let usecost;
     let t8;
     let current;
-    let if_block0 = ctx[18].range && create_if_block_19(ctx);
+    let if_block0 = ctx[18].range && create_if_block_21(ctx);
     specialbonus = new SpecialBonus_default({
       props: {
         bonus: ctx[18].accuracyMultiplier
@@ -16546,7 +19391,7 @@
         flatTime: ctx[18].flatTime
       }
     });
-    let if_block1 = ctx[0].costPrime && create_if_block_182(ctx);
+    let if_block1 = ctx[0].costPrime && create_if_block_20(ctx);
     return {
       c() {
         td0 = element("td");
@@ -16605,7 +19450,7 @@
           if (if_block0) {
             if_block0.p(ctx2, dirty);
           } else {
-            if_block0 = create_if_block_19(ctx2);
+            if_block0 = create_if_block_21(ctx2);
             if_block0.c();
             if_block0.m(td1, br);
           }
@@ -16630,7 +19475,7 @@
               transition_in(if_block1, 1);
             }
           } else {
-            if_block1 = create_if_block_182(ctx2);
+            if_block1 = create_if_block_20(ctx2);
             if_block1.c();
             transition_in(if_block1, 1);
             if_block1.m(td2, null);
@@ -16677,7 +19522,7 @@
       }
     };
   }
-  function create_if_block_172(ctx) {
+  function create_if_block_19(ctx) {
     let td0;
     let canvasimage;
     let t0;
@@ -16792,7 +19637,7 @@
       }
     };
   }
-  function create_if_block_19(ctx) {
+  function create_if_block_21(ctx) {
     let html_tag;
     let raw_value = rul.str("up to !N! m").replace("!N!", `<em class="${ctx[18].range == ctx[0].maxRange ? "bad" : ""}">${ctx[0].minRange ? ctx[0].minRange + "-" : ""}${ctx[18].range}</em>`) + "";
     let t;
@@ -16818,7 +19663,7 @@
       }
     };
   }
-  function create_if_block_182(ctx) {
+  function create_if_block_20(ctx) {
     let div;
     let tr2;
     let t;
@@ -16868,7 +19713,7 @@
       }
     };
   }
-  function create_if_block_162(ctx) {
+  function create_if_block_182(ctx) {
     let alterlist;
     let current;
     alterlist = new AlterList_default({
@@ -16903,7 +19748,7 @@
       }
     };
   }
-  function create_if_block_152(ctx) {
+  function create_if_block_172(ctx) {
     let alterlist;
     let current;
     alterlist = new AlterList_default({
@@ -16949,7 +19794,7 @@
     let t2;
     let if_block2_anchor;
     let current;
-    const if_block_creators = [create_if_block_172, create_else_block_2];
+    const if_block_creators = [create_if_block_19, create_else_block_2];
     const if_blocks = [];
     function select_block_type_1(ctx2, dirty) {
       if (ctx2[18].mode == "ammo")
@@ -16959,8 +19804,8 @@
     current_block_type_index = select_block_type_1(ctx, -1);
     if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
     damage = new Damage_default({ props: { attack: ctx[18] } });
-    let if_block1 = ctx[18].mode == "melee" && ctx[0].meleeAlter && create_if_block_162(ctx);
-    let if_block2 = ctx[18].mode == "ammo" && ctx[18].alter && create_if_block_152(ctx);
+    let if_block1 = ctx[18].mode == "melee" && ctx[0].meleeAlter && create_if_block_182(ctx);
+    let if_block2 = ctx[18].mode == "ammo" && ctx[18].alter && create_if_block_172(ctx);
     return {
       c() {
         tr2 = element("tr");
@@ -17023,7 +19868,7 @@
               transition_in(if_block1, 1);
             }
           } else {
-            if_block1 = create_if_block_162(ctx2);
+            if_block1 = create_if_block_182(ctx2);
             if_block1.c();
             transition_in(if_block1, 1);
             if_block1.m(t2.parentNode, t2);
@@ -17042,7 +19887,7 @@
               transition_in(if_block2, 1);
             }
           } else {
-            if_block2 = create_if_block_152(ctx2);
+            if_block2 = create_if_block_172(ctx2);
             if_block2.c();
             transition_in(if_block2, 1);
             if_block2.m(if_block2_anchor.parentNode, if_block2_anchor);
@@ -17089,7 +19934,7 @@
       }
     };
   }
-  function create_if_block_142(ctx) {
+  function create_if_block_162(ctx) {
     let alterlist;
     let current;
     alterlist = new AlterList_default({
@@ -17142,15 +19987,15 @@
       props: { val: ctx[8], capital: true }
     });
     const if_block_creators = [
-      create_if_block_44,
-      create_if_block_53,
       create_if_block_63,
       create_if_block_73,
       create_if_block_83,
-      create_if_block_9,
-      create_if_block_10,
+      create_if_block_92,
+      create_if_block_102,
       create_if_block_11,
-      create_else_block_12
+      create_if_block_122,
+      create_if_block_132,
+      create_else_block_13
     ];
     const if_blocks = [];
     function select_block_type_3(ctx2, dirty) {
@@ -17263,7 +20108,7 @@
       }
     };
   }
-  function create_if_block_37(ctx) {
+  function create_if_block_53(ctx) {
     let secondarytable;
     let current;
     secondarytable = new SecondaryTable_default({
@@ -17385,7 +20230,7 @@
       }
     };
   }
-  function create_else_block_12(ctx) {
+  function create_else_block_13(ctx) {
     let value;
     let current;
     value = new Value_default({ props: { val: ctx[9] } });
@@ -17418,7 +20263,7 @@
       }
     };
   }
-  function create_if_block_11(ctx) {
+  function create_if_block_132(ctx) {
     let value0;
     let t;
     let value1;
@@ -17469,7 +20314,7 @@
       }
     };
   }
-  function create_if_block_10(ctx) {
+  function create_if_block_122(ctx) {
     let value;
     let t;
     let tr2;
@@ -17522,7 +20367,7 @@
       }
     };
   }
-  function create_if_block_9(ctx) {
+  function create_if_block_11(ctx) {
     let link2;
     let current;
     link2 = new Link_default({
@@ -17557,7 +20402,7 @@
       }
     };
   }
-  function create_if_block_83(ctx) {
+  function create_if_block_102(ctx) {
     let a;
     let t0_value = ctx[9] + "";
     let t0;
@@ -17610,7 +20455,7 @@
       }
     };
   }
-  function create_if_block_73(ctx) {
+  function create_if_block_92(ctx) {
     let each_1_anchor;
     let each_value_2 = ctx[5](ctx[9]);
     let each_blocks = [];
@@ -17659,7 +20504,7 @@
       }
     };
   }
-  function create_if_block_63(ctx) {
+  function create_if_block_83(ctx) {
     let t0_value = ctx[9] + "";
     let t0;
     let t1;
@@ -17694,7 +20539,7 @@
       }
     };
   }
-  function create_if_block_53(ctx) {
+  function create_if_block_73(ctx) {
     let t_value = rul.damageTypeName(ctx[9]) + "";
     let t;
     return {
@@ -17716,7 +20561,7 @@
       }
     };
   }
-  function create_if_block_44(ctx) {
+  function create_if_block_63(ctx) {
     let specialbonus;
     let current;
     specialbonus = new SpecialBonus_default({ props: { bonus: ctx[9] } });
@@ -17821,53 +20666,151 @@
       }
     };
   }
+  function create_if_block_44(ctx) {
+    var _a;
+    let t;
+    let value;
+    let current;
+    value = new Value_default({
+      props: { val: (_a = ctx[13]) == null ? void 0 : _a.requiresBaseFunc }
+    });
+    return {
+      c() {
+        t = text("/ ");
+        create_component(value.$$.fragment);
+      },
+      m(target, anchor) {
+        insert(target, t, anchor);
+        mount_component(value, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        var _a2;
+        const value_changes = {};
+        if (dirty & 12)
+          value_changes.val = (_a2 = ctx2[13]) == null ? void 0 : _a2.requiresBaseFunc;
+        value.$set(value_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(value.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(value.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(t);
+        destroy_component(value, detaching);
+      }
+    };
+  }
+  function create_if_block_37(ctx) {
+    var _a;
+    let t;
+    let value;
+    let current;
+    value = new Value_default({ props: { val: (_a = ctx[13]) == null ? void 0 : _a.cost } });
+    return {
+      c() {
+        t = text("$");
+        create_component(value.$$.fragment);
+      },
+      m(target, anchor) {
+        insert(target, t, anchor);
+        mount_component(value, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        var _a2;
+        const value_changes = {};
+        if (dirty & 12)
+          value_changes.val = (_a2 = ctx2[13]) == null ? void 0 : _a2.cost;
+        value.$set(value_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(value.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(value.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        if (detaching)
+          detach(t);
+        destroy_component(value, detaching);
+      }
+    };
+  }
   function create_each_block_13(ctx) {
+    var _a, _b, _c, _d, _e;
     let tr0;
     let td0;
-    let em;
     let value0;
     let t0;
+    let t1;
     let tr1;
     let td1;
     let value1;
-    let t1;
-    let td2;
+    let t2;
     let t3;
-    let td3;
+    let em;
     let value2;
     let t4;
+    let td2;
+    let t6;
+    let td3;
     let value3;
-    let t5;
+    let t7;
+    let value4;
+    let t8;
     let current;
     value0 = new Value_default({ props: { val: ctx[12] } });
+    let if_block0 = ((_a = ctx[13]) == null ? void 0 : _a.requiresBaseFunc) && create_if_block_44(ctx);
     value1 = new Value_default({
-      props: { val: ctx[13]?.requiredItems || "" }
+      props: { val: ((_b = ctx[13]) == null ? void 0 : _b.requiredItems) || "" }
     });
-    value2 = new Value_default({
+    let if_block1 = ((_c = ctx[13]) == null ? void 0 : _c.cost) && create_if_block_37(ctx);
+    value2 = new Value_default({ props: { val: (_d = ctx[13]) == null ? void 0 : _d.time } });
+    value3 = new Value_default({
       props: {
-        val: ctx[13]?.totalProducedItems[ctx[0].id]
+        val: (_e = ctx[13]) == null ? void 0 : _e.totalProducedItems[ctx[0].id]
       }
     });
-    value3 = new Value_default({ props: { val: ctx[0].id } });
+    value4 = new Value_default({ props: { val: ctx[0].id } });
     return {
       c() {
         tr0 = element("tr");
         td0 = element("td");
-        em = element("em");
         create_component(value0.$$.fragment);
         t0 = space();
+        if (if_block0)
+          if_block0.c();
+        t1 = space();
         tr1 = element("tr");
         td1 = element("td");
         create_component(value1.$$.fragment);
-        t1 = space();
+        t2 = space();
+        if (if_block1)
+          if_block1.c();
+        t3 = text("\r\n                \u231B");
+        em = element("em");
+        create_component(value2.$$.fragment);
+        t4 = space();
         td2 = element("td");
         td2.textContent = "\u2794";
-        t3 = space();
+        t6 = space();
         td3 = element("td");
-        create_component(value2.$$.fragment);
-        t4 = text("\xA0");
         create_component(value3.$$.fragment);
-        t5 = space();
+        t7 = text("\xA0");
+        create_component(value4.$$.fragment);
+        t8 = space();
         attr(td0, "colspan", "3");
         set_style(td0, "text-align", "left");
         set_style(td1, "text-align", "right");
@@ -17876,67 +20819,129 @@
       m(target, anchor) {
         insert(target, tr0, anchor);
         append(tr0, td0);
-        append(td0, em);
-        mount_component(value0, em, null);
-        insert(target, t0, anchor);
+        mount_component(value0, td0, null);
+        append(td0, t0);
+        if (if_block0)
+          if_block0.m(td0, null);
+        insert(target, t1, anchor);
         insert(target, tr1, anchor);
         append(tr1, td1);
         mount_component(value1, td1, null);
-        append(tr1, t1);
+        append(td1, t2);
+        if (if_block1)
+          if_block1.m(td1, null);
+        append(td1, t3);
+        append(td1, em);
+        mount_component(value2, em, null);
+        append(tr1, t4);
         append(tr1, td2);
-        append(tr1, t3);
+        append(tr1, t6);
         append(tr1, td3);
-        mount_component(value2, td3, null);
-        append(td3, t4);
         mount_component(value3, td3, null);
-        append(tr1, t5);
+        append(td3, t7);
+        mount_component(value4, td3, null);
+        append(tr1, t8);
         current = true;
       },
       p(ctx2, dirty) {
+        var _a2, _b2, _c2, _d2, _e2;
         const value0_changes = {};
         if (dirty & 12)
           value0_changes.val = ctx2[12];
         value0.$set(value0_changes);
+        if ((_a2 = ctx2[13]) == null ? void 0 : _a2.requiresBaseFunc) {
+          if (if_block0) {
+            if_block0.p(ctx2, dirty);
+            if (dirty & 12) {
+              transition_in(if_block0, 1);
+            }
+          } else {
+            if_block0 = create_if_block_44(ctx2);
+            if_block0.c();
+            transition_in(if_block0, 1);
+            if_block0.m(td0, null);
+          }
+        } else if (if_block0) {
+          group_outros();
+          transition_out(if_block0, 1, 1, () => {
+            if_block0 = null;
+          });
+          check_outros();
+        }
         const value1_changes = {};
         if (dirty & 12)
-          value1_changes.val = ctx2[13]?.requiredItems || "";
+          value1_changes.val = ((_b2 = ctx2[13]) == null ? void 0 : _b2.requiredItems) || "";
         value1.$set(value1_changes);
+        if ((_c2 = ctx2[13]) == null ? void 0 : _c2.cost) {
+          if (if_block1) {
+            if_block1.p(ctx2, dirty);
+            if (dirty & 12) {
+              transition_in(if_block1, 1);
+            }
+          } else {
+            if_block1 = create_if_block_37(ctx2);
+            if_block1.c();
+            transition_in(if_block1, 1);
+            if_block1.m(td1, t3);
+          }
+        } else if (if_block1) {
+          group_outros();
+          transition_out(if_block1, 1, 1, () => {
+            if_block1 = null;
+          });
+          check_outros();
+        }
         const value2_changes = {};
-        if (dirty & 13)
-          value2_changes.val = ctx2[13]?.totalProducedItems[ctx2[0].id];
+        if (dirty & 12)
+          value2_changes.val = (_d2 = ctx2[13]) == null ? void 0 : _d2.time;
         value2.$set(value2_changes);
         const value3_changes = {};
-        if (dirty & 1)
-          value3_changes.val = ctx2[0].id;
+        if (dirty & 13)
+          value3_changes.val = (_e2 = ctx2[13]) == null ? void 0 : _e2.totalProducedItems[ctx2[0].id];
         value3.$set(value3_changes);
+        const value4_changes = {};
+        if (dirty & 1)
+          value4_changes.val = ctx2[0].id;
+        value4.$set(value4_changes);
       },
       i(local) {
         if (current)
           return;
         transition_in(value0.$$.fragment, local);
+        transition_in(if_block0);
         transition_in(value1.$$.fragment, local);
+        transition_in(if_block1);
         transition_in(value2.$$.fragment, local);
         transition_in(value3.$$.fragment, local);
+        transition_in(value4.$$.fragment, local);
         current = true;
       },
       o(local) {
         transition_out(value0.$$.fragment, local);
+        transition_out(if_block0);
         transition_out(value1.$$.fragment, local);
+        transition_out(if_block1);
         transition_out(value2.$$.fragment, local);
         transition_out(value3.$$.fragment, local);
+        transition_out(value4.$$.fragment, local);
         current = false;
       },
       d(detaching) {
         if (detaching)
           detach(tr0);
         destroy_component(value0);
+        if (if_block0)
+          if_block0.d();
         if (detaching)
-          detach(t0);
+          detach(t1);
         if (detaching)
           detach(tr1);
         destroy_component(value1);
+        if (if_block1)
+          if_block1.d();
         destroy_component(value2);
         destroy_component(value3);
+        destroy_component(value4);
       }
     };
   }
@@ -18066,7 +21071,7 @@
     let if_block;
     let if_block_anchor;
     let current;
-    const if_block_creators = [create_if_block13, create_if_block_27, create_if_block_37, create_else_block8];
+    const if_block_creators = [create_if_block13, create_if_block_27, create_if_block_53, create_else_block8];
     const if_blocks = [];
     function select_block_type_2(ctx2, dirty) {
       if (ctx2[8] == "anal")
@@ -18135,7 +21140,7 @@
     let t0_value = (ctx[0].weight ? ctx[0].weight + rul.tr("kg") : "") + "";
     let t0;
     let t1;
-    let t2_value = ctx[0].invWidth > 1 || ctx[0].invHeight > 1 ? `${ctx[0].invWidth}\xD7${ctx[0].invHeight}` : "";
+    let t2_value = ctx[0].invSize + "";
     let t2;
     let t3;
     let t4_value = (ctx[0].clipSize > 0 ? ctx[0].clipSize + rul.tr("-shot") : "") + "";
@@ -18153,7 +21158,7 @@
       }
     });
     tr2 = new Tr_default({ props: { s: "Item" } });
-    let if_block = (ctx[0].sprite && ctx[0].sprite != "Resources/Blanks/Blank.png" || ctx[1].length > 0) && create_if_block_122(ctx);
+    let if_block = (ctx[0].sprite && ctx[0].sprite != "Resources/Blanks/Blank.png" || ctx[1].length > 0) && create_if_block_142(ctx);
     let each_value = ctx[3] ? [...ctx[2].first, ["anal"], ...ctx[2].misc] : [...ctx[2].first, ["anal"]];
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
@@ -18211,7 +21216,7 @@
       p(ctx2, [dirty]) {
         if ((!current || dirty & 1) && t0_value !== (t0_value = (ctx2[0].weight ? ctx2[0].weight + rul.tr("kg") : "") + ""))
           set_data(t0, t0_value);
-        if ((!current || dirty & 1) && t2_value !== (t2_value = ctx2[0].invWidth > 1 || ctx2[0].invHeight > 1 ? `${ctx2[0].invWidth}\xD7${ctx2[0].invHeight}` : ""))
+        if ((!current || dirty & 1) && t2_value !== (t2_value = ctx2[0].invSize + ""))
           set_data(t2, t2_value);
         if ((!current || dirty & 1) && t4_value !== (t4_value = (ctx2[0].clipSize > 0 ? ctx2[0].clipSize + rul.tr("-shot") : "") + ""))
           set_data(t4, t4_value);
@@ -18226,7 +21231,7 @@
               transition_in(if_block, 1);
             }
           } else {
-            if_block = create_if_block_122(ctx2);
+            if_block = create_if_block_142(ctx2);
             if_block.c();
             transition_in(if_block, 1);
             if_block.m(table, t8);
@@ -18314,6 +21319,7 @@
     $$self.$$.update = () => {
       if ($$self.$$.dirty & 3) {
         $: {
+          clog(entry);
           $$invalidate(1, attacks = entry.attacks().slice());
           let ohpen = entry.oneHandedPenalty || entry.battleType == 3 ? 67 : 50;
           $$invalidate(4, hand1bonus = entry.twoHanded ? entry.blockBothHands ? rul.tr("2handOnly") : `${rul.tr("1handPenalty")} ${ohpen}%` : "");
@@ -18865,7 +21871,7 @@
       }
     };
   }
-  function create_if_block_102(ctx) {
+  function create_if_block_103(ctx) {
     let div;
     let t;
     let if_block = ctx[2] && create_if_block_112(ctx);
@@ -18993,7 +21999,7 @@
   }
   function create_each_block_6(ctx) {
     let if_block_anchor;
-    let if_block = (ctx[2] || ctx[12] == 0) && create_if_block_102(ctx);
+    let if_block = (ctx[2] || ctx[12] == 0) && create_if_block_103(ctx);
     return {
       c() {
         if (if_block)
@@ -19010,7 +22016,7 @@
           if (if_block) {
             if_block.p(ctx2, dirty);
           } else {
-            if_block = create_if_block_102(ctx2);
+            if_block = create_if_block_103(ctx2);
             if_block.c();
             if_block.m(if_block_anchor.parentNode, if_block_anchor);
           }
@@ -19186,7 +22192,7 @@
       }
     };
   }
-  function create_else_block_13(ctx) {
+  function create_else_block_14(ctx) {
     let em;
     let value;
     let current;
@@ -19294,7 +22300,7 @@
       }
     };
   }
-  function create_if_block_92(ctx) {
+  function create_if_block_93(ctx) {
     let br;
     return {
       c() {
@@ -19316,7 +22322,7 @@
     let em;
     let value1;
     let current;
-    let if_block = ctx[21] != 0 && create_if_block_92(ctx);
+    let if_block = ctx[21] != 0 && create_if_block_93(ctx);
     value0 = new Value_default({ props: { val: ctx[19] } });
     value1 = new Value_default({
       props: {
@@ -19390,7 +22396,7 @@
     value = new Value_default({
       props: { val: ctx[6], icon: "monospace" }
     });
-    const if_block_creators = [create_if_block_84, create_else_block_13];
+    const if_block_creators = [create_if_block_84, create_else_block_14];
     const if_blocks = [];
     function select_block_type(ctx2, dirty) {
       if ("recovery" == ctx2[7])
@@ -20966,7 +23972,7 @@
     let current;
     maintable = new MainTable_default({
       props: {
-        title: rul.tr("Unit"),
+        title: "Unit",
         entry: ctx[0],
         sort: {
           first: ["stats", "armor", "canSurrender"],
@@ -21896,563 +24902,14 @@
   };
   var Manufacture_default = Manufacture2;
 
-  // src/Ufo.svelte
-  function get_each_context20(ctx, list, i) {
-    const child_ctx = ctx.slice();
-    child_ctx[1] = list[i];
-    child_ctx[3] = i;
-    return child_ctx;
-  }
-  function get_each_context_16(ctx, list, i) {
-    const child_ctx = ctx.slice();
-    child_ctx[4] = list[i];
-    child_ctx[6] = i;
-    return child_ctx;
-  }
-  function get_each_context_25(ctx, list, i) {
-    const child_ctx = ctx.slice();
-    child_ctx[7] = list[i][0];
-    child_ctx[8] = list[i][1];
-    return child_ctx;
-  }
-  function create_else_block13(ctx) {
-    let value;
-    let current;
-    value = new Value_default({ props: { val: ctx[8] } });
-    return {
-      c() {
-        create_component(value.$$.fragment);
-      },
-      m(target, anchor) {
-        mount_component(value, target, anchor);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        const value_changes = {};
-        if (dirty & 1)
-          value_changes.val = ctx2[8];
-        value.$set(value_changes);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(value.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(value.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        destroy_component(value, detaching);
-      }
-    };
-  }
-  function create_if_block_116(ctx) {
-    let img;
-    let img_src_value;
-    return {
-      c() {
-        img = element("img");
-        attr(img, "class", "sprite");
-        attr(img, "alt", "X");
-        if (!src_url_equal(img.src, img_src_value = rul.sprite(ctx[8])))
-          attr(img, "src", img_src_value);
-        attr(img, "onerror", "this.onerror=null; this.src='xpedia/0.jpg'");
-      },
-      m(target, anchor) {
-        insert(target, img, anchor);
-      },
-      p(ctx2, dirty) {
-        if (dirty & 1 && !src_url_equal(img.src, img_src_value = rul.sprite(ctx2[8]))) {
-          attr(img, "src", img_src_value);
-        }
-      },
-      i: noop,
-      o: noop,
-      d(detaching) {
-        if (detaching)
-          detach(img);
-      }
-    };
-  }
-  function create_each_block_25(ctx) {
-    let tr2;
-    let td0;
-    let raw_value = rul.tr(ctx[7]) + "";
-    let t;
-    let td1;
-    let show_if;
-    let current_block_type_index;
-    let if_block;
-    let current;
-    const if_block_creators = [create_if_block_116, create_else_block13];
-    const if_blocks = [];
-    function select_block_type(ctx2, dirty) {
-      if (dirty & 1)
-        show_if = null;
-      if (show_if == null)
-        show_if = !!["modSprite"].includes(ctx2[7]);
-      if (show_if)
-        return 0;
-      return 1;
-    }
-    current_block_type_index = select_block_type(ctx, -1);
-    if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-    return {
-      c() {
-        tr2 = element("tr");
-        td0 = element("td");
-        t = space();
-        td1 = element("td");
-        if_block.c();
-        attr(td0, "class", "padding-right");
-      },
-      m(target, anchor) {
-        insert(target, tr2, anchor);
-        append(tr2, td0);
-        td0.innerHTML = raw_value;
-        append(tr2, t);
-        append(tr2, td1);
-        if_blocks[current_block_type_index].m(td1, null);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        if ((!current || dirty & 1) && raw_value !== (raw_value = rul.tr(ctx2[7]) + ""))
-          td0.innerHTML = raw_value;
-        ;
-        let previous_block_index = current_block_type_index;
-        current_block_type_index = select_block_type(ctx2, dirty);
-        if (current_block_type_index === previous_block_index) {
-          if_blocks[current_block_type_index].p(ctx2, dirty);
-        } else {
-          group_outros();
-          transition_out(if_blocks[previous_block_index], 1, 1, () => {
-            if_blocks[previous_block_index] = null;
-          });
-          check_outros();
-          if_block = if_blocks[current_block_type_index];
-          if (!if_block) {
-            if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx2);
-            if_block.c();
-          } else {
-            if_block.p(ctx2, dirty);
-          }
-          transition_in(if_block, 1);
-          if_block.m(td1, null);
-        }
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(if_block);
-        current = true;
-      },
-      o(local) {
-        transition_out(if_block);
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(tr2);
-        if_blocks[current_block_type_index].d();
-      }
-    };
-  }
-  function create_if_block19(ctx) {
-    let tr1;
-    let td2;
-    let table;
-    let tr0;
-    let td0;
-    let td1;
-    let t1;
-    let current;
-    let each_value = Object.keys(ctx[0].raceBonus).sort();
-    let each_blocks = [];
-    for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block20(get_each_context20(ctx, each_value, i));
-    }
-    const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
-      each_blocks[i] = null;
-    });
-    return {
-      c() {
-        tr1 = element("tr");
-        td2 = element("td");
-        table = element("table");
-        tr0 = element("tr");
-        td0 = element("td");
-        td0.textContent = `${rul.tr("raceBonus")}`;
-        td1 = element("td");
-        t1 = space();
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].c();
-        }
-        attr(td0, "colspan", "2");
-        attr(table, "class", "number-table");
-        attr(td2, "colspan", "2");
-      },
-      m(target, anchor) {
-        insert(target, tr1, anchor);
-        append(tr1, td2);
-        append(td2, table);
-        append(table, tr0);
-        append(tr0, td0);
-        append(tr0, td1);
-        append(tr0, t1);
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].m(tr0, null);
-        }
-        current = true;
-      },
-      p(ctx2, dirty) {
-        if (dirty & 1) {
-          each_value = Object.keys(ctx2[0].raceBonus).sort();
-          let i;
-          for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context20(ctx2, each_value, i);
-            if (each_blocks[i]) {
-              each_blocks[i].p(child_ctx, dirty);
-              transition_in(each_blocks[i], 1);
-            } else {
-              each_blocks[i] = create_each_block20(child_ctx);
-              each_blocks[i].c();
-              transition_in(each_blocks[i], 1);
-              each_blocks[i].m(tr0, null);
-            }
-          }
-          group_outros();
-          for (i = each_value.length; i < each_blocks.length; i += 1) {
-            out(i);
-          }
-          check_outros();
-        }
-      },
-      i(local) {
-        if (current)
-          return;
-        for (let i = 0; i < each_value.length; i += 1) {
-          transition_in(each_blocks[i]);
-        }
-        current = true;
-      },
-      o(local) {
-        each_blocks = each_blocks.filter(Boolean);
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          transition_out(each_blocks[i]);
-        }
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(tr1);
-        destroy_each(each_blocks, detaching);
-      }
-    };
-  }
-  function create_each_block_16(ctx) {
-    let t0_value = rul.tr(ctx[4]) + "";
-    let t0;
-    let t1;
-    let em;
-    let link2;
-    let br;
-    let current;
-    link2 = new Link_default({
-      props: {
-        href: ctx[0].raceBonus[ctx[1]][ctx[4]]
-      }
-    });
-    return {
-      c() {
-        t0 = text(t0_value);
-        t1 = text(":\xA0");
-        em = element("em");
-        create_component(link2.$$.fragment);
-        br = element("br");
-      },
-      m(target, anchor) {
-        insert(target, t0, anchor);
-        insert(target, t1, anchor);
-        insert(target, em, anchor);
-        mount_component(link2, em, null);
-        insert(target, br, anchor);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        if ((!current || dirty & 1) && t0_value !== (t0_value = rul.tr(ctx2[4]) + ""))
-          set_data(t0, t0_value);
-        const link_changes = {};
-        if (dirty & 1)
-          link_changes.href = ctx2[0].raceBonus[ctx2[1]][ctx2[4]];
-        link2.$set(link_changes);
-      },
-      i(local) {
-        if (current)
-          return;
-        transition_in(link2.$$.fragment, local);
-        current = true;
-      },
-      o(local) {
-        transition_out(link2.$$.fragment, local);
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(t0);
-        if (detaching)
-          detach(t1);
-        if (detaching)
-          detach(em);
-        destroy_component(link2);
-        if (detaching)
-          detach(br);
-      }
-    };
-  }
-  function create_each_block20(ctx) {
-    let tr2;
-    let td0;
-    let t0_value = rul.tr(ctx[1]) + "";
-    let t0;
-    let td1;
-    let t1;
-    let current;
-    let each_value_1 = Object.keys(ctx[0].raceBonus[ctx[1]]).sort();
-    let each_blocks = [];
-    for (let i = 0; i < each_value_1.length; i += 1) {
-      each_blocks[i] = create_each_block_16(get_each_context_16(ctx, each_value_1, i));
-    }
-    const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
-      each_blocks[i] = null;
-    });
-    return {
-      c() {
-        tr2 = element("tr");
-        td0 = element("td");
-        t0 = text(t0_value);
-        td1 = element("td");
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].c();
-        }
-        t1 = space();
-      },
-      m(target, anchor) {
-        insert(target, tr2, anchor);
-        append(tr2, td0);
-        append(td0, t0);
-        append(tr2, td1);
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].m(td1, null);
-        }
-        append(td1, t1);
-        current = true;
-      },
-      p(ctx2, dirty) {
-        if ((!current || dirty & 1) && t0_value !== (t0_value = rul.tr(ctx2[1]) + ""))
-          set_data(t0, t0_value);
-        if (dirty & 1) {
-          each_value_1 = Object.keys(ctx2[0].raceBonus[ctx2[1]]).sort();
-          let i;
-          for (i = 0; i < each_value_1.length; i += 1) {
-            const child_ctx = get_each_context_16(ctx2, each_value_1, i);
-            if (each_blocks[i]) {
-              each_blocks[i].p(child_ctx, dirty);
-              transition_in(each_blocks[i], 1);
-            } else {
-              each_blocks[i] = create_each_block_16(child_ctx);
-              each_blocks[i].c();
-              transition_in(each_blocks[i], 1);
-              each_blocks[i].m(td1, t1);
-            }
-          }
-          group_outros();
-          for (i = each_value_1.length; i < each_blocks.length; i += 1) {
-            out(i);
-          }
-          check_outros();
-        }
-      },
-      i(local) {
-        if (current)
-          return;
-        for (let i = 0; i < each_value_1.length; i += 1) {
-          transition_in(each_blocks[i]);
-        }
-        current = true;
-      },
-      o(local) {
-        each_blocks = each_blocks.filter(Boolean);
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          transition_out(each_blocks[i]);
-        }
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(tr2);
-        destroy_each(each_blocks, detaching);
-      }
-    };
-  }
-  function create_fragment30(ctx) {
-    let table;
-    let tr2;
-    let t1;
-    let t2;
-    let current;
-    let each_value_2 = sortFirstLast(ctx[0], {
-      last: [
-        "raceBonus",
-        "type",
-        "battlescapeTerrainData",
-        "craftInventoryTile",
-        "deployment"
-      ]
-    }).all;
-    let each_blocks = [];
-    for (let i = 0; i < each_value_2.length; i += 1) {
-      each_blocks[i] = create_each_block_25(get_each_context_25(ctx, each_value_2, i));
-    }
-    const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
-      each_blocks[i] = null;
-    });
-    let if_block = ctx[0].raceBonus && create_if_block19(ctx);
-    return {
-      c() {
-        table = element("table");
-        tr2 = element("tr");
-        tr2.innerHTML = `<td colspan="2">Craft</td>`;
-        t1 = space();
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].c();
-        }
-        t2 = space();
-        if (if_block)
-          if_block.c();
-        attr(tr2, "class", "table-header");
-        attr(table, "class", "main-table");
-      },
-      m(target, anchor) {
-        insert(target, table, anchor);
-        append(table, tr2);
-        append(table, t1);
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].m(table, null);
-        }
-        append(table, t2);
-        if (if_block)
-          if_block.m(table, null);
-        current = true;
-      },
-      p(ctx2, [dirty]) {
-        if (dirty & 1) {
-          each_value_2 = sortFirstLast(ctx2[0], {
-            last: [
-              "raceBonus",
-              "type",
-              "battlescapeTerrainData",
-              "craftInventoryTile",
-              "deployment"
-            ]
-          }).all;
-          let i;
-          for (i = 0; i < each_value_2.length; i += 1) {
-            const child_ctx = get_each_context_25(ctx2, each_value_2, i);
-            if (each_blocks[i]) {
-              each_blocks[i].p(child_ctx, dirty);
-              transition_in(each_blocks[i], 1);
-            } else {
-              each_blocks[i] = create_each_block_25(child_ctx);
-              each_blocks[i].c();
-              transition_in(each_blocks[i], 1);
-              each_blocks[i].m(table, t2);
-            }
-          }
-          group_outros();
-          for (i = each_value_2.length; i < each_blocks.length; i += 1) {
-            out(i);
-          }
-          check_outros();
-        }
-        if (ctx2[0].raceBonus) {
-          if (if_block) {
-            if_block.p(ctx2, dirty);
-            if (dirty & 1) {
-              transition_in(if_block, 1);
-            }
-          } else {
-            if_block = create_if_block19(ctx2);
-            if_block.c();
-            transition_in(if_block, 1);
-            if_block.m(table, null);
-          }
-        } else if (if_block) {
-          group_outros();
-          transition_out(if_block, 1, 1, () => {
-            if_block = null;
-          });
-          check_outros();
-        }
-      },
-      i(local) {
-        if (current)
-          return;
-        for (let i = 0; i < each_value_2.length; i += 1) {
-          transition_in(each_blocks[i]);
-        }
-        transition_in(if_block);
-        current = true;
-      },
-      o(local) {
-        each_blocks = each_blocks.filter(Boolean);
-        for (let i = 0; i < each_blocks.length; i += 1) {
-          transition_out(each_blocks[i]);
-        }
-        transition_out(if_block);
-        current = false;
-      },
-      d(detaching) {
-        if (detaching)
-          detach(table);
-        destroy_each(each_blocks, detaching);
-        if (if_block)
-          if_block.d();
-      }
-    };
-  }
-  function instance30($$self, $$props, $$invalidate) {
-    let { entry } = $$props;
-    $$self.$$set = ($$props2) => {
-      if ("entry" in $$props2)
-        $$invalidate(0, entry = $$props2.entry);
-    };
-    $$self.$$.update = () => {
-      if ($$self.$$.dirty & 1) {
-        $: {
-          console.info(entry);
-        }
-      }
-    };
-    return [entry];
-  }
-  var Ufo = class extends SvelteComponent {
-    constructor(options) {
-      super();
-      init(this, options, instance30, create_fragment30, safe_not_equal, { entry: 0 });
-    }
-  };
-  var Ufo_default = Ufo;
-
   // src/FacilitySprite.svelte
-  function get_each_context21(ctx, list, i) {
+  function get_each_context20(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[3] = list[i];
     child_ctx[5] = i;
     return child_ctx;
   }
-  function get_each_context_17(ctx, list, i) {
+  function get_each_context_16(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[3] = list[i];
     child_ctx[7] = i;
@@ -22495,7 +24952,7 @@
   function create_pending_block5(ctx) {
     return { c: noop, m: noop, p: noop, d: noop };
   }
-  function create_each_block_17(ctx) {
+  function create_each_block_16(ctx) {
     let await_block_anchor;
     let promise;
     let info = {
@@ -22537,12 +24994,12 @@
       }
     };
   }
-  function create_each_block21(ctx) {
+  function create_each_block20(ctx) {
     let each_1_anchor;
     let each_value_1 = { length: ctx[0] };
     let each_blocks = [];
     for (let i = 0; i < each_value_1.length; i += 1) {
-      each_blocks[i] = create_each_block_17(get_each_context_17(ctx, each_value_1, i));
+      each_blocks[i] = create_each_block_16(get_each_context_16(ctx, each_value_1, i));
     }
     return {
       c() {
@@ -22562,11 +25019,11 @@
           each_value_1 = { length: ctx2[0] };
           let i;
           for (i = 0; i < each_value_1.length; i += 1) {
-            const child_ctx = get_each_context_17(ctx2, each_value_1, i);
+            const child_ctx = get_each_context_16(ctx2, each_value_1, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
             } else {
-              each_blocks[i] = create_each_block_17(child_ctx);
+              each_blocks[i] = create_each_block_16(child_ctx);
               each_blocks[i].c();
               each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
             }
@@ -22584,12 +25041,12 @@
       }
     };
   }
-  function create_fragment31(ctx) {
+  function create_fragment30(ctx) {
     let div;
     let each_value = { length: ctx[0] };
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block21(get_each_context21(ctx, each_value, i));
+      each_blocks[i] = create_each_block20(get_each_context20(ctx, each_value, i));
     }
     return {
       c() {
@@ -22613,11 +25070,11 @@
           each_value = { length: ctx2[0] };
           let i;
           for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context21(ctx2, each_value, i);
+            const child_ctx = get_each_context20(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
             } else {
-              each_blocks[i] = create_each_block21(child_ctx);
+              each_blocks[i] = create_each_block20(child_ctx);
               each_blocks[i].c();
               each_blocks[i].m(div, null);
             }
@@ -22646,7 +25103,7 @@
       }
     };
   }
-  function instance31($$self, $$props, $$invalidate) {
+  function instance30($$self, $$props, $$invalidate) {
     let { size, prop, bottom } = $$props;
     $$self.$$set = ($$props2) => {
       if ("size" in $$props2)
@@ -22661,25 +25118,25 @@
   var FacilitySprite = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance31, create_fragment31, safe_not_equal, { size: 0, prop: 1, bottom: 2 });
+      init(this, options, instance30, create_fragment30, safe_not_equal, { size: 0, prop: 1, bottom: 2 });
     }
   };
   var FacilitySprite_default = FacilitySprite;
 
   // src/Facility.svelte
-  function get_each_context22(ctx, list, i) {
+  function get_each_context21(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[4] = list[i][0];
     child_ctx[5] = list[i][1];
     return child_ctx;
   }
-  function get_each_context_18(ctx, list, i) {
+  function get_each_context_17(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[8] = list[i];
     child_ctx[10] = i;
     return child_ctx;
   }
-  function create_if_block20(ctx) {
+  function create_if_block19(ctx) {
     let tr2;
     let td0;
     let value;
@@ -22695,11 +25152,11 @@
     let current;
     value = new Value_default({ props: { val: ctx[4] } });
     const if_block_creators = [
-      create_if_block_117,
+      create_if_block_116,
       create_if_block_39,
       create_if_block_55,
       create_if_block_65,
-      create_else_block_14
+      create_else_block_15
     ];
     const if_blocks = [];
     function select_block_type(ctx2, dirty) {
@@ -22798,7 +25255,7 @@
       }
     };
   }
-  function create_else_block_14(ctx) {
+  function create_else_block_15(ctx) {
     let value;
     let current;
     value = new Value_default({ props: { val: ctx[5] } });
@@ -22836,7 +25293,7 @@
     let if_block;
     let if_block_anchor;
     let current;
-    const if_block_creators = [create_if_block_75, create_else_block14];
+    const if_block_creators = [create_if_block_75, create_else_block13];
     const if_blocks = [];
     function select_block_type_1(ctx2, dirty) {
       if (ctx2[0].spriteFacility)
@@ -23006,13 +25463,13 @@
       }
     };
   }
-  function create_if_block_117(ctx) {
+  function create_if_block_116(ctx) {
     let each_1_anchor;
     let current;
     let each_value_1 = Object.keys(ctx[5]).sort();
     let each_blocks = [];
     for (let i = 0; i < each_value_1.length; i += 1) {
-      each_blocks[i] = create_each_block_18(get_each_context_18(ctx, each_value_1, i));
+      each_blocks[i] = create_each_block_17(get_each_context_17(ctx, each_value_1, i));
     }
     const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
       each_blocks[i] = null;
@@ -23036,12 +25493,12 @@
           each_value_1 = Object.keys(ctx2[5]).sort();
           let i;
           for (i = 0; i < each_value_1.length; i += 1) {
-            const child_ctx = get_each_context_18(ctx2, each_value_1, i);
+            const child_ctx = get_each_context_17(ctx2, each_value_1, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
               transition_in(each_blocks[i], 1);
             } else {
-              each_blocks[i] = create_each_block_18(child_ctx);
+              each_blocks[i] = create_each_block_17(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
               each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
@@ -23076,7 +25533,7 @@
       }
     };
   }
-  function create_else_block14(ctx) {
+  function create_else_block13(ctx) {
     let facilitysprite;
     let current;
     facilitysprite = new FacilitySprite_default({
@@ -23236,7 +25693,7 @@
       }
     };
   }
-  function create_each_block_18(ctx) {
+  function create_each_block_17(ctx) {
     let t0;
     let link2;
     let t1;
@@ -23307,11 +25764,11 @@
       }
     };
   }
-  function create_each_block22(ctx) {
+  function create_each_block21(ctx) {
     let show_if = !["type", "battlescapeTerrainData", "craftInventoryTile", "deployment"].includes(ctx[4]);
     let if_block_anchor;
     let current;
-    let if_block = show_if && create_if_block20(ctx);
+    let if_block = show_if && create_if_block19(ctx);
     return {
       c() {
         if (if_block)
@@ -23334,7 +25791,7 @@
               transition_in(if_block, 1);
             }
           } else {
-            if_block = create_if_block20(ctx2);
+            if_block = create_if_block19(ctx2);
             if_block.c();
             transition_in(if_block, 1);
             if_block.m(if_block_anchor.parentNode, if_block_anchor);
@@ -23365,7 +25822,7 @@
       }
     };
   }
-  function create_fragment32(ctx) {
+  function create_fragment31(ctx) {
     let table;
     let tr2;
     let td;
@@ -23377,7 +25834,7 @@
     }).all;
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block22(get_each_context22(ctx, each_value, i));
+      each_blocks[i] = create_each_block21(get_each_context21(ctx, each_value, i));
     }
     const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
       each_blocks[i] = null;
@@ -23414,12 +25871,12 @@
           }).all;
           let i;
           for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context22(ctx2, each_value, i);
+            const child_ctx = get_each_context21(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
               transition_in(each_blocks[i], 1);
             } else {
-              each_blocks[i] = create_each_block22(child_ctx);
+              each_blocks[i] = create_each_block21(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
               each_blocks[i].m(table, null);
@@ -23454,7 +25911,7 @@
       }
     };
   }
-  function instance32($$self, $$props, $$invalidate) {
+  function instance31($$self, $$props, $$invalidate) {
     let { entry } = $$props;
     let seeStorageTiles = false;
     let size = 1;
@@ -23475,18 +25932,18 @@
   var Facility2 = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance32, create_fragment32, safe_not_equal, { entry: 0 });
+      init(this, options, instance31, create_fragment31, safe_not_equal, { entry: 0 });
     }
   };
   var Facility_default = Facility2;
 
   // src/BaseService.svelte
-  function get_each_context23(ctx, list, i) {
+  function get_each_context22(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[1] = list[i];
     return child_ctx;
   }
-  function create_if_block21(ctx) {
+  function create_if_block20(ctx) {
     let tr2;
     let td0;
     let value;
@@ -23544,11 +26001,11 @@
       }
     };
   }
-  function create_each_block23(ctx) {
+  function create_each_block22(ctx) {
     let show_if = !["id"].includes(ctx[1][0]);
     let if_block_anchor;
     let current;
-    let if_block = show_if && create_if_block21(ctx);
+    let if_block = show_if && create_if_block20(ctx);
     return {
       c() {
         if (if_block)
@@ -23571,7 +26028,7 @@
               transition_in(if_block, 1);
             }
           } else {
-            if_block = create_if_block21(ctx2);
+            if_block = create_if_block20(ctx2);
             if_block.c();
             transition_in(if_block, 1);
             if_block.m(if_block_anchor.parentNode, if_block_anchor);
@@ -23602,13 +26059,13 @@
       }
     };
   }
-  function create_fragment33(ctx) {
+  function create_fragment32(ctx) {
     let table;
     let current;
     let each_value = Object.entries(ctx[0]).sort(func4);
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block23(get_each_context23(ctx, each_value, i));
+      each_blocks[i] = create_each_block22(get_each_context22(ctx, each_value, i));
     }
     const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
       each_blocks[i] = null;
@@ -23633,12 +26090,12 @@
           each_value = Object.entries(ctx2[0]).sort(func4);
           let i;
           for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context23(ctx2, each_value, i);
+            const child_ctx = get_each_context22(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
               transition_in(each_blocks[i], 1);
             } else {
-              each_blocks[i] = create_each_block23(child_ctx);
+              each_blocks[i] = create_each_block22(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
               each_blocks[i].m(table, null);
@@ -23674,7 +26131,7 @@
     };
   }
   var func4 = (a, b) => (a[0] == "providedBy" ? -10 : 10) + (a[0] > b[0] ? 1 : -1);
-  function instance33($$self, $$props, $$invalidate) {
+  function instance32($$self, $$props, $$invalidate) {
     let { entry } = $$props;
     $$self.$$set = ($$props2) => {
       if ("entry" in $$props2)
@@ -23685,7 +26142,7 @@
   var BaseService = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance33, create_fragment33, safe_not_equal, { entry: 0 });
+      init(this, options, instance32, create_fragment32, safe_not_equal, { entry: 0 });
     }
   };
   var BaseService_default = BaseService;
@@ -23729,7 +26186,7 @@
       }
     };
   }
-  function create_fragment34(ctx) {
+  function create_fragment33(ctx) {
     let maintable;
     let current;
     maintable = new MainTable_default({
@@ -23784,7 +26241,7 @@
       }
     };
   }
-  function instance34($$self, $$props, $$invalidate) {
+  function instance33($$self, $$props, $$invalidate) {
     let { entry } = $$props;
     let { title } = $$props;
     let { subtitle } = $$props;
@@ -23801,19 +26258,20 @@
   var SoldierBonuses = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance34, create_fragment34, safe_not_equal, { entry: 0, title: 1, subtitle: 2 });
+      init(this, options, instance33, create_fragment33, safe_not_equal, { entry: 0, title: 1, subtitle: 2 });
     }
   };
   var SoldierBonuses_default = SoldierBonuses;
 
   // src/Commendation.svelte
-  function get_each_context24(ctx, list, i) {
+  function get_each_context23(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[3] = list[i];
     child_ctx[5] = i;
     return child_ctx;
   }
   function create_if_block_211(ctx) {
+    var _a, _b;
     let linkslist;
     let br;
     let t0;
@@ -23826,8 +26284,8 @@
         items: withoutKeys(ctx[7], ["stats", "recovery", "id"])
       }
     });
-    value = new Value_default({ props: { val: ctx[7]?.stats } });
-    let if_block = ctx[7]?.recovery && create_if_block_310(ctx);
+    value = new Value_default({ props: { val: (_a = ctx[7]) == null ? void 0 : _a.stats } });
+    let if_block = ((_b = ctx[7]) == null ? void 0 : _b.recovery) && create_if_block_310(ctx);
     return {
       c() {
         create_component(linkslist.$$.fragment);
@@ -23851,15 +26309,16 @@
         current = true;
       },
       p(ctx2, dirty) {
+        var _a2, _b2;
         const linkslist_changes = {};
         if (dirty & 128)
           linkslist_changes.items = withoutKeys(ctx2[7], ["stats", "recovery", "id"]);
         linkslist.$set(linkslist_changes);
         const value_changes = {};
         if (dirty & 128)
-          value_changes.val = ctx2[7]?.stats;
+          value_changes.val = (_a2 = ctx2[7]) == null ? void 0 : _a2.stats;
         value.$set(value_changes);
-        if (ctx2[7]?.recovery) {
+        if ((_b2 = ctx2[7]) == null ? void 0 : _b2.recovery) {
           if (if_block) {
             if_block.p(ctx2, dirty);
             if (dirty & 128) {
@@ -23909,12 +26368,12 @@
       }
     };
   }
-  function create_if_block22(ctx) {
+  function create_if_block21(ctx) {
     let current_block_type_index;
     let if_block;
     let if_block_anchor;
     let current;
-    const if_block_creators = [create_if_block_118, create_else_block15];
+    const if_block_creators = [create_if_block_117, create_else_block14];
     const if_blocks = [];
     function select_block_type_1(ctx2, dirty) {
       if (ctx2[7].length == 0)
@@ -24022,7 +26481,7 @@
       }
     };
   }
-  function create_else_block15(ctx) {
+  function create_else_block14(ctx) {
     let html_tag;
     let raw_value = ctx[7].map(ctx[2]).join(` ${rul.tr("or")}<br/>`) + "";
     let html_anchor;
@@ -24050,7 +26509,7 @@
       }
     };
   }
-  function create_if_block_118(ctx) {
+  function create_if_block_117(ctx) {
     let tr_1;
     let current;
     tr_1 = new Tr_default({ props: { s: "See stage descriptions" } });
@@ -24083,7 +26542,7 @@
     let if_block;
     let if_block_anchor;
     let current;
-    const if_block_creators = [create_if_block22, create_if_block_211];
+    const if_block_creators = [create_if_block21, create_if_block_211];
     const if_blocks = [];
     function select_block_type(ctx2, dirty) {
       if (ctx2[6] == "killCriteria2")
@@ -24157,7 +26616,7 @@
       }
     };
   }
-  function create_each_block24(key_1, ctx) {
+  function create_each_block23(key_1, ctx) {
     let first;
     let soldierbonuses;
     let current;
@@ -24207,7 +26666,7 @@
       }
     };
   }
-  function create_fragment35(ctx) {
+  function create_fragment34(ctx) {
     let maintable;
     let t;
     let div;
@@ -24244,9 +26703,9 @@
     let each_value = ctx[1];
     const get_key = (ctx2) => ctx2[5];
     for (let i = 0; i < each_value.length; i += 1) {
-      let child_ctx = get_each_context24(ctx, each_value, i);
+      let child_ctx = get_each_context23(ctx, each_value, i);
       let key = get_key(child_ctx);
-      each_1_lookup.set(key, each_blocks[i] = create_each_block24(key, child_ctx));
+      each_1_lookup.set(key, each_blocks[i] = create_each_block23(key, child_ctx));
     }
     return {
       c() {
@@ -24278,7 +26737,7 @@
         if (dirty & 2) {
           each_value = ctx2[1];
           group_outros();
-          each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx2, each_value, each_1_lookup, div, outro_and_destroy_block, create_each_block24, null, get_each_context24);
+          each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx2, each_value, each_1_lookup, div, outro_and_destroy_block, create_each_block23, null, get_each_context23);
           check_outros();
         }
       },
@@ -24310,7 +26769,7 @@
       }
     };
   }
-  function instance35($$self, $$props, $$invalidate) {
+  function instance34($$self, $$props, $$invalidate) {
     let { entry } = $$props;
     let bonuses;
     const func6 = (deeds) => deeds.map((deed) => deedDescription(deed)).join(` ${rul.tr("and")} `);
@@ -24324,10 +26783,9 @@
           let buf = [];
           for (let i = 0; i < 10; i++) {
             let bonusName = entry.soldierBonusTypes ? entry.soldierBonusTypes[i] : null;
-            let b = {
-              ...rul.soldierBonuses[bonusName] || {},
+            let b = __spreadProps(__spreadValues({}, rul.soldierBonuses[bonusName] || {}), {
               criteria: {}
-            };
+            });
             for (let criteria in entry.criteria) {
               b.criteria[criteria] = entry.criteria[criteria][i];
             }
@@ -24343,19 +26801,112 @@
   var Commendation2 = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance35, create_fragment35, safe_not_equal, { entry: 0 });
+      init(this, options, instance34, create_fragment34, safe_not_equal, { entry: 0 });
     }
   };
   var Commendation_default = Commendation2;
 
+  // src/StartingConditions.svelte
+  function create_fragment35(ctx) {
+    let maintable;
+    let current;
+    maintable = new MainTable_default({
+      props: {
+        sort: {
+          first: ["deployments"],
+          exclude: ctx[3],
+          last: ["allowedArmors", "forbiddenArmors", "defaultArmor"]
+        },
+        title: ctx[1],
+        subtitle: ctx[2],
+        entry: ctx[0]
+      }
+    });
+    return {
+      c() {
+        create_component(maintable.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(maintable, target, anchor);
+        current = true;
+      },
+      p(ctx2, [dirty]) {
+        const maintable_changes = {};
+        if (dirty & 8)
+          maintable_changes.sort = {
+            first: ["deployments"],
+            exclude: ctx2[3],
+            last: ["allowedArmors", "forbiddenArmors", "defaultArmor"]
+          };
+        if (dirty & 2)
+          maintable_changes.title = ctx2[1];
+        if (dirty & 4)
+          maintable_changes.subtitle = ctx2[2];
+        if (dirty & 1)
+          maintable_changes.entry = ctx2[0];
+        maintable.$set(maintable_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(maintable.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(maintable.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(maintable, detaching);
+      }
+    };
+  }
+  function instance35($$self, $$props, $$invalidate) {
+    let { entry } = $$props;
+    let { title } = $$props;
+    let { subtitle } = $$props;
+    let entryTrimmed = {};
+    let exclude2 = [];
+    $$self.$$set = ($$props2) => {
+      if ("entry" in $$props2)
+        $$invalidate(0, entry = $$props2.entry);
+      if ("title" in $$props2)
+        $$invalidate(1, title = $$props2.title);
+      if ("subtitle" in $$props2)
+        $$invalidate(2, subtitle = $$props2.subtitle);
+    };
+    $$self.$$.update = () => {
+      var _a, _b;
+      if ($$self.$$.dirty & 8) {
+        $: {
+          $$invalidate(3, exclude2 = []);
+          for (let k of ["Craft", "SoldierTypes", "Vehicles", "Armors"]) {
+            if (((_a = entryTrimmed[`allowed${k}`]) == null ? void 0 : _a.length) > ((_b = entryTrimmed[`forbidden${k}`]) == null ? void 0 : _b.length))
+              exclude2.push(`allowed${k}`);
+            else
+              exclude2.push(`forbidden${k}`);
+          }
+        }
+      }
+    };
+    return [entry, title, subtitle, exclude2];
+  }
+  var StartingConditions2 = class extends SvelteComponent {
+    constructor(options) {
+      super();
+      init(this, options, instance35, create_fragment35, safe_not_equal, { entry: 0, title: 1, subtitle: 2 });
+    }
+  };
+  var StartingConditions_default = StartingConditions2;
+
   // src/ArticleBody.svelte
-  function get_each_context25(ctx, list, i) {
+  function get_each_context24(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[5] = list[i][0];
     child_ctx[6] = list[i][1];
     return child_ctx;
   }
-  function create_else_block16(ctx) {
+  function create_else_block15(ctx) {
     let maintable;
     let current;
     maintable = new MainTable_default({
@@ -24398,7 +26949,7 @@
       }
     };
   }
-  function create_if_block23(ctx) {
+  function create_if_block22(ctx) {
     let switch_instance;
     let switch_instance_anchor;
     let current;
@@ -24474,12 +27025,12 @@
       }
     };
   }
-  function create_each_block25(ctx) {
+  function create_each_block24(ctx) {
     let current_block_type_index;
     let if_block;
     let if_block_anchor;
     let current;
-    const if_block_creators = [create_if_block23, create_else_block16];
+    const if_block_creators = [create_if_block22, create_else_block15];
     const if_blocks = [];
     function select_block_type(ctx2, dirty) {
       if (typeof ctx2[6] == "function")
@@ -24543,7 +27094,7 @@
     let each_value = Object.entries(ctx[2]).filter(ctx[3]);
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block25(get_each_context25(ctx, each_value, i));
+      each_blocks[i] = create_each_block24(get_each_context24(ctx, each_value, i));
     }
     const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
       each_blocks[i] = null;
@@ -24567,12 +27118,12 @@
           each_value = Object.entries(ctx2[2]).filter(ctx2[3]);
           let i;
           for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context25(ctx2, each_value, i);
+            const child_ctx = get_each_context24(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
               transition_in(each_blocks[i], 1);
             } else {
-              each_blocks[i] = create_each_block25(child_ctx);
+              each_blocks[i] = create_each_block24(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
               each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
@@ -24611,6 +27162,10 @@
     let { text: text2 = null } = $$props;
     let { id } = $$props;
     let armor;
+    onMount(() => {
+      if (rul.pageScripts[id])
+        rul.pageScripts[id]();
+    });
     const renderers = {
       units: Unit_default,
       armors: Armor_default,
@@ -24619,6 +27174,7 @@
       research: Research_default,
       stats: {},
       damageTypes: {},
+      countries: {},
       commendations: Commendation_default,
       baseServices: BaseService_default,
       facilities: Facility_default,
@@ -24631,11 +27187,19 @@
       soldiers: {
         sort: { first: ["statCaps"], last: ["armors"] }
       },
-      ufos: Ufo_default,
+      ufos: {
+        sort: {
+          first: ["modSprite"],
+          last: ["battlescapeTerrainData"]
+        }
+      },
       alienRaces: { title: "Race" },
       alienRanks: { title: "Ranks" },
       alienDeployments: {
-        sort: { first: ["startingCondition", "loot"] }
+        sort: {
+          first: ["startingCondition", "loot"],
+          last: ["data"]
+        }
       },
       missionScripts: {
         sort: {
@@ -24643,7 +27207,7 @@
         }
       },
       alienMissions: {},
-      startingConditions: {},
+      startingConditions: StartingConditions_default,
       enviroEffects: {},
       terrains: { sort: { last: ["mapBlocks"] } },
       mapScripts: {},
@@ -24676,17 +27240,17 @@
   var ArticleBody_default = ArticleBody;
 
   // src/Article.svelte
-  function get_each_context26(ctx, list, i) {
+  function get_each_context25(ctx, list, i) {
     const child_ctx = ctx.slice();
     child_ctx[9] = list[i];
     return child_ctx;
   }
-  function create_if_block_173(ctx) {
+  function create_if_block_192(ctx) {
     let linkspage;
     let current;
     linkspage = new LinksPage_default({
       props: {
-        links: rul.sections[ctx[0].id].articles.map(func_5)
+        links: rul.sections[ctx[0].id].articles.map(func_4)
       }
     });
     return {
@@ -24700,7 +27264,7 @@
       p(ctx2, dirty) {
         const linkspage_changes = {};
         if (dirty & 1)
-          linkspage_changes.links = rul.sections[ctx2[0].id].articles.map(func_5);
+          linkspage_changes.links = rul.sections[ctx2[0].id].articles.map(func_4);
         linkspage.$set(linkspage_changes);
       },
       i(local) {
@@ -24718,7 +27282,7 @@
       }
     };
   }
-  function create_if_block_163(ctx) {
+  function create_if_block_183(ctx) {
     let conditions;
     let current;
     conditions = new Conditions_default({
@@ -24755,7 +27319,7 @@
       }
     };
   }
-  function create_if_block_153(ctx) {
+  function create_if_block_173(ctx) {
     let sectiontable;
     let current;
     sectiontable = new SectionTable_default({
@@ -24780,7 +27344,8 @@
         ],
         filters: {
           armorUsers: ["any", "allies", "enemies", ...Object.keys(rul.soldiers)],
-          size: ["any", "1", "2"]
+          size: ["any", "auto"],
+          allowedIn: ["any", ...Object.keys(rul.startingConditions)]
         }
       }
     });
@@ -24813,7 +27378,7 @@
       }
     };
   }
-  function create_if_block_143(ctx) {
+  function create_if_block_163(ctx) {
     let sectiontable;
     let current;
     sectiontable = new SectionTable_default({
@@ -24862,19 +27427,20 @@
       }
     };
   }
-  function create_if_block_134(ctx) {
+  function create_if_block_153(ctx) {
     let sectiontable;
     let current;
     sectiontable = new SectionTable_default({
       props: {
         aId: ctx[3],
         entries: Object.values(rul.items),
-        fields: ["costSell", "costBuy", "size", "weight", "power"],
-        extraFields: [...rul.itemFields].filter(func_4).sort(),
+        fields: ["costSell", "costBuy", "size", "weight", "power", "invSize"],
+        extraFields: [...rul.itemFields].sort(),
         filters: {
           internalBattleType: ["any", ...internalBattleTypes],
           damageTypes: ["any", ...damageTypes],
-          category: ["any", ...rul.sortStrings(Object.keys(rul.categories))]
+          category: ["any", ...rul.sortStrings(Object.keys(rul.categories))],
+          invSize: ["any", "auto"]
         }
       }
     });
@@ -24907,7 +27473,7 @@
       }
     };
   }
-  function create_if_block_124(ctx) {
+  function create_if_block_143(ctx) {
     let sectiontable;
     let current;
     sectiontable = new SectionTable_default({
@@ -24963,7 +27529,99 @@
       }
     };
   }
-  function create_if_block_119(ctx) {
+  function create_if_block_134(ctx) {
+    let sectiontable;
+    let current;
+    sectiontable = new SectionTable_default({
+      props: {
+        aId: ctx[3],
+        entries: Object.values(rul.countries),
+        fields: ["fundingBase", "fundingCap", "events"]
+      }
+    });
+    return {
+      c() {
+        create_component(sectiontable.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(sectiontable, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        const sectiontable_changes = {};
+        if (dirty & 8)
+          sectiontable_changes.aId = ctx2[3];
+        sectiontable.$set(sectiontable_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(sectiontable.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(sectiontable.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(sectiontable, detaching);
+      }
+    };
+  }
+  function create_if_block_124(ctx) {
+    let sectiontable;
+    let current;
+    sectiontable = new SectionTable_default({
+      props: {
+        aId: ctx[3],
+        entries: Object.values(rul.ufos),
+        fields: [
+          "modSprite",
+          "marker",
+          "markerCrash",
+          "markerLand",
+          "speedMax",
+          "armor",
+          "damageMax",
+          "power",
+          "huntBehavior",
+          "huntMode",
+          "hunterKillerPercentage",
+          "radarRange",
+          "accel"
+        ]
+      }
+    });
+    return {
+      c() {
+        create_component(sectiontable.$$.fragment);
+      },
+      m(target, anchor) {
+        mount_component(sectiontable, target, anchor);
+        current = true;
+      },
+      p(ctx2, dirty) {
+        const sectiontable_changes = {};
+        if (dirty & 8)
+          sectiontable_changes.aId = ctx2[3];
+        sectiontable.$set(sectiontable_changes);
+      },
+      i(local) {
+        if (current)
+          return;
+        transition_in(sectiontable.$$.fragment, local);
+        current = true;
+      },
+      o(local) {
+        transition_out(sectiontable.$$.fragment, local);
+        current = false;
+      },
+      d(detaching) {
+        destroy_component(sectiontable, detaching);
+      }
+    };
+  }
+  function create_if_block_118(ctx) {
     let sectiontable;
     let current;
     sectiontable = new SectionTable_default({
@@ -25002,7 +27660,7 @@
       }
     };
   }
-  function create_if_block_103(ctx) {
+  function create_if_block_104(ctx) {
     let sectiontable;
     let current;
     sectiontable = new SectionTable_default({
@@ -25044,7 +27702,7 @@
       }
     };
   }
-  function create_if_block_93(ctx) {
+  function create_if_block_94(ctx) {
     let sectiontable;
     let current;
     sectiontable = new SectionTable_default({
@@ -25154,8 +27812,8 @@
           "storage",
           "personnel",
           "workshops",
-          "kennel",
-          "prison"
+          "prisonType",
+          "aliens"
         ],
         extraFields: [
           "buildCost",
@@ -25336,7 +27994,8 @@
       }
     };
   }
-  function create_if_block_120(ctx) {
+  function create_if_block_119(ctx) {
+    var _a;
     let div1;
     let t0;
     let div0;
@@ -25344,7 +28003,7 @@
     let raw_value = ctx[0].text + "";
     let t1;
     let current;
-    let if_block0 = rul.items[ctx[0].id]?.sprite && ctx[0].text && rul.items[ctx[0].id].battleType != 2 && create_if_block_311(ctx);
+    let if_block0 = ((_a = rul.items[ctx[0].id]) == null ? void 0 : _a.sprite) && ctx[0].text && rul.items[ctx[0].id].battleType != 2 && create_if_block_311(ctx);
     let if_block1 = ctx[0].requires && ctx[0].requires != ctx[0].id && create_if_block_212(ctx);
     return {
       c() {
@@ -25373,7 +28032,8 @@
         current = true;
       },
       p(ctx2, dirty) {
-        if (rul.items[ctx2[0].id]?.sprite && ctx2[0].text && rul.items[ctx2[0].id].battleType != 2) {
+        var _a2;
+        if (((_a2 = rul.items[ctx2[0].id]) == null ? void 0 : _a2.sprite) && ctx2[0].text && rul.items[ctx2[0].id].battleType != 2) {
           if (if_block0) {
             if_block0.p(ctx2, dirty);
             if (dirty & 1) {
@@ -25491,7 +28151,7 @@
     let each_value = ctx[0].requires || [];
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block26(get_each_context26(ctx, each_value, i));
+      each_blocks[i] = create_each_block25(get_each_context25(ctx, each_value, i));
     }
     const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
       each_blocks[i] = null;
@@ -25523,12 +28183,12 @@
           each_value = ctx2[0].requires || [];
           let i;
           for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context26(ctx2, each_value, i);
+            const child_ctx = get_each_context25(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
               transition_in(each_blocks[i], 1);
             } else {
-              each_blocks[i] = create_each_block26(child_ctx);
+              each_blocks[i] = create_each_block25(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
               each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
@@ -25572,7 +28232,7 @@
       }
     };
   }
-  function create_each_block26(ctx) {
+  function create_each_block25(ctx) {
     let value;
     let current;
     value = new Value_default({ props: { val: ctx[9] } });
@@ -25605,7 +28265,7 @@
       }
     };
   }
-  function create_if_block24(ctx) {
+  function create_if_block23(ctx) {
     let canvasimage;
     let current;
     canvasimage = new CanvasImage_default({
@@ -25685,15 +28345,17 @@
       create_if_block_66,
       create_if_block_76,
       create_if_block_85,
-      create_if_block_93,
-      create_if_block_103,
-      create_if_block_119,
+      create_if_block_94,
+      create_if_block_104,
+      create_if_block_118,
       create_if_block_124,
       create_if_block_134,
       create_if_block_143,
       create_if_block_153,
       create_if_block_163,
-      create_if_block_173
+      create_if_block_173,
+      create_if_block_183,
+      create_if_block_192
     ];
     const if_blocks = [];
     function select_block_type(ctx2, dirty) {
@@ -25709,18 +28371,22 @@
         return 4;
       if (ctx2[0].id == "SOLDIERS")
         return 5;
-      if (ctx2[0].id == "ATTACKS")
+      if (ctx2[0].id == "UFOS")
         return 6;
-      if (ctx2[0].id == "ITEMS")
+      if (ctx2[0].id == "COUNTRIES")
         return 7;
-      if (ctx2[0].id == "MANUFACTURE")
+      if (ctx2[0].id == "ATTACKS")
         return 8;
-      if (ctx2[0].id == "ARMORS")
+      if (ctx2[0].id == "ITEMS")
         return 9;
-      if (ctx2[0].id == "CONDITIONS")
+      if (ctx2[0].id == "MANUFACTURE")
         return 10;
-      if (ctx2[0].section == ctx2[0].id)
+      if (ctx2[0].id == "ARMORS")
         return 11;
+      if (ctx2[0].id == "CONDITIONS")
+        return 12;
+      if (ctx2[0].section == ctx2[0].id)
+        return 13;
       return -1;
     }
     if (~(current_block_type_index = select_block_type(ctx, -1))) {
@@ -25728,7 +28394,7 @@
     }
     let if_block1 = ctx[0].section == "CATEGORIES" && ctx[0].id != "CATEGORIES" && create_if_block_56(ctx);
     let if_block2 = ctx[0].section == "MANUFACTURE_CATEGORIES" && ctx[0].id != "MANUFACTURE_CATEGORIES" && create_if_block_47(ctx);
-    let if_block3 = ctx[0].text && create_if_block_120(ctx);
+    let if_block3 = ctx[0].text && create_if_block_119(ctx);
     var switch_value = ctx[2];
     function switch_props(ctx2) {
       return { props: { query: ctx2[1] } };
@@ -25737,7 +28403,7 @@
       switch_instance = new switch_value(switch_props(ctx));
     }
     articlebody = new ArticleBody_default({ props: { id: ctx[0].id } });
-    let if_block4 = !(ctx[0].id in rul.units) && create_if_block24(ctx);
+    let if_block4 = !(ctx[0].id in rul.units) && create_if_block23(ctx);
     return {
       c() {
         t0 = space();
@@ -25924,7 +28590,7 @@
               transition_in(if_block3, 1);
             }
           } else {
-            if_block3 = create_if_block_120(ctx2);
+            if_block3 = create_if_block_119(ctx2);
             if_block3.c();
             transition_in(if_block3, 1);
             if_block3.m(t12.parentNode, t12);
@@ -25970,7 +28636,7 @@
               transition_in(if_block4, 1);
             }
           } else {
-            if_block4 = create_if_block24(ctx2);
+            if_block4 = create_if_block23(ctx2);
             if_block4.c();
             transition_in(if_block4, 1);
             if_block4.m(div2, t15);
@@ -26056,8 +28722,7 @@
   var func5 = (s) => s.id;
   var func_2 = (s) => "recovery." + s;
   var func_3 = (v) => "acc*" + v;
-  var func_4 = (f) => !["costSell", "costBuy", "size", "weight", "power"].includes(f);
-  var func_5 = (a) => a.id;
+  var func_4 = (a) => a.id;
   function instance37($$self, $$props, $$invalidate) {
     const dispatch = createEventDispatcher();
     let { article = {} } = $$props;
@@ -26169,6 +28834,58 @@
   };
   var CogAnimation_default = CogAnimation;
 
+  // src/exportPedia.ts
+  function exportPedia(onlyCurrentLanguage = false) {
+    return __async(this, null, function* () {
+      var _a;
+      document.body.style.cursor = "wait";
+      let jsPath = (_a = document.getElementById("xpedia-js")) == null ? void 0 : _a.src;
+      let js = yield (yield fetch(jsPath)).text();
+      let style = yield readStyle("main-css");
+      let lightStyle = yield readStyle("light-css");
+      let src = rul.src;
+      if (onlyCurrentLanguage) {
+        let langs = {};
+        langs[defaultLanguage2] = src.langs[defaultLanguage2];
+        langs.icon = src.langs.icon;
+        let langName = rul.langName;
+        if (langName != defaultLanguage2) {
+          langs[langName] = src.langs[langName];
+        }
+        src = __spreadProps(__spreadValues({}, src), { langs });
+      }
+      let packed = yield packZip(JSON.stringify(src));
+      let html = `
+<head>
+  <meta name="description" content="Online reference for OpenXCom games" />
+  <style id="main-css">${style}</style>
+  <style id="light-css" media="none">${lightStyle}</style>
+  <script>
+  window.gameDir = ".";
+  window.xpediaDir = "xpedia2/";
+  window.xpedia = "${packed}";
+  window.GlobeMarkers = "${window["GlobeMarkers"]}"
+  <\/script>
+  <script>${js}<\/script>
+</head>`;
+      download("xpedia.html", html);
+      document.body.style.cursor = "default";
+    });
+  }
+  function download(filename, text2) {
+    if (typeof fsSave != "undefined") {
+      fsSave(filename, text2);
+      return;
+    }
+    var element2 = document.createElement("a");
+    element2.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(text2));
+    element2.setAttribute("download", filename);
+    element2.style.display = "none";
+    document.body.appendChild(element2);
+    element2.click();
+    document.body.removeChild(element2);
+  }
+
   // src/Download.svelte
   function create_fragment39(ctx) {
     let button;
@@ -26270,26 +28987,26 @@
 
   // src/App.svelte
   var { document: document_1 } = globals;
-  function get_each_context27(ctx, list, i) {
+  function get_each_context26(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[58] = list[i];
+    child_ctx[63] = list[i];
     return child_ctx;
   }
-  function get_each_context_19(ctx, list, i) {
+  function get_each_context_18(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[61] = list[i];
-    child_ctx[63] = i;
+    child_ctx[66] = list[i];
+    child_ctx[68] = i;
     return child_ctx;
   }
-  function get_each_context_26(ctx, list, i) {
+  function get_each_context_25(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[61] = list[i];
-    child_ctx[63] = i;
+    child_ctx[66] = list[i];
+    child_ctx[68] = i;
     return child_ctx;
   }
   function get_each_context_35(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[65] = list[i];
+    child_ctx[70] = list[i];
     return child_ctx;
   }
   function get_each_context_44(ctx, list, i) {
@@ -26299,14 +29016,14 @@
   }
   function get_each_context_53(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[61] = list[i];
-    child_ctx[63] = i;
+    child_ctx[66] = list[i];
+    child_ctx[68] = i;
     return child_ctx;
   }
   function get_each_context_62(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[61] = list[i];
-    child_ctx[63] = i;
+    child_ctx[66] = list[i];
+    child_ctx[68] = i;
     return child_ctx;
   }
   function create_if_block_125(ctx) {
@@ -26314,8 +29031,8 @@
     document_1.title = title_value = tr("XPedia");
     return { c: noop, m: noop, d: noop };
   }
-  function create_else_block17(ctx) {
-    let previous_key = [ctx[20], ctx[0]];
+  function create_else_block16(ctx) {
+    let previous_key = [ctx[20], ctx[0], markersLoaded];
     let key_block_anchor;
     let current;
     let key_block = create_key_block(ctx);
@@ -26330,7 +29047,7 @@
         current = true;
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 1048577 && safe_not_equal(previous_key, previous_key = [ctx2[20], ctx2[0]])) {
+        if (dirty[0] & 1048577 && safe_not_equal(previous_key, previous_key = [ctx2[20], ctx2[0], markersLoaded])) {
           group_outros();
           transition_out(key_block, 1, 1, noop);
           check_outros();
@@ -26359,7 +29076,7 @@
       }
     };
   }
-  function create_if_block25(ctx) {
+  function create_if_block24(ctx) {
     let div0;
     let t;
     let div1;
@@ -26414,12 +29131,12 @@
     let tr_1;
     let a_href_value;
     let current;
-    tr_1 = new Tr_default({ props: { s: ctx[61].id } });
+    tr_1 = new Tr_default({ props: { s: ctx[66].id } });
     return {
       c() {
         a = element("a");
         create_component(tr_1.$$.fragment);
-        attr(a, "href", a_href_value = "##" + ctx[61].id);
+        attr(a, "href", a_href_value = "##" + ctx[66].id);
       },
       m(target, anchor) {
         insert(target, a, anchor);
@@ -26447,17 +29164,17 @@
   function create_each_block_53(ctx) {
     let a;
     let tr_1;
-    let t_value = tableSections.includes(ctx[61].id) ? "\u2630" : "";
+    let t_value = tableSections.includes(ctx[66].id) ? "\u2630" : "";
     let t;
     let a_href_value;
     let current;
-    tr_1 = new Tr_default({ props: { s: ctx[61].id } });
+    tr_1 = new Tr_default({ props: { s: ctx[66].id } });
     return {
       c() {
         a = element("a");
         create_component(tr_1.$$.fragment);
         t = text(t_value);
-        attr(a, "href", a_href_value = "##" + ctx[61].id);
+        attr(a, "href", a_href_value = "##" + ctx[66].id);
       },
       m(target, anchor) {
         insert(target, a, anchor);
@@ -26497,33 +29214,6 @@
       m(target, anchor) {
         insert(target, button, anchor);
         if (!mounted) {
-          dispose = listen(button, "click", ctx[36]);
-          mounted = true;
-        }
-      },
-      p: noop,
-      d(detaching) {
-        if (detaching)
-          detach(button);
-        mounted = false;
-        dispose();
-      }
-    };
-  }
-  function create_if_block_104(ctx) {
-    let button;
-    let mounted;
-    let dispose;
-    return {
-      c() {
-        button = element("button");
-        button.innerHTML = `<span style="font-size:150%">A</span> 
-          <span style="font-size:75%">A</span>`;
-        attr(button, "class", "navbar-button");
-      },
-      m(target, anchor) {
-        insert(target, button, anchor);
-        if (!mounted) {
           dispose = listen(button, "click", ctx[37]);
           mounted = true;
         }
@@ -26537,7 +29227,34 @@
       }
     };
   }
-  function create_if_block_94(ctx) {
+  function create_if_block_105(ctx) {
+    let button;
+    let mounted;
+    let dispose;
+    return {
+      c() {
+        button = element("button");
+        button.innerHTML = `<span style="font-size:150%">A</span> 
+          <span style="font-size:75%">A</span>`;
+        attr(button, "class", "navbar-button");
+      },
+      m(target, anchor) {
+        insert(target, button, anchor);
+        if (!mounted) {
+          dispose = listen(button, "click", ctx[39]);
+          mounted = true;
+        }
+      },
+      p: noop,
+      d(detaching) {
+        if (detaching)
+          detach(button);
+        mounted = false;
+        dispose();
+      }
+    };
+  }
+  function create_if_block_95(ctx) {
     let div1;
     let button;
     let big;
@@ -26586,15 +29303,15 @@
         current = true;
         if (!mounted) {
           dispose = [
-            listen(button, "mousedown", ctx[38]),
-            listen(div1, "mouseover", ctx[40]),
-            listen(div1, "mouseout", ctx[41])
+            listen(button, "mousedown", ctx[40]),
+            listen(div1, "mouseover", ctx[42]),
+            listen(div1, "mouseout", ctx[43])
           ];
           mounted = true;
         }
       },
       p(ctx2, dirty) {
-        if (dirty[0] & 8388608) {
+        if (dirty[0] & 16777216) {
           each_value_4 = rul.langNames;
           let i;
           for (i = 0; i < each_value_4.length; i += 1) {
@@ -26655,8 +29372,8 @@
     let mounted;
     let dispose;
     tr_1 = new Tr_default({ props: { s: ctx[20] } });
-    function click_handler_3(...args) {
-      return ctx[39](ctx[20], ...args);
+    function click_handler_4(...args) {
+      return ctx[41](ctx[20], ...args);
     }
     return {
       c() {
@@ -26673,7 +29390,7 @@
         append(div, t);
         current = true;
         if (!mounted) {
-          dispose = listen(div, "click", click_handler_3);
+          dispose = listen(div, "click", click_handler_4);
           mounted = true;
         }
       },
@@ -26700,6 +29417,7 @@
     };
   }
   function create_if_block_77(ctx) {
+    var _a;
     let nav;
     let button;
     let tr_1;
@@ -26712,7 +29430,7 @@
     let mounted;
     let dispose;
     tr_1 = new Tr_default({ props: { s: "A-Z" } });
-    let each_value_3 = ctx[16](ctx[5]?.articles) || [];
+    let each_value_3 = ctx[16]((_a = ctx[5]) == null ? void 0 : _a.articles) || [];
     let each_blocks = [];
     for (let i = 0; i < each_value_3.length; i += 1) {
       each_blocks[i] = create_each_block_35(get_each_context_35(ctx, each_value_3, i));
@@ -26750,16 +29468,17 @@
         append(nav, br);
         current = true;
         if (!mounted) {
-          dispose = listen(button, "click", ctx[43]);
+          dispose = listen(button, "click", ctx[45]);
           mounted = true;
         }
       },
       p(ctx2, dirty) {
+        var _a2;
         if (!current || dirty[0] & 4 && button_style_value !== (button_style_value = ctx2[2] ? "" : "text-decoration:line-through")) {
           attr(button, "style", button_style_value);
         }
         if (dirty[0] & 65761) {
-          each_value_3 = ctx2[16](ctx2[5]?.articles) || [];
+          each_value_3 = ctx2[16]((_a2 = ctx2[5]) == null ? void 0 : _a2.articles) || [];
           let i;
           for (i = 0; i < each_value_3.length; i += 1) {
             const child_ctx = get_each_context_35(ctx2, each_value_3, i);
@@ -26815,14 +29534,14 @@
     let current;
     let mounted;
     let dispose;
-    tr_1 = new Tr_default({ props: { s: ctx[65].id } });
+    tr_1 = new Tr_default({ props: { s: ctx[70].id } });
     return {
       c() {
         a = element("a");
         create_component(tr_1.$$.fragment);
         t = space();
         attr(a, "class", "side-link");
-        attr(a, "href", a_href_value = "##" + ctx[65].id);
+        attr(a, "href", a_href_value = "##" + ctx[70].id);
       },
       m(target, anchor) {
         insert(target, a, anchor);
@@ -26830,16 +29549,16 @@
         append(a, t);
         current = true;
         if (!mounted) {
-          dispose = listen(a, "click", ctx[45]);
+          dispose = listen(a, "click", ctx[47]);
           mounted = true;
         }
       },
       p(ctx2, dirty) {
         const tr_1_changes = {};
         if (dirty[0] & 65568)
-          tr_1_changes.s = ctx2[65].id;
+          tr_1_changes.s = ctx2[70].id;
         tr_1.$set(tr_1_changes);
-        if (!current || dirty[0] & 65568 && a_href_value !== (a_href_value = "##" + ctx2[65].id)) {
+        if (!current || dirty[0] & 65568 && a_href_value !== (a_href_value = "##" + ctx2[70].id)) {
           attr(a, "href", a_href_value);
         }
       },
@@ -26868,28 +29587,28 @@
     let t;
     let a_href_value;
     let current;
-    tr_1 = new Tr_default({ props: { s: ctx[65].id } });
+    tr_1 = new Tr_default({ props: { s: ctx[70].id } });
     return {
       c() {
         a = element("a");
         create_component(tr_1.$$.fragment);
         t = space();
-        attr(a, "href", a_href_value = "##" + ctx[65].id);
+        attr(a, "href", a_href_value = "##" + ctx[70].id);
         attr(a, "class", "active-article-option side-link");
       },
       m(target, anchor) {
         insert(target, a, anchor);
         mount_component(tr_1, a, null);
         append(a, t);
-        ctx[44](a);
+        ctx[46](a);
         current = true;
       },
       p(ctx2, dirty) {
         const tr_1_changes = {};
         if (dirty[0] & 65568)
-          tr_1_changes.s = ctx2[65].id;
+          tr_1_changes.s = ctx2[70].id;
         tr_1.$set(tr_1_changes);
-        if (!current || dirty[0] & 65568 && a_href_value !== (a_href_value = "##" + ctx2[65].id)) {
+        if (!current || dirty[0] & 65568 && a_href_value !== (a_href_value = "##" + ctx2[70].id)) {
           attr(a, "href", a_href_value);
         }
       },
@@ -26907,7 +29626,7 @@
         if (detaching)
           detach(a);
         destroy_component(tr_1);
-        ctx[44](null);
+        ctx[46](null);
       }
     };
   }
@@ -26919,7 +29638,7 @@
     const if_block_creators = [create_if_block_86, create_else_block_32];
     const if_blocks = [];
     function select_block_type_1(ctx2, dirty) {
-      if (ctx2[0] && ctx2[0].id == ctx2[65].id)
+      if (ctx2[0] && ctx2[0].id == ctx2[70].id)
         return 0;
       return 1;
     }
@@ -27000,19 +29719,19 @@
     let each_value_2 = rul.sectionsOrder;
     let each_blocks_2 = [];
     for (let i = 0; i < each_value_2.length; i += 1) {
-      each_blocks_2[i] = create_each_block_26(get_each_context_26(ctx, each_value_2, i));
+      each_blocks_2[i] = create_each_block_25(get_each_context_25(ctx, each_value_2, i));
     }
     tr1 = new Tr_default({ props: { s: "Extra sections" } });
     let each_value_1 = rul.typeSectionsOrder;
     let each_blocks_1 = [];
     for (let i = 0; i < each_value_1.length; i += 1) {
-      each_blocks_1[i] = create_each_block_19(get_each_context_19(ctx, each_value_1, i));
+      each_blocks_1[i] = create_each_block_18(get_each_context_18(ctx, each_value_1, i));
     }
     tr2 = new Tr_default({ props: { s: "Mods" } });
     let each_value = rul.mods;
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
-      each_blocks[i] = create_each_block27(get_each_context27(ctx, each_value, i));
+      each_blocks[i] = create_each_block26(get_each_context26(ctx, each_value, i));
     }
     let if_block = !packedData && create_if_block_67(ctx);
     tr3 = new Tr_default({ props: { s: "About XPedia" } });
@@ -27090,11 +29809,11 @@
           each_value_2 = rul.sectionsOrder;
           let i;
           for (i = 0; i < each_value_2.length; i += 1) {
-            const child_ctx = get_each_context_26(ctx2, each_value_2, i);
+            const child_ctx = get_each_context_25(ctx2, each_value_2, i);
             if (each_blocks_2[i]) {
               each_blocks_2[i].p(child_ctx, dirty);
             } else {
-              each_blocks_2[i] = create_each_block_26(child_ctx);
+              each_blocks_2[i] = create_each_block_25(child_ctx);
               each_blocks_2[i].c();
               each_blocks_2[i].m(p0, null);
             }
@@ -27108,11 +29827,11 @@
           each_value_1 = rul.typeSectionsOrder;
           let i;
           for (i = 0; i < each_value_1.length; i += 1) {
-            const child_ctx = get_each_context_19(ctx2, each_value_1, i);
+            const child_ctx = get_each_context_18(ctx2, each_value_1, i);
             if (each_blocks_1[i]) {
               each_blocks_1[i].p(child_ctx, dirty);
             } else {
-              each_blocks_1[i] = create_each_block_19(child_ctx);
+              each_blocks_1[i] = create_each_block_18(child_ctx);
               each_blocks_1[i].c();
               each_blocks_1[i].m(p1, null);
             }
@@ -27126,11 +29845,11 @@
           each_value = rul.mods;
           let i;
           for (i = 0; i < each_value.length; i += 1) {
-            const child_ctx = get_each_context27(ctx2, each_value, i);
+            const child_ctx = get_each_context26(ctx2, each_value, i);
             if (each_blocks[i]) {
               each_blocks[i].p(child_ctx, dirty);
             } else {
-              each_blocks[i] = create_each_block27(child_ctx);
+              each_blocks[i] = create_each_block26(child_ctx);
               each_blocks[i].c();
               each_blocks[i].m(ul, null);
             }
@@ -27216,8 +29935,8 @@
         query: ctx[4]
       }
     });
-    article_1.$on("prev", ctx[49]);
-    article_1.$on("next", ctx[50]);
+    article_1.$on("prev", ctx[51]);
+    article_1.$on("next", ctx[52]);
     return {
       c() {
         create_component(article_1.$$.fragment);
@@ -27249,7 +29968,7 @@
       }
     };
   }
-  function create_if_block_121(ctx) {
+  function create_if_block_120(ctx) {
     let t0;
     let em;
     let t1;
@@ -27324,12 +30043,12 @@
       }
     };
   }
-  function create_each_block_26(ctx) {
+  function create_each_block_25(ctx) {
     let html_tag;
-    let raw_value = divider(ctx[63]) + "";
+    let raw_value = divider(ctx[68]) + "";
     let t0;
     let a;
-    let t1_value = ctx[61].title + "";
+    let t1_value = ctx[66].title + "";
     let t1;
     let a_href_value;
     return {
@@ -27339,7 +30058,7 @@
         a = element("a");
         t1 = text(t1_value);
         html_tag.a = t0;
-        attr(a, "href", a_href_value = "##" + ctx[61].id);
+        attr(a, "href", a_href_value = "##" + ctx[66].id);
       },
       m(target, anchor) {
         html_tag.m(raw_value, target, anchor);
@@ -27358,12 +30077,12 @@
       }
     };
   }
-  function create_each_block_19(ctx) {
+  function create_each_block_18(ctx) {
     let html_tag;
-    let raw_value = divider(ctx[63]) + "";
+    let raw_value = divider(ctx[68]) + "";
     let t0;
     let a;
-    let t1_value = ctx[61].title + "";
+    let t1_value = ctx[66].title + "";
     let t1;
     let a_href_value;
     return {
@@ -27373,7 +30092,7 @@
         a = element("a");
         t1 = text(t1_value);
         html_tag.a = t0;
-        attr(a, "href", a_href_value = "##" + ctx[61].id);
+        attr(a, "href", a_href_value = "##" + ctx[66].id);
       },
       m(target, anchor) {
         html_tag.m(raw_value, target, anchor);
@@ -27392,12 +30111,12 @@
       }
     };
   }
-  function create_each_block27(ctx) {
+  function create_each_block26(ctx) {
     let li;
-    let t0_value = ctx[58].name + "";
+    let t0_value = ctx[63].name + "";
     let t0;
     let t1;
-    let t2_value = ctx[58].version + "";
+    let t2_value = ctx[63].version + "";
     let t2;
     return {
       c() {
@@ -27437,7 +30156,7 @@
     download0 = new Download_default({ props: { title: "Export all languages" } });
     download1 = new Download_default({
       props: {
-        title: "Export current (" + rul.tr(rul.langName) + ") only",
+        title: rul.langName == "en-US" ? `Export English only` : `Export current (${rul.tr(rul.langName)}) and English only`,
         onlyCurrent: true
       }
     });
@@ -27508,7 +30227,7 @@
       }
     };
   }
-  function create_else_block_15(ctx) {
+  function create_else_block_16(ctx) {
     let i;
     let tr_1;
     let current;
@@ -27615,12 +30334,12 @@
     let current;
     linkspage0 = new LinksPage_default({
       props: {
-        links: ctx[3].filter(ctx[47]).slice(0, 200)
+        links: ctx[3].filter(ctx[49]).slice(0, 200)
       }
     });
     linkspage1 = new LinksPage_default({
       props: {
-        links: ctx[3].filter(ctx[48]).slice(0, 200),
+        links: ctx[3].filter(ctx[50]).slice(0, 200),
         title: " "
       }
     });
@@ -27641,11 +30360,11 @@
       p(ctx2, dirty) {
         const linkspage0_changes = {};
         if (dirty[0] & 24)
-          linkspage0_changes.links = ctx2[3].filter(ctx2[47]).slice(0, 200);
+          linkspage0_changes.links = ctx2[3].filter(ctx2[49]).slice(0, 200);
         linkspage0.$set(linkspage0_changes);
         const linkspage1_changes = {};
         if (dirty[0] & 24)
-          linkspage1_changes.links = ctx2[3].filter(ctx2[48]).slice(0, 200);
+          linkspage1_changes.links = ctx2[3].filter(ctx2[50]).slice(0, 200);
         linkspage1.$set(linkspage1_changes);
       },
       i(local) {
@@ -27675,7 +30394,7 @@
     let if_block;
     let if_block_anchor;
     let current;
-    const if_block_creators = [create_if_block_213, create_if_block_312, create_if_block_48, create_else_block_15];
+    const if_block_creators = [create_if_block_213, create_if_block_312, create_if_block_48, create_else_block_16];
     const if_blocks = [];
     function select_block_type_3(ctx2, dirty) {
       if (ctx2[3] && ctx2[3].length > 0)
@@ -27738,6 +30457,7 @@
     };
   }
   function create_key_block(ctx) {
+    var _a;
     let nav;
     let div6;
     let div0;
@@ -27773,22 +30493,24 @@
     let div8;
     let t14;
     let t15;
-    let t16;
+    let button0;
     let t17;
+    let t18;
+    let t19;
     let div9;
     let input;
     let input_placeholder_value;
-    let t18;
-    let t19;
-    let button;
-    let span2;
-    let button_style_value;
+    let t20;
     let t21;
+    let button1;
+    let span2;
+    let button1_style_value;
+    let t23;
     let div10;
     let current_block_type_index;
     let if_block4;
     let div10_style_value;
-    let t22;
+    let t24;
     let div11;
     let current;
     let mounted;
@@ -27811,10 +30533,10 @@
       each_blocks[i] = null;
     });
     let if_block0 = !packedData && create_if_block_1110(ctx);
-    let if_block1 = allowHugeFont && create_if_block_104(ctx);
-    let if_block2 = rul.langNames?.length > 1 && create_if_block_94(ctx);
+    let if_block1 = allowHugeFont && create_if_block_105(ctx);
+    let if_block2 = ((_a = rul.langNames) == null ? void 0 : _a.length) > 1 && create_if_block_95(ctx);
     let if_block3 = ctx[9] && create_if_block_77(ctx);
-    const if_block_creators = [create_if_block_121, create_if_block_57, create_else_block_22];
+    const if_block_creators = [create_if_block_120, create_if_block_57, create_else_block_22];
     const if_blocks = [];
     function select_block_type_2(ctx2, dirty) {
       if (ctx2[4] && ctx2[13])
@@ -27867,25 +30589,28 @@
         if (if_block0)
           if_block0.c();
         t15 = space();
+        button0 = element("button");
+        button0.textContent = "\u2580\u2584";
+        t17 = space();
         if (if_block1)
           if_block1.c();
-        t16 = space();
+        t18 = space();
         if (if_block2)
           if_block2.c();
-        t17 = space();
+        t19 = space();
         div9 = element("div");
         input = element("input");
-        t18 = space();
+        t20 = space();
         if (if_block3)
           if_block3.c();
-        t19 = space();
-        button = element("button");
+        t21 = space();
+        button1 = element("button");
         span2 = element("span");
         span2.textContent = "\u2261";
-        t21 = space();
+        t23 = space();
         div10 = element("div");
         if_block4.c();
-        t22 = space();
+        t24 = space();
         div11 = element("div");
         div11.textContent = "Tooltip";
         if (!src_url_equal(img.src, img_src_value = favicon))
@@ -27911,6 +30636,7 @@
         attr(div7, "id", "reveal");
         attr(div7, "tooltip", "tip_reveal");
         attr(div8, "class", "stretcher on-wide");
+        attr(button0, "class", "navbar-button");
         attr(input, "class", "input");
         attr(input, "type", "text");
         attr(input, "id", "search-string");
@@ -27918,8 +30644,8 @@
         attr(div9, "class", "navbar-search");
         attr(nav, "class", "navbar flex-horisontal");
         set_style(span2, "font-size", "150%");
-        attr(button, "class", "side-hide-button");
-        attr(button, "style", button_style_value = ctx[9] ? "" : "left:1em;");
+        attr(button1, "class", "side-hide-button");
+        attr(button1, "style", button1_style_value = ctx[9] ? "" : "left:1em;");
         attr(div10, "class", "main");
         attr(div10, "id", "main");
         attr(div10, "style", div10_style_value = ctx[9] ? "" : "padding-left:1rem;");
@@ -27952,7 +30678,7 @@
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].m(div3, null);
         }
-        ctx[30](div6);
+        ctx[31](div6);
         append(nav, t9);
         append(nav, a1);
         append(a1, t10);
@@ -27965,44 +30691,48 @@
         if (if_block0)
           if_block0.m(nav, null);
         append(nav, t15);
+        append(nav, button0);
+        append(nav, t17);
         if (if_block1)
           if_block1.m(nav, null);
-        append(nav, t16);
+        append(nav, t18);
         if (if_block2)
           if_block2.m(nav, null);
-        append(nav, t17);
+        append(nav, t19);
         append(nav, div9);
         append(div9, input);
         set_input_value(input, ctx[4]);
-        insert(target, t18, anchor);
+        insert(target, t20, anchor);
         if (if_block3)
           if_block3.m(target, anchor);
-        insert(target, t19, anchor);
-        insert(target, button, anchor);
-        append(button, span2);
         insert(target, t21, anchor);
+        insert(target, button1, anchor);
+        append(button1, span2);
+        insert(target, t23, anchor);
         insert(target, div10, anchor);
         if_blocks[current_block_type_index].m(div10, null);
-        insert(target, t22, anchor);
+        insert(target, t24, anchor);
         insert(target, div11, anchor);
-        ctx[51](div11);
+        ctx[53](div11);
         current = true;
         if (!mounted) {
           dispose = [
-            listen(div0, "mousedown", ctx[29]),
-            listen(div6, "mousemove", ctx[31]),
-            listen(div6, "mouseout", ctx[32]),
-            listen(div7, "mouseover", ctx[33]),
-            listen(div7, "mouseout", ctx[34]),
-            listen(div7, "click", ctx[35]),
-            listen(input, "input", ctx[42]),
-            listen(input, "keyup", ctx[26]),
-            listen(button, "click", ctx[46])
+            listen(div0, "mousedown", ctx[30]),
+            listen(div6, "mousemove", ctx[32]),
+            listen(div6, "mouseout", ctx[33]),
+            listen(div7, "mouseover", ctx[34]),
+            listen(div7, "mouseout", ctx[35]),
+            listen(div7, "click", ctx[36]),
+            listen(button0, "click", ctx[38]),
+            listen(input, "input", ctx[44]),
+            listen(input, "keyup", ctx[27]),
+            listen(button1, "click", ctx[48])
           ];
           mounted = true;
         }
       },
       p(ctx2, dirty) {
+        var _a2;
         if (dirty & 0) {
           each_value_6 = rul.sectionsOrder;
           let i;
@@ -28060,7 +30790,7 @@
           if_block0.p(ctx2, dirty);
         if (allowHugeFont)
           if_block1.p(ctx2, dirty);
-        if (rul.langNames?.length > 1)
+        if (((_a2 = rul.langNames) == null ? void 0 : _a2.length) > 1)
           if_block2.p(ctx2, dirty);
         if (dirty[0] & 16 && input.value !== ctx2[4]) {
           set_input_value(input, ctx2[4]);
@@ -28075,7 +30805,7 @@
             if_block3 = create_if_block_77(ctx2);
             if_block3.c();
             transition_in(if_block3, 1);
-            if_block3.m(t19.parentNode, t19);
+            if_block3.m(t21.parentNode, t21);
           }
         } else if (if_block3) {
           group_outros();
@@ -28084,8 +30814,8 @@
           });
           check_outros();
         }
-        if (!current || dirty[0] & 512 && button_style_value !== (button_style_value = ctx2[9] ? "" : "left:1em;")) {
-          attr(button, "style", button_style_value);
+        if (!current || dirty[0] & 512 && button1_style_value !== (button1_style_value = ctx2[9] ? "" : "left:1em;")) {
+          attr(button1, "style", button1_style_value);
         }
         let previous_block_index = current_block_type_index;
         current_block_type_index = select_block_type_2(ctx2, dirty);
@@ -28147,7 +30877,7 @@
         destroy_component(tr_1);
         destroy_each(each_blocks_1, detaching);
         destroy_each(each_blocks, detaching);
-        ctx[30](null);
+        ctx[31](null);
         if (if_block0)
           if_block0.d();
         if (if_block1)
@@ -28155,23 +30885,23 @@
         if (if_block2)
           if_block2.d();
         if (detaching)
-          detach(t18);
+          detach(t20);
         if (if_block3)
           if_block3.d(detaching);
         if (detaching)
-          detach(t19);
-        if (detaching)
-          detach(button);
-        if (detaching)
           detach(t21);
+        if (detaching)
+          detach(button1);
+        if (detaching)
+          detach(t23);
         if (detaching)
           detach(div10);
         if_blocks[current_block_type_index].d();
         if (detaching)
-          detach(t22);
+          detach(t24);
         if (detaching)
           detach(div11);
-        ctx[51](null);
+        ctx[53](null);
         mounted = false;
         run_all(dispose);
       }
@@ -28187,7 +30917,7 @@
     let if_block1_anchor;
     let current;
     let if_block0 = !ctx[0] && create_if_block_125(ctx);
-    const if_block_creators = [create_if_block25, create_else_block17];
+    const if_block_creators = [create_if_block24, create_else_block16];
     const if_blocks = [];
     function select_block_type(ctx2, dirty) {
       if (!ctx2[17])
@@ -28315,6 +31045,7 @@
     let sortArticles = false;
     let isTouch = "ontouchstart" in window;
     let lang;
+    let markers;
     setContext("main", { revealed: () => revealed });
     loaded.subscribe((done) => {
       if (done) {
@@ -28331,6 +31062,16 @@
     leftRightClickSwipe.subscribe((v) => {
       lrcs = v;
     });
+    let theme = "light";
+    function toggleTheme() {
+      theme = theme == "light" ? "dark" : "light";
+      applyTheme();
+      saveState();
+    }
+    function applyTheme() {
+      let lightCSS = document.getElementById("light-css");
+      lightCSS.setAttribute("media", theme == "light" ? "" : "none");
+    }
     function saveState() {
       if (!saveLoaded)
         return;
@@ -28339,20 +31080,23 @@
         seeSide,
         lang,
         sortArticles,
+        theme,
         linksPageSorted: _linksPageSorted
       });
-      console.log("ss", localStorage.xpediaSettings);
+      clog("ss", localStorage.xpediaSettings);
     }
     function loadState() {
       try {
-        console.log("ls", localStorage.xpediaSettings);
+        clog("ls", localStorage.xpediaSettings);
         let data = JSON.parse(localStorage.xpediaSettings);
         if (data && typeof data == "object") {
           $$invalidate(1, hugeFont = data.hugeFont);
           $$invalidate(9, seeSide = data.seeSide);
           $$invalidate(2, sortArticles = data.sortArticles);
+          theme = data.theme;
           linksPageSorted.set(data.linksPageSorted);
           selectLang(data.lang);
+          applyTheme();
         }
       } catch (e) {
         console.log(e);
@@ -28366,52 +31110,52 @@
       checkHash();
     }
     let searchinInProgres;
-    async function checkHash() {
-      $$invalidate(10, showDropdown = $$invalidate(11, showLanguagesDropdown = false));
-      let hash = decodeURI(document.location.hash);
-      if (hash.substring(0, 2) != "##")
-        return;
-      id = hash.substring(2);
-      if (id == "MAIN") {
-        $$invalidate(4, query = "");
-      }
-      $$invalidate(13, searching = false);
-      if (id) {
-        let dd = id.indexOf("::");
-        if (dd != -1) {
-          $$invalidate(4, query = id.substring(dd + 2).toLowerCase());
-          id = id.substring(0, dd);
+    function checkHash() {
+      return __async(this, null, function* () {
+        $$invalidate(10, showDropdown = $$invalidate(11, showLanguagesDropdown = false));
+        let hash = decodeURI(document.location.hash);
+        if (hash.substring(0, 2) != "##")
+          return;
+        id = hash.substring(2);
+        if (id == "MAIN") {
+          $$invalidate(4, query = "");
         }
-        if (id == "SEARCH") {
-          $$invalidate(13, searching = true);
-          if (query.length >= 2) {
-            $$invalidate(14, searchinInProgres = true);
-            $$invalidate(3, found = await rul.search[rul.langName].findArticles(query));
-            $$invalidate(14, searchinInProgres = false);
-          } else
-            $$invalidate(3, found = 0);
-          $$invalidate(0, article = null);
-        } else {
-          $$invalidate(3, found = null);
-          if (!article || article.id != id)
-            $$invalidate(0, article = rul.article(id));
-        }
-        clog(id);
-        clog(article);
-      }
-      if (article) {
-        if (article.sections) {
-          if (!article.sections.includes(currentSection)) {
-            $$invalidate(5, currentSection = article.sections[0]);
+        $$invalidate(13, searching = false);
+        if (id) {
+          let dd = id.indexOf("::");
+          if (dd != -1) {
+            $$invalidate(4, query = id.substring(dd + 2).toLowerCase());
+            id = id.substring(0, dd);
+          }
+          if (id == "SEARCH") {
+            $$invalidate(13, searching = true);
+            if (query.length >= 2) {
+              $$invalidate(14, searchinInProgres = true);
+              $$invalidate(3, found = yield rul.search[rul.langName].findArticles(query));
+              $$invalidate(14, searchinInProgres = false);
+            } else
+              $$invalidate(3, found = 0);
+            $$invalidate(0, article = null);
+          } else {
+            $$invalidate(3, found = null);
+            if (!article || article.id != id)
+              $$invalidate(0, article = rul.article(id));
           }
         }
-      }
-      if (activeOption) {
-        centerOnArticle();
-      }
+        if (article) {
+          if (article.sections) {
+            if (!article.sections.includes(currentSection)) {
+              $$invalidate(5, currentSection = article.sections[0]);
+            }
+          }
+        }
+        if (activeOption) {
+          centerOnArticle();
+        }
+      });
     }
     function centerOnArticle() {
-      setTimeout(() => activeOption?.scrollIntoView({ block: "center" }), 50);
+      setTimeout(() => activeOption == null ? void 0 : activeOption.scrollIntoView({ block: "center" }), 50);
     }
     function nextArticle(delta) {
       if (lrcs) {
@@ -28453,7 +31197,7 @@
       else
         nextArticle(-1);
     });
-    window.addEventListener("mousemove", async (e) => {
+    window.addEventListener("mousemove", (e) => __async(this, null, function* () {
       if (e.screenX < 10 && e.screenY < innerHeight / 3) {
         dropdown(true);
       } else {
@@ -28476,7 +31220,7 @@
           toggleTooltip(null);
         }
       }
-    });
+    }));
     function toggleTooltip(text2) {
       $$invalidate(12, tooltip.innerHTML = text2, tooltip);
       let classes = tooltip.classList;
@@ -28516,16 +31260,17 @@
       useCache("wipe");
       location.reload();
     };
-    const click_handler_2 = (e) => $$invalidate(1, hugeFont = !hugeFont);
+    const click_handler_2 = () => toggleTheme();
+    const click_handler_3 = (e) => $$invalidate(1, hugeFont = !hugeFont);
     const mousedown_handler_1 = (e) => $$invalidate(11, showLanguagesDropdown = !showLanguagesDropdown);
-    const click_handler_3 = (lang2, e) => selectLang(lang2);
+    const click_handler_4 = (lang2, e) => selectLang(lang2);
     const mouseover_handler_1 = (e) => !isTouch && $$invalidate(11, showLanguagesDropdown = true);
     const mouseout_handler_2 = (e) => !isTouch && $$invalidate(11, showLanguagesDropdown = false);
     function input_input_handler() {
       query = this.value;
       $$invalidate(4, query);
     }
-    const click_handler_4 = (e) => {
+    const click_handler_5 = (e) => {
       $$invalidate(2, sortArticles = !sortArticles);
       centerOnArticle();
       saveState();
@@ -28536,10 +31281,10 @@
         $$invalidate(6, activeOption);
       });
     }
-    const click_handler_5 = () => {
+    const click_handler_6 = () => {
       $$invalidate(7, ignoreNextAutoscroll = true);
     };
-    const click_handler_6 = (e) => {
+    const click_handler_7 = (e) => {
       if (e.button == 0)
         $$invalidate(9, seeSide = !seeSide);
       saveState();
@@ -28590,6 +31335,7 @@
       $revealed,
       lang,
       isTouch,
+      toggleTheme,
       saveState,
       selectLang,
       centerOnArticle,
@@ -28606,15 +31352,16 @@
       click_handler,
       click_handler_1,
       click_handler_2,
-      mousedown_handler_1,
       click_handler_3,
+      mousedown_handler_1,
+      click_handler_4,
       mouseover_handler_1,
       mouseout_handler_2,
       input_input_handler,
-      click_handler_4,
-      a_binding,
       click_handler_5,
+      a_binding,
       click_handler_6,
+      click_handler_7,
       func6,
       func_13,
       prev_handler,
@@ -28625,10 +31372,10 @@
   var App = class extends SvelteComponent {
     constructor(options) {
       super();
-      init(this, options, instance40, create_fragment40, safe_not_equal, { loadState: 28 }, null, [-1, -1, -1]);
+      init(this, options, instance40, create_fragment40, safe_not_equal, { loadState: 29 }, null, [-1, -1, -1]);
     }
     get loadState() {
-      return this.$$.ctx[28];
+      return this.$$.ctx[29];
     }
   };
   var App_default = App;
@@ -28651,7 +31398,7 @@
   addEventListener("hashchange", (e) => {
     if (location.hash.substring(0, 8) != "##SEARCH") {
       let input = document.getElementById("search-string");
-      input?.blur();
+      input == null ? void 0 : input.blur();
     }
   });
   var main_default = app;

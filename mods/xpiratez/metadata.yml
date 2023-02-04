@@ -3,4 +3,5 @@ version: "2.0 2022.08.09"
 description: "Extra texts and stuff for Xpedia"
 author: "https://github.com/baturinsky and https://vk.com/xpiratez"
 master: piratez
+active: true
 id: piratez_xpedia

@@ -4,6 +4,7 @@ import { loadData } from './load';
 import { addAllIfNew, addIfNew, camelToUnderscore, capital, cullDoubles, delay, getFlagEmoji, imageToCanvas, loadImage, removeByValue, unique } from './util';
 import * as util from "./util"
 import { markersLoaded } from './store';
+import { initPedipal } from './pedipal';
 
 export let rul!: Ruleset;
 export type SortFirstLastOptions = { first?: string[], last?: string[], exclude?: string[], sortBy?: Function }
@@ -158,6 +159,9 @@ export class EventScript extends Entry {
   eventWeights;
   oneTimeRandomEvents;
   researchTriggers;
+  xcomBaseInCountryTriggers;
+  _xcomBaseInCountryTrue = [];
+  _xcomBaseInCountryFalse = [];
 
   constructor(raw: any) {
     super(raw, "eventScripts")
@@ -167,6 +171,13 @@ export class EventScript extends Entry {
     ]);
     this._relatedEvents = [...relatedEvents];
     this._relatedResearch = [...new Set<string>(Object.keys(this.researchTriggers || {}))];
+    if(this.xcomBaseInCountryTriggers){
+      this._xcomBaseInCountryTrue = Object.keys(this.xcomBaseInCountryTriggers).filter(k=>this.xcomBaseInCountryTriggers[k] == true)
+      this._xcomBaseInCountryFalse = Object.keys(this.xcomBaseInCountryTriggers).filter(k=>this.xcomBaseInCountryTriggers[k] == false)
+      /*console.log(this.id);
+      console.log("true", this._xcomBaseInCountryTrue);
+      console.log("false", this._xcomBaseInCountryFalse);*/
+    }
   }
 }
 
@@ -1201,6 +1212,7 @@ export default class Ruleset {
   itemTypes: { [key: string]: Entry } = {};
   stats: { [key: string]: Entry } = {};
   battleTypes: { [key: string]: Entry } = {};
+  countries: { [key: string]: Entry } = {};
   damageTypes: { [key: string]: DamageType } = {};
   research: { [key: string]: Research } = {};
   soldierBonuses: { [key: string]: Entry } = {};
@@ -1224,6 +1236,7 @@ export default class Ruleset {
   redirect: { [key: string]: string } = {};
   attacks: Attack[] = [];
   globeMarkers: string[];
+  pageScripts = {STR_PALETTE_CONVERTER:initPedipal}
 
   itemFields = new Set<string>();
 
@@ -1233,7 +1246,6 @@ export default class Ruleset {
   langName: string;
   langNames: string[];
   convertedLangs = {};
-
 
 
   addCategory(catName: string, id: string, where?) {
@@ -1451,6 +1463,7 @@ export default class Ruleset {
 
     new Section("ATTACKS", true);
 
+    crosslink(this.eventScripts, "_xcomBaseInCountryTrue", "countries", "events");
     crosslink(this.units, "race", "alienRaces", "hasThisRace");
     crosslink(this.units, "rank", "alienRanks", "hasThisRank");
     crosslink(this.alienRaces, "members", "units", "memberOf");
@@ -1828,11 +1841,13 @@ export default class Ruleset {
 
 }
 
+/**Main class to figure what to do with data in Ruls */
 export const entryConstructors = {
   items: Item,
   battleTypes: Entry,
   soldiers: Soldiers,
   alienRaces: Entry,
+  countries: Entry,
   armors: Armor,
   units: Unit,
   crafts: Craft,

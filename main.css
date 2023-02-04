@@ -206,9 +206,11 @@ h4 {
   text-shadow: var(--shadow) 2px 2px 2px;  
 }
 
-h4 {
-  border-bottom: solid 1px var(--border);
+h2,
+h3,
+h4 {  
   margin-top: 1rem;
+  border-bottom: solid 1px var(--border);
 }
 
 h2 {
@@ -1270,6 +1272,49 @@ button.download {
     width: auto;
   }
 }
+
+pre {
+  font-family: 'Courier New', Courier, monospace;
+  border: solid 0.5px #888888;
+}
+
+/*styles for ruleset reference*/
+.exgreen {
+  background-color: rgba(0,255,0,0.05);
+}
+
+.exred {
+  background-color: rgba(255, 0,0,0.05);
+}
+
+#drop-area, #load-area {
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  font-family: sans-serif;
+  padding: 10px;
+}
+
+#pedipal .button {
+  display: inline-block;
+  padding: 10px;
+  cursor: pointer;
+  border: solid 1px #888;
+}
+
+#pedipal .button:hover {
+  background: #ddd;
+}
+
+
+#fileElem {
+  display: none;
+}
+
+form{
+  padding:0;
+  margin:0;  
+}
+
 
 @font-face { 
   font-family: "Didact Gothic";

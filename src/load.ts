@@ -133,6 +133,7 @@ export async function loadFromFiles() {
   let allModDirs = [...modDirs, ...xpediaDirs]
   let modMetadataById = {};
   let modMetadata = await Promise.all(allModDirs.map(dir => readYaml(`${dir}metadata.yml`)))
+  modMetadata = modMetadata.filter(m=>m);
 
   for (let i in modMetadata) {
     let data = modMetadata[i];
@@ -148,31 +149,28 @@ export async function loadFromFiles() {
   masterModIds.push("xpedia");
 
   if(options){
-    activeMods = ["xcom1", ...options.mods.filter(m => m.active).map(m => m.id)];
-    modMetadata = modMetadata.filter(m=>activeMods.includes(m.id))      
-    modMetadata = modMetadata.filter(m=>m.isMaster || masterModIds.includes(m.master))
-    activeMods = modMetadata.map(m=>m.id)  
-    let xpediaMods = Object.keys(modMetadataById).filter(k => {
-      let data = modMetadataById[k];
-      return (data.master == null || activeMods.includes(data.master)) && xpediaDirs.includes(data.dir)
-    });
-  
-    activeMods = [...activeMods, ...xpediaMods];
-  
-  } else { 
-    modMetadata = modMetadata.filter(m=>m.isMaster || masterModIds.includes(m.master))
-    const priority = (id:string)=>{
-      let mod = modMetadataById[id];
-      if(mod.master == "xpedia")
-        return 0;
-      if(mod.master == null)
-        return 1;
-      if(mod.master == "xcom1")
-        return 2;
-      return 3;
-    }
-    activeMods = Object.keys(modMetadataById).sort((a,b)=>priority(a) - priority(b))
+    activeMods = ["xcom1", ...[...options.mods.filter(m => m.active), ...modMetadata.filter(m=>m.active)].map(m => m.id)];
+  } else {
+    activeMods = ["xcom1", ...modMetadata.map(m=>m.id)];
   }
+
+  activeMods = activeMods.filter(id => {
+    let mod = modMetadataById[id];
+    return mod && (mod.isMaster || masterModIds.includes(mod.master));
+  });
+
+  const priority = (id:string)=>{
+    let mod = modMetadataById[id];
+    if(mod.master == "xpedia")
+      return 0;
+    if(mod.master == null)
+      return 1;
+    if(mod.master == "xcom1")
+      return 2;
+    return 3;
+  }
+
+  activeMods = activeMods.sort((a,b)=>priority(a) - priority(b))
 
   let activeModsMetadata = activeMods.map(id => modMetadataById[id])
   for (let mod of activeModsMetadata)
@@ -181,10 +179,10 @@ export async function loadFromFiles() {
   let langDirs = activeModsMetadata.map(m => `${m.dir}Language/`);
 
   langDirs.splice(1, 0, "/standard/xcom1/Language/OXCE/");
-
+  
   let [ruls, langs] = await Promise.all(
     [loadRulsFromMods(activeModsMetadata),
-    loadLanguagesFromDirs(activeModsMetadata.map(m => `${m.dir}Language/`))]
+    loadLanguagesFromDirs(langDirs)]
   );
   
   return { ruls, langs, mods: activeModsMetadata }
@@ -209,7 +207,6 @@ async function loadLanguagesFromDirs(dirs: string[]) {
 
   let lng = {};
   //let files: { lname: string, dir: string }[] = lnames.map(lname => dirs.map(dir => ({ lname, dir }))).flat(1);
-
 
   let data = await Promise.all(files.map(f => {
     let path = `${f.dir}${f.lname}`;

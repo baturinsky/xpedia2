@@ -1,7 +1,7 @@
 <script>
-/**
- * UI root. Left and top bar. Switches between search results, article and the front page.
-*/
+  /**
+   * UI root. Left and top bar. Switches between search results, article and the front page.
+   */
 
   "use strict";
   import { rul, Article as ArticleRul } from "./Ruleset";
@@ -15,10 +15,10 @@
   } from "./Components";
   import Article from "./Article.svelte";
   import CogAnimation from "./CogAnimation.svelte";
-  import { afterUpdate, onMount, setContext } from "svelte";  
+  import { afterUpdate, onMount, setContext } from "svelte";
   import {
     revealed,
-    reveal, 
+    reveal,
     revealLock,
     loaded,
     linksPageSorted,
@@ -69,7 +69,6 @@
     saveState();
   });
 
-  
   let lrcs;
   leftRightClickSwipe.subscribe((v) => {
     lrcs = v;
@@ -77,13 +76,13 @@
 
   let theme = "light";
 
-  function toggleTheme() {    
-    theme = theme == "light"?"dark":"light";
+  function toggleTheme() {
+    theme = theme == "light" ? "dark" : "light";
     applyTheme();
     saveState();
   }
 
-  function applyTheme() {    
+  function applyTheme() {
     let lightCSS = document.getElementById("light-css");
     lightCSS.setAttribute("media", theme == "light" ? "" : "none");
   }
@@ -421,9 +420,7 @@
         </button>
       {/if}
 
-      <button class="navbar-button" on:click={() => toggleTheme()}>
-        ▀▄
-      </button>
+      <button class="navbar-button" on:click={() => toggleTheme()}> ▀▄ </button>
 
       {#if allowHugeFont}
         <button class="navbar-button" on:click={(e) => (hugeFont = !hugeFont)}>
@@ -593,7 +590,7 @@
           <Tr s="aboutexport" /><br />
           <Download title="Export all languages" />
           <Download
-            title="Export current ({rul.tr(rul.langName)}) only"
+            title= {rul.langName == "en-US"?`Export English only`:`Export current (${rul.tr(rul.langName)}) and English only`}
             onlyCurrent={true}
           />
           <br />

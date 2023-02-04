@@ -58,12 +58,13 @@ export async function listDir(path, full = false) {
     if (dir != "../" && dir.substring(0, 4) != "http")
       files.push(full ? path + dir : dir);
   }
-  console.log("ld", path, files);
+  //console.log("listDir", path, files);
   return files;
 }
 
 
 export async function readYaml(path: string) {
+  //console.log("reading yaml file", path)
   let text = await readTextFile(path);
   let parsed = parseYaml(text, path);
   return parsed as any;

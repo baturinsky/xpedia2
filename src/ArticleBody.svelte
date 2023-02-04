@@ -13,6 +13,7 @@
   import Commendation from "./Commendation.svelte";
   import MainTable from "./MainTable.svelte";
   import StartingConditions from "./StartingConditions.svelte";
+  import { onMount } from "svelte";
 
   export let text = null;
   export let id;
@@ -27,6 +28,11 @@
         : null;
   }
 
+  onMount(()=>{
+    if(rul.pageScripts[id])
+      rul.pageScripts[id]();
+  });
+
   const renderers = {
     units: Unit,
     armors: Armor,
@@ -35,6 +41,7 @@
     research: Research,
     stats: {},
     damageTypes: {},
+    countries: {},
     commendations: Commendation,
     baseServices: BaseService,
     facilities: Facility,
