@@ -1,0 +1,1 @@
+declare function clog(...args:any[]): void;

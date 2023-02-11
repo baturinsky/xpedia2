@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { clog } from "./util";
   import { Value, rul } from "./Components";
   import { sortFirstLast, SortFirstLastOptions } from "./Ruleset";
   export let entry;
@@ -14,7 +13,7 @@
   let sorted;
 
   $: {
-    clog("MT", entry, sort, wide);
+    //clog("MT", entry, sort, wide);
     sorted = sortFirstLast(entry, sort);
   }
 </script>

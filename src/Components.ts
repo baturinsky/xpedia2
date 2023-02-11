@@ -36,7 +36,8 @@ export const tableSections = [
   "ITEMS",
   "ATTACKS",
   "UFO",
-  "COUNTRIES"
+  "COUNTRIES",
+  "UNITS"
 ];
 
 export function invisible(t){

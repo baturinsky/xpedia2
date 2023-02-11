@@ -7,7 +7,6 @@
   let div;
 
   function loaded(img) {
-    console.log(zoom, maxWidth, maxHeight);
     div = img.parentNode;
     img.style.width = img.naturalWidth * zoom + "px";
     img.style.height = img.naturalHeight * zoom + "px";

@@ -1,8 +1,6 @@
 import esbuild from "esbuild";
 import esbuildSvelte from "esbuild-svelte";
 import sveltePreprocess from "svelte-preprocess";
-import open from "open";
-import { copyFile } from 'node:fs/promises';
 
 let options = {
   entryPoints: ["src/main.ts"],
@@ -31,6 +29,8 @@ if (keys.has("serve")) {
     }, { ...options, watch: false })
 } else if (keys.has("minify")) {
   builder = esbuild.build({ ...options, minify: true });
+} else if (keys.has("watch")) {
+  builder = esbuild.build({ ...options, watch: true });
 } else {
   builder = esbuild.build(options);
 }

@@ -13,9 +13,8 @@
 
   $:{
     if(obs){
-      console.log(rul.obsSprite(obs,val))
+      clog(rul.obsSprite(obs,val))
     }
-    //if(key) console.log({key});    
   }
 </script>
 

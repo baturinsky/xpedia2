@@ -35,6 +35,7 @@ export async function exportPedia(onlyCurrentLanguage = false) {
   window.xpediaDir = "xpedia2/";
   window.xpedia = "${packed}";
   window.GlobeMarkers = "${window["GlobeMarkers"]}"
+  clog = (...args)=>{}
   </script>
   <script>${js}</script>
 </head>`;

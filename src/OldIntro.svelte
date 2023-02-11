@@ -1,7 +1,6 @@
 <script>
   import { rul } from "./Ruleset";
   let intro = rul.str("intro");
-  console.log(intro);
 </script>
 
 {#if intro}

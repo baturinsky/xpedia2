@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "devDependencies": {
     "@types/js-yaml": "^4.0.5",
+    "concurrently": "^7.6.0",
     "esbuild": "^0.14.49",
     "esbuild-svelte": "^0.7.1",
     "open": "^8.4.0",
@@ -13,7 +14,9 @@
   "scripts": {
     "build": "node build.mjs",
     "min": "node build.mjs --minify",
+    "watch": "node build.mjs --watch",
     "start": "node build.mjs --serve",
+    "ws": "concurrently --kill-others \"node build.mjs --watch\" \"serve .. -p 2601\"",
     "neu": "neu run",
     "neub": "neu run -- --mode=browser",
     "neubuild": "npm run build && neu build --release"

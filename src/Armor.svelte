@@ -20,7 +20,7 @@
 
   const imageNotFound = () => {
     this.onerror = null;
-    console.log(this.src + " not found");
+    console.warn(this.src + " not found");
     this.src = emptyImg;
   };
 

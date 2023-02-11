@@ -2,6 +2,7 @@
   import { Value, Link, LinksList, tr, Tr } from "./Components";
   import {linksPageSorted} from "./store"
   import PaginatedList from "./PaginatedList.svelte"
+  import { onDestroy } from "svelte";
 
   export let links;
   export let cols = false;
@@ -9,11 +10,11 @@
   
   let sortedList;
   
-  linksPageSorted.subscribe(sorted => {
-    sortedList = sorted ?
+  $:{
+    sortedList = $linksPageSorted ?
       links.slice().sort((a, b) => (tr(a) > tr(b) ? 1 : -1)) :
       links;    
-  })
+  }
 </script>
 
 {#if links && links.length > 0}

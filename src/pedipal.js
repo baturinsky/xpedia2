@@ -68,7 +68,6 @@ export function initPedipal() {
       name = name.substr(0, pos < 0 ? name.length : pos) + ".gif";
       anchor.download = name;
       anchor.click();
-      console.log(anchor.download);
     }
   }
 
@@ -98,8 +97,6 @@ export function initPedipal() {
 
     palette = palettes[paletteSelect.value || pedipalName];
 
-    console.log(paletteSelect.value);
-
     if (palette.length < 256) {
       let newPalette = quantize(data, 256 - palette.length - 1, { format, clearAlpha: transparent, oneBitAlpha: transparent });
       palette = [[0, 0, 0], ...newPalette, ...palette]
@@ -110,10 +107,6 @@ export function initPedipal() {
       if (data[i * 4 + 3] < 127)
         index[i] = 0;
     }
-
-    console.log({ data, palette, index });
-
-    //debugger;
 
     // Write frame into GIF
     gif.writeFrame(index, width, height, { palette, transparent: transparent, transparentIndex: 0 });
@@ -180,7 +173,6 @@ export function initPedipal() {
   async function handleFiles(_files) {
     files = _files;
     urls = [];
-    console.log({ files });
     inputs.innerHTML = "";
     await Promise.allSettled(([...files]).map(f => addInput(f)));
     encodeAll();

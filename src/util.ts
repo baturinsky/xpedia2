@@ -22,7 +22,6 @@ async function fetchAll(files) {
 
 export async function readTextFile(path: string) {
   let text: string;
-  //console.log("fetch", path);
   try {
     text = await fetchText(path)
     inform(path);
@@ -58,13 +57,11 @@ export async function listDir(path, full = false) {
     if (dir != "../" && dir.substring(0, 4) != "http")
       files.push(full ? path + dir : dir);
   }
-  //console.log("listDir", path, files);
   return files;
 }
 
 
 export async function readYaml(path: string) {
-  //console.log("reading yaml file", path)
   let text = await readTextFile(path);
   let parsed = parseYaml(text, path);
   return parsed as any;
@@ -174,10 +171,6 @@ export function withoutKeys(o: Object, keys: string[]) {
     delete o[k];
   }
   return o;
-}
-
-export function clog(...args) {
-  console.log(...args);
 }
 
 export function allFieldValuesOf(objects: Object[], field: string) {

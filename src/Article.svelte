@@ -1,7 +1,7 @@
 <script lang="ts">
-/**
- * Article OR section-articel with a list or a table of articles.
- * */  
+  /**
+   * Article OR section-articel with a list or a table of articles.
+   * */
   import {
     rul,
     sortFirstLast,
@@ -19,7 +19,7 @@
   import { createEventDispatcher } from "svelte";
   import ArticleBody from "./ArticleBody.svelte";
   import CanvasImage from "./CanvasImage.svelte";
-  
+
   const dispatch = createEventDispatcher();
 
   /**@type {Article}*/
@@ -78,7 +78,7 @@
       "personnel",
       "workshops",
       "prisonType",
-      "aliens",      
+      "aliens",
     ]}
     extraFields={[
       "buildCost",
@@ -140,20 +140,34 @@
   <SectionTable
     {aId}
     entries={Object.values(rul.ufos)}
-    fields={["modSprite", "marker", "markerCrash", "markerLand", "speedMax", "armor", "damageMax", "power", "huntBehavior", "huntMode", "hunterKillerPercentage", "radarRange", "accel"]}
+    fields={[
+      "modSprite",
+      "marker",
+      "markerCrash",
+      "markerLand",
+      "speedMax",
+      "armor",
+      "damageMax",
+      "power",
+      "huntBehavior",
+      "huntMode",
+      "hunterKillerPercentage",
+      "radarRange",
+      "accel",
+    ]}
   />
 {:else if article.id == "COUNTRIES"}
   <SectionTable
     {aId}
     entries={Object.values(rul.countries)}
     fields={["fundingBase", "fundingCap", "events"]}
- />
+  />
 {:else if article.id == "ATTACKS"}
   <SectionTable
     {aId}
     entries={rul.attacks}
     fields={["name", "accuracy", "damage", "damageType", "shots", "range"]}
-    extraFields={[      
+    extraFields={[
       "ToArmorPre",
       "ToStun",
       "RandomType",
@@ -180,8 +194,8 @@
     filters={{
       internalBattleType: ["any", ...internalBattleTypes],
       damageTypes: ["any", ...damageTypes],
-      category: ["any", ...rul.sortStrings(Object.keys(rul.categories))],      
-      invSize: ["any", "auto"]
+      category: ["any", ...rul.sortStrings(Object.keys(rul.categories))],
+      invSize: ["any", "auto"],
     }}
   />
 {:else if article.id == "MANUFACTURE"}
@@ -223,8 +237,15 @@
     filters={{
       armorUsers: ["any", "allies", "enemies", ...Object.keys(rul.soldiers)],
       size: ["any", "auto"],
-      allowedIn: ["any", ...Object.keys(rul.startingConditions)]
+      allowedIn: ["any", ...Object.keys(rul.startingConditions)],
     }}
+  />
+{:else if article.id == "UNITS"}
+  <SectionTable
+    {aId}
+    entries={Object.values(rul.units)}
+    fields={["canSurrender", "sniper", "spotter", "health"]}
+    extraFields={[...statsList, ...rul.unitFields].sort()}
   />
 {:else if article.id == "CONDITIONS"}
   <Conditions conditions={rul.startingConditions[article.id]} />
@@ -250,7 +271,7 @@
     <div>
       {@html article.text}
       {#if article.requires && article.requires != article.id}
-        <br/>
+        <br />
         <Tr s="Research required:" />
         {#each article.requires || [] as req}
           <Value val={req} />

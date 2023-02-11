@@ -7,15 +7,6 @@
   export let capital = false;
   export let icon = "compact";
 
-  let rev = true;
-  
-  /**@type {string}*/
-  let tr;
-  $: {
-    tr = rev?s:rul.tr(s, {icon, capital, nobr});
-  }
-
-  revealed.subscribe((v) => (rev = v));
 </script>
 
-{@html tr}
+{@html $revealed?s:rul.tr(s, {icon, capital, nobr})}

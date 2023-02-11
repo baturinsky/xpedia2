@@ -12,7 +12,6 @@
   import UseCost from "./UseCost.svelte";
   import SecondaryTable from "./SecondaryTable.svelte";
   import Damage from "./Damage.svelte";
-  import { clog } from "./util";
 
   /**@type {typeof import("./Ruleset").Item}*/
   export let entry;

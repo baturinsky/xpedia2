@@ -26,7 +26,7 @@
     markersLoaded,
     leftRightClickSwipe,
   } from "./store";
-  import { isAncestorOf, clog } from "./util";
+  import { isAncestorOf } from "./util";
   import Download from "./Download.svelte";
   import onSwipe from "./swipe";
   import { useCache, packedData } from "./load";
@@ -114,7 +114,7 @@
         applyTheme();
       }
     } catch (e) {
-      console.log(e);
+      console.warn(e);
     }
     saveLoaded = true;
   }
@@ -146,7 +146,7 @@
     if (hash.substring(0, 2) != "##") return;
     id = hash.substring(2);
 
-    if (id == "MAIN") {
+    if (id == "HOME") {
       query = "";
     }
 
@@ -163,21 +163,14 @@
         searching = true;
         if (query.length >= 2) {
           searchinInProgres = true;
-          //console.log("looking for", query);
           found = await rul.search[rul.langName].findArticles(query);
-          //console.log(found);
           searchinInProgres = false;
-          //debugger;
-          //found = result.map((a) => a.id);
         } else found = 0;
         article = null;
       } else {
         found = null;
         if (!article || article.id != id) article = rul.article(id);
       }
-
-      //clog(id);
-      //clog(article);
     }
 
     if (article) {
@@ -228,7 +221,7 @@
   window.onhashchange = checkHash;
 
   $: {
-    if (article) clog(article);
+    //if (article) clog(article);
     document.documentElement.style.fontSize = hugeFont ? "24pt" : "12pt";
   }
 
@@ -251,10 +244,10 @@
     if (keyName == "ArrowLeft") nextArticle(-1);
   });
 
-  onSwipe(document.body, (right) => {
+  /*onSwipe(document.body, (right) => {
     if (right) nextArticle(1);
     else nextArticle(-1);
-  });
+  });*/
 
   /*document.body.addEventListener("touchstart", (e)=>{
     let tag = e.target.tag;
@@ -341,7 +334,11 @@
       >
         <div
           class="navbar-button dropdown-button"
-          on:mousedown={(e) => dropdown()}
+          on:click={(e) => {
+            //dropdown();
+            goTo("HOME");
+            //e.stopPropagation();
+          }}
         >
           <img src={favicon} alt="XPedia" class="xpedia-icon" />
           <nobr>
@@ -358,7 +355,7 @@
         >
           <div class="flex-horisontal">
             <div class="navbar-auto navbar-list">
-              <a href="##MAIN" style="text-decoration:underline;">
+              <a href="##HOME" style="text-decoration:underline;">
                 <Tr s={"HOME"} />
               </a>
               <div style="height:0.5em;" />
@@ -379,12 +376,14 @@
         </div>
       </div>
 
-      <a
-        class="navbar-button navbar-current-article"
-        href={"##" + (currentSection ? currentSection.id : "MAIN")}
-      >
-        {currentSection ? rul.tr(currentSection.id) : ""}
-      </a>
+      <!--
+        <a
+          class="navbar-button navbar-current-article"
+          href={"##" + (currentSection ? currentSection.id : "HOME")}
+        >
+          {currentSection ? rul.tr(currentSection.id) : ""}
+        </a>
+      -->
 
       <!-- svelte-ignore a11y-mouse-events-have-key-events -->
       <div
@@ -430,32 +429,40 @@
       {/if}
 
       {#if rul.langNames?.length > 1}
-        <!-- svelte-ignore a11y-mouse-events-have-key-events -->
-        <div
-          class="navbar-dropdown-container select-language"
-          on:mouseover={(e) => !isTouch && (showLanguagesDropdown = true)}
-          on:mouseout={(e) => !isTouch && (showLanguagesDropdown = false)}
-        >
-          <button
-            class="navbar-button"
-            on:mousedown={(e) =>
-              (showLanguagesDropdown = !showLanguagesDropdown)}
-          >
-            <big><Tr s={rul.langName} /></big>
-          </button>
+        {#if rul.langNames?.length <= 3}
+          {#each rul.langNames as lang}
+            <button class="navbar-button" on:click={(e) => selectLang(lang)}>
+              <nobr><Tr s={lang} /></nobr>
+            </button>
+          {/each}
+        {:else}
+          <!-- svelte-ignore a11y-mouse-events-have-key-events -->
           <div
-            class="navbar-dropdown"
-            style={showLanguagesDropdown
-              ? "visibility:visible"
-              : "visibility:hidden"}
+            class="navbar-dropdown-container select-language"
+            on:mouseover={(e) => !isTouch && (showLanguagesDropdown = true)}
+            on:mouseout={(e) => !isTouch && (showLanguagesDropdown = false)}
           >
-            {#each rul.langNames as lang}
-              <div class="clickable" on:click={(e) => selectLang(lang)}>
-                <nobr><Tr s={lang} /></nobr>
-              </div>
-            {/each}
+            <button
+              class="navbar-button"
+              on:mousedown={(e) =>
+                (showLanguagesDropdown = !showLanguagesDropdown)}
+            >
+              <big><Tr s={rul.langName} /></big>
+            </button>
+            <div
+              class="navbar-dropdown"
+              style={showLanguagesDropdown
+                ? "visibility:visible"
+                : "visibility:hidden"}
+            >
+              {#each rul.langNames as lang}
+                <div class="clickable" on:click={(e) => selectLang(lang)}>
+                  <nobr><Tr s={lang} /></nobr>
+                </div>
+              {/each}
+            </div>
           </div>
-        </div>
+        {/if}
       {/if}
 
       <!--
@@ -576,7 +583,9 @@
         <p>
           {#each rul.typeSectionsOrder as section, i}
             {@html divider(i)}
-            <a href={"##" + section.id}>{section.title}</a>
+            <a href={"##" + section.id}
+              >{section.title}{tableSections.includes(section.id) ? "☰" : ""}</a
+            >
           {/each}
         </p>
         <h2><Tr s="Mods" /></h2>
@@ -588,15 +597,26 @@
         {#if !packedData}
           <h2><Tr s="Export" /></h2>
           <Tr s="aboutexport" /><br />
+          <button class="download"
+            on:click={(e) => {
+              useCache("wipe");
+              location.reload();
+            }}
+            tooltip="tip_refresh"
+          >
+            ⭯
+          </button>
           <Download title="Export all languages" />
           <Download
-            title= {rul.langName == "en-US"?`Export English only`:`Export current (${rul.tr(rul.langName)}) and English only`}
+            title={rul.langName == "en-US"
+              ? `Export English only`
+              : `Export current (${rul.tr(rul.langName)}) and English only`}
             onlyCurrent={true}
           />
           <br />
         {/if}
         <h2><Tr s="About XPedia" /></h2>
-        <Tr s="aboutxpedia" />
+        <Tr s="STR_ABOUT_XPEDIA" />
       {/if}
     </div>
 

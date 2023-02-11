@@ -58,7 +58,6 @@ const enabledQ = false;
 function enableKeys() {
 
   addEventListener("keydown", e => {
-    //console.log(e);
     switch (e.code) {
       case "KeyQ":
         if (!enabledQ)

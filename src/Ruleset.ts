@@ -174,9 +174,6 @@ export class EventScript extends Entry {
     if(this.xcomBaseInCountryTriggers){
       this._xcomBaseInCountryTrue = Object.keys(this.xcomBaseInCountryTriggers).filter(k=>this.xcomBaseInCountryTriggers[k] == true)
       this._xcomBaseInCountryFalse = Object.keys(this.xcomBaseInCountryTriggers).filter(k=>this.xcomBaseInCountryTriggers[k] == false)
-      /*console.log(this.id);
-      console.log("true", this._xcomBaseInCountryTrue);
-      console.log("false", this._xcomBaseInCountryFalse);*/
     }
   }
 }
@@ -534,7 +531,7 @@ export class StartingConditions extends Entry {
   }
 }
 
-export class Stats {
+export type Stats = {
   tu: number;
   stamina: number;
   health: number;
@@ -556,6 +553,12 @@ export class Unit extends Entry {
 
   constructor(raw: any) {
     super(raw, "units")
+    for (let k in { ...raw}) {
+      if (typeof raw[k] == "string" || typeof raw[k] == "number") {
+        rul.unitFields.add(k);
+      }
+    }
+
     let armor = rul.armors[raw.armor];
     if (armor) {
       armor.users = armor.users || [];
@@ -572,6 +575,13 @@ export class Unit extends Entry {
       }
     }
   }
+
+  sortField(n: string) {
+    if (statsList.includes(n))
+      return this.stats ? this.stats[n] || 0 : 0;
+    return this[n]
+  }
+
 }
 
 let defaultRange = { snap: 15, auto: 7, aimed: 200 };
@@ -991,7 +1001,7 @@ export class Armor extends Entry {
     return ds;
   }
 
-  sortField(n, v) {
+  sortField(n:string, v) {
     if (statsList.includes(n))
       return this.stats ? this.stats[n] || 0 : 0;
     if (damageTypes.includes(n))
@@ -1239,6 +1249,7 @@ export default class Ruleset {
   pageScripts = {STR_PALETTE_CONVERTER:initPedipal}
 
   itemFields = new Set<string>();
+  unitFields = new Set<string>();
 
   lang: { [key: string]: string } = {};
   langs: { [key: string]: { [key: string]: string } } = {};
@@ -1728,8 +1739,6 @@ export default class Ruleset {
     if (!options?.notip && ('tip_' + id) in rul.lang) {
       str = `<span tooltip=${'tip_' + id}>${str}<sup class="tipmark">?</sup></span>`;
     }
-
-    //console.log(str);
     return str;
   }
 

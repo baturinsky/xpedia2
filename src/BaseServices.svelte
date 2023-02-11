@@ -3,8 +3,6 @@
   import { Link, LinksPage, Value, LinksList, Tr } from "./Components";
 
   export let query = null
-
-  console.log(query);
 </script>
 
 

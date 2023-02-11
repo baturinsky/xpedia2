@@ -3,8 +3,6 @@
   import LinksPage from "./LinksPage.svelte";  
 
   export let conditions;
-  console.log(conditions);
-  console.log(sortFirstLast(conditions));
 </script>
 
 {#each sortFirstLast(conditions, {exclude:["type"]}).all as [key, prop]}
